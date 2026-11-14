@@ -45,14 +45,14 @@ isOneToOne: false
                   ]
                 },"documents": {
                   Row: {
-                    "created_at": string,"extracted": Json | null,"id": string,"source": Database["public"]['Enums']["document_source"],"stated_total_cents": number | null,"status": Database["public"]['Enums']["document_status"],"storage_path": string,"type": Database["public"]['Enums']["document_type"] | null,"user_id": string,"visit_id": string | null
+                    "created_at": string,"extracted": Json | null,"file_name": string,"id": string,"mime_type": string,"source": Database["public"]['Enums']["document_source"],"stated_total_cents": number | null,"status": Database["public"]['Enums']["document_status"],"storage_path": string,"type": Database["public"]['Enums']["document_type"] | null,"user_id": string,"visit_id": string | null
                   }
                   ComputedFields: never
                   Insert: {
-                    "created_at"?: string,"extracted"?: Json | null,"id"?: string,"source"?: Database["public"]['Enums']["document_source"],"stated_total_cents"?: number | null,"status"?: Database["public"]['Enums']["document_status"],"storage_path": string,"type"?: Database["public"]['Enums']["document_type"] | null,"user_id"?: string,"visit_id"?: string | null
+                    "created_at"?: string,"extracted"?: Json | null,"file_name": string,"id"?: string,"mime_type": string,"source"?: Database["public"]['Enums']["document_source"],"stated_total_cents"?: number | null,"status"?: Database["public"]['Enums']["document_status"],"storage_path": string,"type"?: Database["public"]['Enums']["document_type"] | null,"user_id"?: string,"visit_id"?: string | null
                   }
                   Update: {
-                    "created_at"?: string,"extracted"?: Json | null,"id"?: string,"source"?: Database["public"]['Enums']["document_source"],"stated_total_cents"?: number | null,"status"?: Database["public"]['Enums']["document_status"],"storage_path"?: string,"type"?: Database["public"]['Enums']["document_type"] | null,"user_id"?: string,"visit_id"?: string | null
+                    "created_at"?: string,"extracted"?: Json | null,"file_name"?: string,"id"?: string,"mime_type"?: string,"source"?: Database["public"]['Enums']["document_source"],"stated_total_cents"?: number | null,"status"?: Database["public"]['Enums']["document_status"],"storage_path"?: string,"type"?: Database["public"]['Enums']["document_type"] | null,"user_id"?: string,"visit_id"?: string | null
                   }
                   Relationships: [
                     {
@@ -125,14 +125,14 @@ isOneToOne: false
                   ]
                 },"line_items": {
                   Row: {
-                    "amount_cents": number,"code": string | null,"created_at": string,"description": string | null,"document_id": string,"id": string,"plain_explanation": string | null,"quantity": number | null,"service_date": string | null,"user_id": string
+                    "amount_cents": number,"code": string | null,"created_at": string,"description": string | null,"document_id": string,"id": string,"plain_explanation": string | null,"position": number,"quantity": number | null,"service_date": string | null,"user_id": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "amount_cents": number,"code"?: string | null,"created_at"?: string,"description"?: string | null,"document_id": string,"id"?: string,"plain_explanation"?: string | null,"quantity"?: number | null,"service_date"?: string | null,"user_id"?: string
+                    "amount_cents": number,"code"?: string | null,"created_at"?: string,"description"?: string | null,"document_id": string,"id"?: string,"plain_explanation"?: string | null,"position"?: number,"quantity"?: number | null,"service_date"?: string | null,"user_id"?: string
                   }
                   Update: {
-                    "amount_cents"?: number,"code"?: string | null,"created_at"?: string,"description"?: string | null,"document_id"?: string,"id"?: string,"plain_explanation"?: string | null,"quantity"?: number | null,"service_date"?: string | null,"user_id"?: string
+                    "amount_cents"?: number,"code"?: string | null,"created_at"?: string,"description"?: string | null,"document_id"?: string,"id"?: string,"plain_explanation"?: string | null,"position"?: number,"quantity"?: number | null,"service_date"?: string | null,"user_id"?: string
                   }
                   Relationships: [
                     {
