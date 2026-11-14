@@ -9,6 +9,9 @@ export const LOCALE_COOKIE = "rc-lang";
 // Short names for the switcher, each in its own language.
 export const LOCALE_NAMES: Record<Locale, string> = { en: "EN", ru: "RU", kk: "ҚАЗ" };
 
+// Full names for the language menu, each in its own language.
+export const LOCALE_FULL_NAMES: Record<Locale, string> = { en: "English", ru: "Русский", kk: "Қазақша" };
+
 // BCP 47 tags for <html lang> and Intl formatting.
 export const LOCALE_TAGS: Record<Locale, string> = { en: "en-US", ru: "ru-RU", kk: "kk-KZ" };
 
