@@ -53,7 +53,7 @@ export function DisputePanel({ visitId, initialDraft, fileStem }: Props) {
         <button
           onClick={write}
           disabled={pending}
-          className="mt-4 rounded-lg bg-[var(--rc-navy)] px-4 py-2 font-medium text-[var(--rc-ivory)] disabled:opacity-60"
+          className="mt-4 rounded-lg bg-[var(--rc-accent)] px-4 py-2 font-medium text-[var(--rc-navy)] disabled:opacity-60"
         >
           {pending ? "Writing your letter…" : "Write a dispute letter"}
         </button>

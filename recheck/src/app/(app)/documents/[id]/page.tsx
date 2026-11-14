@@ -159,7 +159,7 @@ export default async function DocumentPage({ params }: PageProps<"/documents/[id
           {document.visit_id ? (
             <Link
               href={`/visits/${document.visit_id}`}
-              className="mt-8 inline-block rounded-lg bg-slate-900 px-4 py-2 font-medium text-white"
+              className="mt-8 inline-block rounded-lg bg-[var(--rc-accent)] px-4 py-2 font-medium text-[var(--rc-navy)]"
             >
               See the whole visit
             </Link>

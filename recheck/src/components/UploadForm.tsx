@@ -74,14 +74,14 @@ export function UploadForm() {
               <button
                 type="button"
                 onClick={() => cameraInput.current?.click()}
-                className="rounded-lg bg-[var(--rc-navy)] px-4 py-2 font-medium text-[var(--rc-ivory)] sm:hidden"
+                className="rounded-lg bg-[var(--rc-accent)] px-4 py-2 font-medium text-[var(--rc-navy)] sm:hidden"
               >
                 Take a photo
               </button>
               <button
                 type="button"
                 onClick={() => fileInput.current?.click()}
-                className="rounded-lg border border-[var(--rc-navy)]/25 px-4 py-2 font-medium max-sm:bg-[var(--rc-ivory)] sm:bg-[var(--rc-navy)] sm:text-[var(--rc-ivory)]"
+                className="rounded-lg border border-[var(--rc-navy)]/25 px-4 py-2 font-medium max-sm:bg-[var(--rc-ivory)] sm:bg-[var(--rc-accent)] sm:text-[var(--rc-navy)]"
               >
                 Choose a file
               </button>

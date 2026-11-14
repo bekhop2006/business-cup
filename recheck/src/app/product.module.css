@@ -1,8 +1,52 @@
 .surface {
+  position: relative;
+  isolation: isolate;
   min-height: 100dvh;
-  background: var(--rc-ivory);
+  display: flow-root;
+  background: var(--rc-navy);
+  background-image: var(--rc-liquid-background);
+  background-size: 100% 100%;
   color: var(--rc-navy);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+.surface::before,
+.surface::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.surface::before {
+  inset: 100px 6% auto;
+  height: min(76vw, 760px);
+  background:
+    radial-gradient(ellipse at 18% 58%, color-mix(in srgb, var(--rc-ivory) 32%, transparent), transparent 52%),
+    radial-gradient(ellipse at 82% 36%, color-mix(in srgb, var(--rc-ivory) 24%, transparent), transparent 48%);
+  filter: blur(32px);
+  animation: liquidDrift 18s ease-in-out infinite alternate;
+}
+
+.surface::after {
+  inset: 100px 0 auto;
+  height: 640px;
+  background-image: radial-gradient(circle, var(--rc-liquid-dot, color-mix(in srgb, var(--rc-ivory) 32%, transparent)) 1px, transparent 1.5px);
+  background-size: 12px 12px;
+  -webkit-mask-image: linear-gradient(transparent, black 45%, transparent);
+  mask-image: linear-gradient(transparent, black 45%, transparent);
+  opacity: 0.45;
+}
+
+@keyframes liquidDrift {
+  from {
+    transform: translateY(-12px) scale(0.98);
+    opacity: 0.65;
+  }
+  to {
+    transform: translateY(18px) scale(1.04);
+    opacity: 1;
+  }
 }
 
 .surface :focus-visible {
@@ -12,7 +56,7 @@
 
 .header {
   background: var(--rc-ivory);
-  border-bottom: 1px solid var(--rc-line);
+  border-bottom: 1px solid var(--rc-glass-border, var(--rc-line));
 }
 
 .headerInner {
@@ -67,6 +111,7 @@
 
 .navigation a[aria-current="page"] {
   box-shadow: inset 0 -2px var(--rc-navy);
+  background: color-mix(in srgb, var(--rc-accent) 28%, transparent);
   font-weight: 700;
 }
 
@@ -75,21 +120,26 @@
   margin: 40px auto;
   padding: 32px;
   background: var(--rc-ivory);
-  border: 1px solid var(--rc-line);
-  border-radius: 6px;
+  border: 1px solid var(--rc-glass-border, var(--rc-line));
+  border-radius: 24px;
+  box-shadow: var(--rc-glass-shadow, 0 24px 64px color-mix(in srgb, var(--rc-navy) 18%, transparent));
 }
 
 .main h1 {
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: Arial, Helvetica, sans-serif;
   font-size: 36px;
-  font-weight: 400;
+  font-weight: 500;
   letter-spacing: -1px;
 }
 
 .footer {
   max-width: 880px;
   margin-inline: auto;
-  padding: 0 24px 32px;
+  margin-bottom: 32px;
+  padding: 16px 24px;
+  background: var(--rc-ivory);
+  border: 1px solid var(--rc-glass-border, var(--rc-line));
+  border-radius: 16px;
   font-size: 12px;
   color: var(--rc-muted);
 }
@@ -105,16 +155,30 @@
   gap: 80px;
 }
 
+.loginIntro {
+  padding: 36px;
+  border: 1px solid color-mix(in srgb, var(--rc-ivory) 24%, transparent);
+  border-radius: 28px;
+  color: var(--rc-ivory);
+  background: color-mix(in srgb, var(--rc-navy) 88%, transparent);
+  box-shadow: 0 20px 64px color-mix(in srgb, var(--rc-navy) 20%, transparent);
+}
+
+.loginIntro :focus-visible {
+  outline-color: var(--rc-ivory);
+}
+
 .loginIntro h1 {
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: clamp(44px, 5vw, 64px);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: clamp(38px, 4.5vw, 56px);
+  font-weight: 500;
   line-height: 1.1;
   letter-spacing: -2px;
   margin-block: 40px 24px;
 }
 
 .loginIntro p {
-  color: var(--rc-muted);
+  color: color-mix(in srgb, var(--rc-ivory) 88%, transparent);
   max-width: 360px;
   line-height: 1.7;
 }
@@ -122,13 +186,39 @@
 .loginCard {
   padding: 32px;
   background: var(--rc-ivory);
-  border: 1px solid var(--rc-line);
-  border-radius: 6px;
-  border-top: 4px solid var(--rc-navy);
-  box-shadow: 8px 8px 0 var(--rc-line);
+  border: 1px solid var(--rc-glass-border, var(--rc-line));
+  border-radius: 24px;
+  border-top: 4px solid var(--rc-accent);
+  box-shadow: var(--rc-glass-shadow, 0 24px 64px color-mix(in srgb, var(--rc-navy) 18%, transparent));
+}
+
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .header,
+  .main,
+  .footer,
+  .loginCard {
+    background: var(--rc-glass-background, color-mix(in srgb, var(--rc-ivory) 94%, transparent));
+    -webkit-backdrop-filter: blur(24px) saturate(125%);
+    backdrop-filter: blur(24px) saturate(125%);
+  }
+
+  .loginIntro {
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .surface::before {
+    animation: none;
+  }
 }
 
 @media (max-width: 640px) {
+  .surface::before {
+    filter: blur(20px);
+  }
+
   .headerInner {
     gap: 8px;
     padding: 14px 20px;
@@ -142,6 +232,11 @@
   .main {
     margin: 20px 12px;
     padding: 20px 16px;
+    border-radius: 18px;
+  }
+
+  .footer {
+    margin-inline: 12px;
   }
 
   .main h1 {
@@ -155,10 +250,11 @@
   }
 
   .loginIntro h1 {
-    font-size: 36px;
+    font-size: 34px;
     margin-block: 24px 16px;
   }
 
+  .loginIntro,
   .loginCard {
     padding: 24px;
   }

@@ -165,7 +165,7 @@ export function ReviewForm({ action, initialDetails, initialLines, initialTotal 
       )}
       <button
         disabled={pending}
-        className="mt-4 rounded-lg bg-slate-900 px-4 py-2 font-medium text-white disabled:opacity-60"
+        className="mt-4 rounded-lg bg-[var(--rc-accent)] px-4 py-2 font-medium text-[var(--rc-navy)] disabled:opacity-60"
       >
         {pending ? "Saving…" : "These lines match my document"}
       </button>
