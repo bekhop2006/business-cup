@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/db/auth";
 import { HOME_PATH } from "@/lib/routes";
 import { MONTHLY_PRICE_CENTS, PAID_PLAN_NAME } from "@/lib/billing/plan";
@@ -7,8 +6,10 @@ import { formatCents } from "@/lib/money";
 import styles from "./home.module.css";
 
 export default async function Home() {
+  // The landing stays open after login; signed-in visitors get a way back
+  // to their dashboard instead of the login link.
   const user = await getCurrentUser();
-  if (user) redirect(HOME_PATH);
+  const startHref = user ? HOME_PATH : "/login";
 
   return (
     <div className={styles.page}>
@@ -26,8 +27,8 @@ export default async function Home() {
           <a className={styles.howLink} href="#how-it-works">
             How it works
           </a>
-          <Link href="/login">
-            Log in <span aria-hidden="true">↗</span>
+          <Link href={startHref}>
+            {user ? "My dashboard" : "Log in"} <span aria-hidden="true">↗</span>
           </Link>
         </nav>
       </header>
@@ -45,7 +46,7 @@ export default async function Home() {
               where to go, who&apos;s nearby and what you&apos;re likely to pay
               with your own insurance, then check the bill when it arrives.
             </p>
-            <Link href="/login" className={styles.primaryLink}>
+            <Link href={startHref} className={styles.primaryLink}>
               Find my savings <span aria-hidden="true">↗</span>
             </Link>
             <p className={styles.helper}>
@@ -179,7 +180,7 @@ export default async function Home() {
             <p className={styles.eyebrow}>{PAID_PLAN_NAME} · {formatCents(MONTHLY_PRICE_CENTS)} a month</p>
             <h2 id="cta-heading">Know the cost before the visit.</h2>
           </div>
-          <Link href="/login" className={styles.primaryLink}>
+          <Link href={startHref} className={styles.primaryLink}>
             Find my savings <span aria-hidden="true">↗</span>
           </Link>
         </section>
