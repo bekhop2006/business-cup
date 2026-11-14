@@ -4,16 +4,9 @@ import { env } from "@/lib/env";
 
 // The only file that talks to Stripe. Test mode keys only.
 
-export class BillingNotConfiguredError extends Error {
-  constructor() {
-    super("Payments are not set up yet.");
-  }
-}
-
 let client: Stripe | null = null;
 
 function getStripe(): Stripe {
-  if (!env.STRIPE_SECRET_KEY) throw new BillingNotConfiguredError();
   client ??= new Stripe(env.STRIPE_SECRET_KEY, { timeout: 20_000, maxNetworkRetries: 1 });
   return client;
 }
@@ -49,6 +42,8 @@ export async function createCheckoutUrl(options: {
       },
     ],
     subscription_data: { metadata: { user_id: options.userId } },
+    // The product is for US families: always show and charge US dollars.
+    adaptive_pricing: { enabled: false },
     success_url: `${options.appUrl}/api/billing/confirm?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${options.appUrl}/billing?canceled=1`,
   });
@@ -66,6 +61,5 @@ export async function getPaidCheckoutUserId(sessionId: string): Promise<string |
 
 // Verifies the signature before anything else looks at the event.
 export function readWebhookEvent(rawBody: string, signature: string): Stripe.Event {
-  if (!env.STRIPE_WEBHOOK_SECRET) throw new BillingNotConfiguredError();
   return getStripe().webhooks.constructEvent(rawBody, signature, env.STRIPE_WEBHOOK_SECRET);
 }

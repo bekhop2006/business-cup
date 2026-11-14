@@ -6,6 +6,8 @@ vi.stubEnv("SUPABASE_SERVICE_ROLE_KEY", "service");
 vi.stubEnv("LLM_API_KEY", "llm-key");
 vi.stubEnv("LLM_MODEL", "llm-model");
 vi.stubEnv("APP_URL", "http://localhost:3000");
+vi.stubEnv("STRIPE_SECRET_KEY", "sk_test_x");
+vi.stubEnv("STRIPE_WEBHOOK_SECRET", "whsec_x");
 
 const { parseEnv } = await import("@/lib/env");
 
@@ -16,6 +18,8 @@ const valid = {
   LLM_API_KEY: "llm-key",
   LLM_MODEL: "llm-model",
   APP_URL: "http://localhost:3000",
+  STRIPE_SECRET_KEY: "sk_test_x",
+  STRIPE_WEBHOOK_SECRET: "whsec_x",
 };
 
 describe("parseEnv", () => {
@@ -25,7 +29,7 @@ describe("parseEnv", () => {
 
   it("names every missing required variable", () => {
     expect(() => parseEnv({})).toThrow(
-      "NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY, LLM_API_KEY, LLM_MODEL, APP_URL",
+      "NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY, LLM_API_KEY, LLM_MODEL, APP_URL, STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET",
     );
   });
 
@@ -36,7 +40,7 @@ describe("parseEnv", () => {
   });
 
   it("treats an empty optional variable as not set", () => {
-    expect(parseEnv({ ...valid, STRIPE_SECRET_KEY: "" }).STRIPE_SECRET_KEY).toBe(
+    expect(parseEnv({ ...valid, CRON_SECRET: "" }).CRON_SECRET).toBe(
       undefined,
     );
   });

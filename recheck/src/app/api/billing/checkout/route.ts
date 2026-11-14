@@ -1,4 +1,4 @@
-import { BillingNotConfiguredError, createCheckoutUrl, createCustomer } from "@/lib/billing/stripe";
+import { createCheckoutUrl, createCustomer } from "@/lib/billing/stripe";
 import { createAdminSupabase } from "@/lib/db/admin";
 import { getCurrentUser } from "@/lib/db/auth";
 import { getProfile, setStripeCustomerId } from "@/lib/db/profiles";
@@ -24,10 +24,7 @@ export async function POST() {
     }
     const url = await createCheckoutUrl({ customerId, userId: user.id, appUrl: env.APP_URL });
     return Response.json({ url });
-  } catch (error) {
-    if (error instanceof BillingNotConfiguredError) {
-      return fail("Payments aren't set up yet. Please try again later.", 503);
-    }
+  } catch {
     console.error("Starting checkout failed", { userId: user.id });
     return fail("We couldn't open the payment page. Please try again.", 502);
   }
