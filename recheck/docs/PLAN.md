@@ -2,7 +2,7 @@
 
 Work through the stages in order. A stage is finished only when its "Done when" line is true **on the deployed app**, not only locally.
 
-**Current stage:** 1
+**Current stage:** 2
 
 Update the line above when a stage is finished.
 
