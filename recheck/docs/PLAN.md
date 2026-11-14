@@ -2,7 +2,7 @@
 
 Work through the stages in order. A stage is finished only when its "Done when" line is true **on the deployed app**, not only locally.
 
-**Current stage:** 5
+**Current stage:** 6
 
 Update the line above when a stage is finished.
 
@@ -81,10 +81,10 @@ If time runs short, cut from the bottom of this list, never from the top:
 
 ## Stage 5 — Pivot foundation (~2 h)
 
-- [ ] `PROJECT.md`, `PLAN.md`, `STRUCTURE.md`, `RULES.md` describe the new product
-- [ ] Migration: profile fields (name, ZIP, household size, onboarded at), insurance profile fields, `care_cases`, `case_providers`
-- [ ] Onboarding: about you → your insurance (every field skippable) → summary; new users land here
-- [ ] `/profile`: edit the same details later
+- [x] `PROJECT.md`, `PLAN.md`, `STRUCTURE.md`, `RULES.md` describe the new product
+- [x] Migration: profile fields (name, ZIP, household size, onboarded at), insurance profile fields, `care_cases`, `case_providers`
+- [x] Onboarding: about you → your insurance (every field skippable) → summary; new users land here
+- [x] `/profile`: edit the same details later
 
 **Done when:** a new user on production completes onboarding and the profile is saved and editable.
 
