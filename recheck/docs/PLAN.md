@@ -2,7 +2,7 @@
 
 Work through the stages in order. A stage is finished only when its "Done when" line is true **on the deployed app**, not only locally.
 
-**Current stage:** 4
+**Current stage:** 5
 
 Update the line above when a stage is finished.
 
@@ -69,11 +69,11 @@ If time runs short, cut from the bottom of this list, never from the top:
 
 ## Stage 4 — Yearly dashboard and payment (hours 15–18)
 
-- [ ] Insurance plan form: deductible and out-of-pocket maximum
-- [ ] Dashboard: spent this year, deductible progress, owed now, saved
-- [ ] Stripe test-mode subscription and webhook
-- [ ] Paywall: first check free; letters, scripts and dashboard on the paid plan
-- [ ] Landing page with the tagline and a clear call to action
+- [x] Insurance plan form: deductible and out-of-pocket maximum
+- [x] Dashboard: spent this year, deductible progress, owed now, saved
+- [x] Stripe test-mode subscription and webhook
+- [x] Paywall: first check free; letters, scripts and dashboard on the paid plan
+- [x] Landing page with the tagline and a clear call to action
 
 **Done when:** a new user can sign up, check one bill for free, hit the paywall, pay with a Stripe test card and open the letter.
 
