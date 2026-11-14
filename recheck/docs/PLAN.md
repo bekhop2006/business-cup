@@ -32,14 +32,14 @@ If time runs short, cut from the bottom of this list, never from the top:
 
 ## Stage 1 — Extraction (hours 2–7)
 
-- [ ] Collect 5–6 sample bills and EOBs in `fixtures/`, some with planted errors
-- [ ] `ExtractedDocument` Zod schema
-- [ ] `src/lib/llm/client.ts` and `extract.ts` with the extraction prompt
-- [ ] Upload page: drag and drop, phone camera, PDF and images
-- [ ] `POST /api/documents` stores the file and creates the row
-- [ ] Pipeline steps 1–3: store, extract, validate
-- [ ] Background processing with status polling in the UI
-- [ ] `needs_review` screen: show extracted lines, allow manual correction
+- [x] Collect 5–6 sample bills and EOBs in `fixtures/`, some with planted errors
+- [x] `ExtractedDocument` Zod schema
+- [x] `src/lib/llm/client.ts` and `extract.ts` with the extraction prompt
+- [x] Upload page: drag and drop, phone camera, PDF and images
+- [x] `POST /api/documents` stores the file and creates the row
+- [x] Pipeline steps 1–3: store, extract, validate
+- [x] Background processing with status polling in the UI
+- [x] `needs_review` screen: show extracted lines, allow manual correction
 
 **Done when:** uploading each fixture on production produces correct line items in the database, and a blurry photo ends in `needs_review` instead of an error.
 
