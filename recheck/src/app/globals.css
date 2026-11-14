@@ -1,1 +1,78 @@
 @import "tailwindcss";
+
+:root {
+  --rc-navy: #14263D;
+  --rc-ivory: #F6F3EB;
+  --rc-red: #B83434;
+  --rc-muted: color-mix(in srgb, var(--rc-navy) 72%, var(--rc-ivory));
+  --rc-line: color-mix(in srgb, var(--rc-navy) 18%, var(--rc-ivory));
+  --rc-wash: color-mix(in srgb, var(--rc-navy) 4%, var(--rc-ivory));
+}
+
+@theme inline {
+  --color-white: var(--rc-ivory);
+  --color-black: var(--rc-navy);
+  --color-slate-50: color-mix(in srgb, var(--rc-navy) 3%, var(--rc-ivory));
+  --color-slate-100: color-mix(in srgb, var(--rc-navy) 6%, var(--rc-ivory));
+  --color-slate-200: color-mix(in srgb, var(--rc-navy) 14%, var(--rc-ivory));
+  --color-slate-300: color-mix(in srgb, var(--rc-navy) 25%, var(--rc-ivory));
+  --color-slate-400: color-mix(in srgb, var(--rc-navy) 45%, var(--rc-ivory));
+  --color-slate-500: color-mix(in srgb, var(--rc-navy) 62%, var(--rc-ivory));
+  --color-slate-600: color-mix(in srgb, var(--rc-navy) 74%, var(--rc-ivory));
+  --color-slate-700: color-mix(in srgb, var(--rc-navy) 84%, var(--rc-ivory));
+  --color-slate-800: color-mix(in srgb, var(--rc-navy) 92%, var(--rc-ivory));
+  --color-slate-900: color-mix(in srgb, var(--rc-navy) 100%, var(--rc-ivory));
+  --color-slate-950: color-mix(in srgb, var(--rc-navy) 100%, var(--rc-ivory));
+  --color-red-50: color-mix(in srgb, var(--rc-red) 4%, var(--rc-ivory));
+  --color-red-100: color-mix(in srgb, var(--rc-red) 8%, var(--rc-ivory));
+  --color-red-200: color-mix(in srgb, var(--rc-red) 18%, var(--rc-ivory));
+  --color-red-300: color-mix(in srgb, var(--rc-red) 28%, var(--rc-ivory));
+  --color-red-400: color-mix(in srgb, var(--rc-red) 60%, var(--rc-ivory));
+  --color-red-500: color-mix(in srgb, var(--rc-red) 85%, var(--rc-ivory));
+  --color-red-600: color-mix(in srgb, var(--rc-red) 100%, var(--rc-ivory));
+  --color-red-700: color-mix(in srgb, var(--rc-red) 100%, var(--rc-ivory));
+  --color-red-800: color-mix(in srgb, var(--rc-red) 100%, var(--rc-ivory));
+  --color-red-900: color-mix(in srgb, var(--rc-red) 100%, var(--rc-ivory));
+  --color-red-950: color-mix(in srgb, var(--rc-red) 100%, var(--rc-ivory));
+}
+
+body {
+  margin: 0;
+  background: var(--rc-ivory);
+  color: var(--rc-navy);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+::selection {
+  background: var(--rc-navy);
+  color: var(--rc-ivory);
+}
+
+:focus-visible {
+  outline: 2px solid var(--rc-navy);
+  outline-offset: 4px;
+}
+
+button, summary, select {
+  cursor: pointer;
+}
+
+button, input, select {
+  min-height: 44px;
+}
+
+button:disabled {
+  cursor: wait;
+}
+
+input, select, textarea {
+  background: var(--rc-ivory);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -11,7 +11,7 @@ export function LoginForm({ action }: Props) {
   const [state, formAction, pending] = useActionState(action, {});
 
   return (
-    <form action={formAction} className="mt-8 flex flex-col gap-4">
+    <form action={formAction} aria-busy={pending} className="mt-8 flex flex-col gap-4">
       <label className="flex flex-col gap-1 text-sm font-medium">
         Email
         <input
@@ -41,8 +41,13 @@ export function LoginForm({ action }: Props) {
         </p>
       )}
       {state.message && (
-        <p role="status" className="text-sm text-emerald-700">
+        <p role="status" className="text-sm text-slate-900">
           {state.message}
+        </p>
+      )}
+      {pending && (
+        <p role="status" className="text-sm text-slate-600">
+          Connecting to your account…
         </p>
       )}
 

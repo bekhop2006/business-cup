@@ -59,7 +59,7 @@ export function UploadForm() {
           upload(event.dataTransfer.files[0]);
         }}
         className={`flex flex-col items-center gap-4 rounded-xl border-2 border-dashed p-8 text-center transition-colors ${
-          dragging ? "border-slate-900 bg-slate-50" : "border-slate-300"
+          dragging ? "border-[var(--rc-navy)] bg-[var(--rc-navy)]/4" : "border-[var(--rc-navy)]/25"
         }`}
       >
         {uploading ? (
@@ -69,19 +69,19 @@ export function UploadForm() {
         ) : (
           <>
             <p className="font-medium">Drop a bill or an insurance statement here</p>
-            <p className="text-sm text-slate-600">PDF or photo, up to 8 MB</p>
+            <p className="text-sm text-[var(--rc-navy)]/70">PDF or photo, up to 8 MB</p>
             <div className="flex flex-col gap-3 sm:flex-row">
               <button
                 type="button"
                 onClick={() => cameraInput.current?.click()}
-                className="rounded-lg bg-slate-900 px-4 py-2 font-medium text-white sm:hidden"
+                className="rounded-lg bg-[var(--rc-navy)] px-4 py-2 font-medium text-[var(--rc-ivory)] sm:hidden"
               >
                 Take a photo
               </button>
               <button
                 type="button"
                 onClick={() => fileInput.current?.click()}
-                className="rounded-lg border border-slate-300 px-4 py-2 font-medium max-sm:bg-white sm:bg-slate-900 sm:text-white"
+                className="rounded-lg border border-[var(--rc-navy)]/25 px-4 py-2 font-medium max-sm:bg-[var(--rc-ivory)] sm:bg-[var(--rc-navy)] sm:text-[var(--rc-ivory)]"
               >
                 Choose a file
               </button>
@@ -95,7 +95,11 @@ export function UploadForm() {
         type="file"
         accept={ACCEPTED_UPLOAD_TYPES}
         className="hidden"
-        onChange={(event) => upload(event.target.files?.[0])}
+        onChange={(event) => {
+          const file = event.target.files?.[0];
+          event.target.value = "";
+          void upload(file);
+        }}
       />
       <input
         ref={cameraInput}
@@ -103,11 +107,15 @@ export function UploadForm() {
         accept="image/jpeg,image/png,image/webp"
         capture="environment"
         className="hidden"
-        onChange={(event) => upload(event.target.files?.[0])}
+        onChange={(event) => {
+          const file = event.target.files?.[0];
+          event.target.value = "";
+          void upload(file);
+        }}
       />
 
       {state.kind === "error" && (
-        <p role="alert" className="mt-4 text-sm text-red-700">
+        <p role="alert" className="mt-4 text-sm text-[var(--rc-red)]">
           {state.message}
         </p>
       )}

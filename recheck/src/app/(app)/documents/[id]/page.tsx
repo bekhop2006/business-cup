@@ -87,14 +87,14 @@ export default async function DocumentPage({ params }: PageProps<"/documents/[id
 
       {document.status === "needs_review" && (
         <section className="mt-6">
-          <div className="rounded-xl border border-amber-200 bg-amber-50 p-4">
-            <p className="font-medium text-amber-900">Please check what we read</p>
-            <ul className="mt-2 list-disc pl-5 text-sm text-amber-900">
+          <div className="rounded-xl border border-red-200 bg-red-50 p-4">
+            <p className="font-medium text-red-900">Please check what we read</p>
+            <ul className="mt-2 list-disc pl-5 text-sm text-red-900">
               {validateExtraction(extracted).problems.map((problem) => (
                 <li key={describeProblem(problem)}>{describeProblem(problem)}</li>
               ))}
             </ul>
-            <p className="mt-2 text-sm text-amber-900">
+            <p className="mt-2 text-sm text-red-900">
               {lines.length > 0
                 ? "Compare what's below with your paper document and fix anything that's off, or "
                 : "Type the details from your paper document below, or "}

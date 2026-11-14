@@ -35,28 +35,42 @@ export default async function VisitsPage() {
 
   return (
     <>
-      <div className="flex items-center justify-between gap-4">
-        <h1 className="text-2xl font-semibold tracking-tight">Visits</h1>
-        <Link href="/upload" className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white">
-          Add a document
+      <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[var(--rc-navy)]/65">
+        Your family billing record
+      </p>
+      <div className="mt-3 flex flex-wrap items-center justify-between gap-4">
+        <h1 className="text-2xl font-semibold tracking-tight">Your visits</h1>
+        <Link href="/upload" className="inline-flex min-h-11 items-center gap-6 rounded-md bg-[var(--rc-navy)] px-5 py-3 text-sm font-medium text-[var(--rc-ivory)] hover:opacity-90">
+          Add a document <span aria-hidden="true">↗</span>
         </Link>
       </div>
+      <p className="mt-3 text-sm text-[var(--rc-navy)]/70">
+        Your family&apos;s bills and insurance statements, organized by visit.
+        Open a visit to review its charges and next steps.
+      </p>
 
       {visits.length === 0 ? (
-        <div className="mt-6 rounded-xl border border-dashed border-slate-300 p-8 text-center">
-          <p className="font-medium">No visits yet</p>
-          <p className="mt-1 text-sm text-slate-600">
-            When you add a medical bill, its visit will show up here.
+        <div className="mt-8 rounded-lg border border-[var(--rc-navy)]/15 bg-[var(--rc-navy)]/4 px-6 py-12 text-center">
+          <span aria-hidden="true" className="mx-auto mb-5 flex size-12 items-center justify-center rounded-full border border-[var(--rc-navy)]/25 text-xl">↥</span>
+          <h2 className="font-serif text-3xl">Start with one bill.</h2>
+          <p className="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-[var(--rc-navy)]/70">
+            Add a medical bill or insurance statement. We&apos;ll read it and
+            organize its charges into a visit for you to review.
           </p>
-          <Link href="/upload" className="mt-4 inline-block text-sm font-medium underline">
+          <Link href="/upload" className="mt-5 inline-block py-2 text-sm font-semibold underline underline-offset-4">
             Add your first bill
           </Link>
         </div>
       ) : (
         groups.map((group) => (
           <section key={group.key} className="mt-8">
-            <h2 className="font-semibold">{group.name}</h2>
-            <ul className="mt-3 divide-y divide-slate-200 rounded-xl border border-slate-200">
+            <div className="flex items-baseline justify-between gap-3">
+              <h2 className="font-semibold">{group.name}</h2>
+              <span className="text-xs text-[var(--rc-navy)]/65">
+                {group.visits.length} {group.visits.length === 1 ? "visit" : "visits"}
+              </span>
+            </div>
+            <ul className="mt-3 divide-y divide-[var(--rc-navy)]/15 overflow-hidden rounded-lg border border-[var(--rc-navy)]/15">
               {group.visits.map((visit) => (
                 <VisitRow key={visit.id} visit={visit} />
               ))}
@@ -67,23 +81,27 @@ export default async function VisitsPage() {
 
       {documents.length > 0 && (
         <section className="mt-10">
-          <h2 className="font-semibold">Documents not in a visit</h2>
-          <ul className="mt-3 divide-y divide-slate-200 rounded-xl border border-slate-200">
+          <h2 className="font-semibold">Documents to finish</h2>
+          <p className="mt-1 text-sm text-[var(--rc-navy)]/70">
+            These documents are still being read or need details before they can
+            join a visit. Open one to check its progress.
+          </p>
+          <ul className="mt-3 divide-y divide-[var(--rc-navy)]/15 rounded-xl border border-[var(--rc-navy)]/15">
             {documents.map((document) => (
               <li key={document.id}>
                 <Link
                   href={`/documents/${document.id}`}
-                  className="flex items-center justify-between gap-4 p-4 hover:bg-slate-50"
+                  className="flex flex-wrap items-center justify-between gap-3 p-5 hover:bg-[var(--rc-navy)]/4"
                 >
                   <span>
-                    <span className="block font-medium">{document.provider_name ?? document.file_name}</span>
-                    <span className="text-sm text-slate-600">{documentTypeLabel(document.type)}</span>
+                    <span className="block break-words font-medium">{document.provider_name ?? document.file_name}</span>
+                    <span className="text-sm text-[var(--rc-navy)]/70">{documentTypeLabel(document.type)}</span>
                   </span>
                   <span
                     className={`shrink-0 rounded-full px-3 py-1 text-xs font-medium ${
                       document.status === "needs_review" || document.status === "failed"
-                        ? "bg-amber-100 text-amber-900"
-                        : "bg-slate-100"
+                        ? "bg-[var(--rc-red)]/8 text-[var(--rc-red)]"
+                        : "bg-[var(--rc-navy)]/8"
                     }`}
                   >
                     {STATUS_LABELS[document.status]}
@@ -101,16 +119,16 @@ export default async function VisitsPage() {
 function VisitRow({ visit }: { visit: Visit }) {
   return (
     <li>
-      <Link href={`/visits/${visit.id}`} className="flex items-center justify-between gap-4 p-4 hover:bg-slate-50">
-        <span>
-          <span className="block font-medium">{visit.provider_name}</span>
-          <span className="text-sm text-slate-600">
+      <Link href={`/visits/${visit.id}`} className="flex items-center justify-between gap-4 p-5 hover:bg-[var(--rc-navy)]/4">
+        <span className="min-w-0">
+          <span className="block break-words font-medium">{visit.provider_name}</span>
+          <span className="text-sm text-[var(--rc-navy)]/70">
             {formatServiceDate(visit.service_date)} · {VISIT_STATUS_LABELS[visit.status]}
           </span>
         </span>
         <span className="shrink-0 text-right">
           <span className="block font-semibold tabular-nums">{formatCents(visit.patient_owes_cents)}</span>
-          <span className="text-xs text-slate-500">you owe</span>
+          <span className="text-xs text-[var(--rc-navy)]/65">listed balance <span aria-hidden="true">↗</span></span>
         </span>
       </Link>
     </li>

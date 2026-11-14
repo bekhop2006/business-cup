@@ -20,18 +20,18 @@ type Props = {
 
 export function LineItemsList({ lines, flags = [] }: Props) {
   if (lines.length === 0) {
-    return <p className="mt-3 text-sm text-slate-600">No charges on this document.</p>;
+    return <p className="mt-3 text-sm text-[var(--rc-navy)]/70">No charges on this document.</p>;
   }
   return (
-    <ul className="mt-3 divide-y divide-slate-200 rounded-xl border border-slate-200">
+    <ul className="mt-3 divide-y divide-[var(--rc-navy)]/15 rounded-xl border border-[var(--rc-navy)]/15">
       {lines.map((line) => {
         const lineFlags = flags.filter((flag) => flag.line_item_id === line.id);
         return (
-          <li key={line.id} className={`p-4 ${lineFlags.length > 0 ? "bg-amber-50/40" : ""}`}>
+          <li key={line.id} className={`p-4 ${lineFlags.length > 0 ? "bg-[var(--rc-red)]/3" : ""}`}>
             <div className="flex justify-between gap-4">
-              <div>
-                <p className="font-medium">{line.description ?? "No description"}</p>
-                <p className="text-sm text-slate-600">
+              <div className="min-w-0">
+                <p className="break-words font-medium">{line.description ?? "No description"}</p>
+                <p className="text-sm text-[var(--rc-navy)]/70">
                   {[
                     line.code ?? "No code",
                     line.service_date && formatServiceDate(line.service_date),
@@ -41,10 +41,10 @@ export function LineItemsList({ lines, flags = [] }: Props) {
                     .join(" · ")}
                 </p>
                 {line.plain_explanation && (
-                  <p className="mt-1 text-sm text-slate-700">{line.plain_explanation}</p>
+                  <p className="mt-1 text-sm text-[var(--rc-navy)]/80">{line.plain_explanation}</p>
                 )}
               </div>
-              <span className="font-medium tabular-nums">{formatCents(line.amount_cents)}</span>
+              <span className="shrink-0 font-medium tabular-nums">{formatCents(line.amount_cents)}</span>
             </div>
             {lineFlags.map((flag) => (
               <FlagNote key={flag.id} flag={flag} />

@@ -1,0 +1,20 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+
+export function AppNavigation() {
+  const pathname = usePathname();
+  const inVisits = pathname.startsWith("/visits") || pathname.startsWith("/documents");
+
+  return (
+    <>
+      <Link href="/visits" aria-current={inVisits ? "page" : undefined}>
+        Your visits
+      </Link>
+      <Link href="/upload" aria-current={pathname === "/upload" ? "page" : undefined}>
+        Add a document
+      </Link>
+    </>
+  );
+}

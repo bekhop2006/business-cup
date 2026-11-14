@@ -44,15 +44,15 @@ export default async function VisitPage({ params }: PageProps<"/visits/[id]">) {
 
   return (
     <>
-      <Link href="/visits" className="text-sm text-slate-600 hover:underline">
+      <Link href="/visits" className="text-sm text-[var(--rc-navy)]/70 hover:underline">
         ← All visits
       </Link>
       <div className="mt-3 flex flex-wrap items-start justify-between gap-3">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">{visit.provider_name}</h1>
-          <p className="mt-1 text-slate-600">{formatServiceDate(visit.service_date)}</p>
+          <p className="mt-1 text-[var(--rc-navy)]/70">{formatServiceDate(visit.service_date)}</p>
         </div>
-        <span className="rounded-full bg-slate-100 px-3 py-1 text-sm font-medium">
+        <span className="rounded-full bg-[var(--rc-navy)]/8 px-3 py-1 text-sm font-medium">
           {VISIT_STATUS_LABELS[visit.status]}
         </span>
       </div>
@@ -71,28 +71,29 @@ export default async function VisitPage({ params }: PageProps<"/visits/[id]">) {
       </dl>
 
       {flags.length > 0 ? (
-        <div className="mt-4 rounded-xl border border-amber-300 bg-amber-50 p-4">
-          <p className="font-semibold text-amber-950">
+        <div className="mt-4 rounded-xl border border-[var(--rc-red)]/25 bg-[var(--rc-red)]/5 p-4">
+          <p className="font-semibold text-[var(--rc-red)]">
             We found {flags.length === 1 ? "one thing" : `${flags.length} things`} worth asking about
           </p>
-          <p className="mt-1 text-sm text-amber-900">
+          <p className="mt-1 text-sm text-[var(--rc-red)]">
             {savings > 0
               ? `If the provider corrects them, you could pay up to ${formatCents(savings)} less. `
               : ""}
-            Don&apos;t pay this bill until you&apos;ve asked. Each problem is marked below, and you
-            can send the provider a letter at the bottom of this page.
+            Ask your provider to review the flagged charges and confirm your
+            payment deadline. Each possible issue is marked below. You can
+            prepare a letter at the bottom of this page.
           </p>
         </div>
       ) : (
         documents.length > 0 && (
-          <p className="mt-4 rounded-xl bg-emerald-50 p-4 text-sm text-emerald-900">
+          <p className="mt-4 rounded-xl bg-[var(--rc-navy)]/4 p-4 text-sm text-[var(--rc-navy)]">
             Nothing looked unusual in what we checked on this visit.
           </p>
         )
       )}
 
       {(!hasEob || !hasBill) && (
-        <p className="mt-4 rounded-xl bg-slate-50 p-4 text-sm text-slate-700">
+        <p className="mt-4 rounded-xl bg-[var(--rc-navy)]/4 p-4 text-sm text-[var(--rc-navy)]/80">
           {!hasEob
             ? "When your insurer sends the Explanation of Benefits for this visit, add it here so the bill can be compared with what insurance says you owe."
             : `When the bill from ${visit.provider_name} arrives, add it here so it can be compared with your insurer's statement.`}{" "}
@@ -104,14 +105,14 @@ export default async function VisitPage({ params }: PageProps<"/visits/[id]">) {
 
       <h2 className="mt-10 font-semibold">Documents</h2>
       {documents.map((document) => (
-        <section key={document.id} className="mt-4 rounded-xl border border-slate-200 p-4">
+        <section key={document.id} className="mt-4 rounded-xl border border-[var(--rc-navy)]/15 p-4">
           <div className="flex flex-wrap items-baseline justify-between gap-2">
             <h3 className="font-medium">{documentTypeLabel(document.type)}</h3>
             <Link href={`/documents/${document.id}`} className="text-sm underline">
               {document.status === "parsed" ? "Open" : STATUS_LABELS[document.status]}
             </Link>
           </div>
-          <p className="text-sm text-slate-600">
+          <p className="text-sm text-[var(--rc-navy)]/70">
             {document.file_name}
             {document.patient_responsibility_cents !== null &&
               ` · says you owe ${formatCents(document.patient_responsibility_cents)}`}
@@ -145,8 +146,8 @@ export default async function VisitPage({ params }: PageProps<"/visits/[id]">) {
 
 function Total({ label, cents, strong = false }: { label: string; cents: number; strong?: boolean }) {
   return (
-    <div className={`rounded-xl p-3 sm:p-4 ${strong ? "bg-slate-900 text-white" : "bg-slate-50"}`}>
-      <dt className={`text-xs sm:text-sm ${strong ? "text-slate-300" : "text-slate-600"}`}>{label}</dt>
+    <div className={`rounded-xl p-3 sm:p-4 ${strong ? "bg-[var(--rc-navy)] text-[var(--rc-ivory)]" : "bg-[var(--rc-navy)]/4"}`}>
+      <dt className={`text-xs sm:text-sm ${strong ? "text-[var(--rc-ivory)]/75" : "text-[var(--rc-navy)]/70"}`}>{label}</dt>
       <dd className="mt-1 text-lg font-semibold tabular-nums sm:text-xl">{formatCents(cents)}</dd>
     </div>
   );

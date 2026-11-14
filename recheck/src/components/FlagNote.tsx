@@ -12,7 +12,7 @@ export type FlagView = {
 
 export function FlagNote({ flag }: { flag: FlagView }) {
   return (
-    <div className="mt-3 rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-950">
+    <div className="mt-3 rounded-lg border border-[var(--rc-red)]/25 bg-[var(--rc-red)]/5 p-3 text-sm text-[var(--rc-red)]">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <p className="font-semibold">{FLAG_TITLES[flag.type]}</p>
         {flag.potential_savings_cents > 0 && (
@@ -20,7 +20,7 @@ export function FlagNote({ flag }: { flag: FlagView }) {
         )}
       </div>
       <p className="mt-1">{flag.message}</p>
-      {flag.explanation && <p className="mt-2 text-amber-900">{flag.explanation}</p>}
+      {flag.explanation && <p className="mt-2 text-[var(--rc-red)]">{flag.explanation}</p>}
     </div>
   );
 }

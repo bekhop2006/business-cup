@@ -34,9 +34,9 @@ export function DisputePanel({ visitId, initialDraft, fileStem }: Props) {
   }
 
   return (
-    <section className="mt-10 rounded-xl border border-slate-200 p-4 sm:p-6">
+    <section className="mt-10 rounded-xl border border-[var(--rc-navy)]/15 p-4 sm:p-6">
       <h2 className="font-semibold">Ask the provider to fix it</h2>
-      <p className="mt-1 text-sm text-slate-600">
+      <p className="mt-1 text-sm text-[var(--rc-navy)]/70">
         We&apos;ll write a letter to the billing office and a script for calling them, based on what
         we found. Read it before you send it, and fill in the parts in [brackets].
       </p>
@@ -53,18 +53,18 @@ export function DisputePanel({ visitId, initialDraft, fileStem }: Props) {
         <button
           onClick={write}
           disabled={pending}
-          className="mt-4 rounded-lg bg-slate-900 px-4 py-2 font-medium text-white disabled:opacity-60"
+          className="mt-4 rounded-lg bg-[var(--rc-navy)] px-4 py-2 font-medium text-[var(--rc-ivory)] disabled:opacity-60"
         >
           {pending ? "Writing your letter…" : "Write a dispute letter"}
         </button>
       )}
 
       {error && (
-        <p role="alert" className="mt-3 text-sm text-red-700">
+        <p role="alert" className="mt-3 text-sm text-[var(--rc-red)]">
           {error}
         </p>
       )}
-      <p className="mt-4 text-xs text-slate-500">
+      <p className="mt-4 text-xs text-[var(--rc-navy)]/65">
         Recheck helps you ask questions about a bill. It is not legal or medical advice.
       </p>
     </section>
@@ -98,15 +98,15 @@ function DraftBlock({ title, text, fileName }: { title: string; text: string; fi
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h3 className="font-medium">{title}</h3>
         <div className="flex gap-2 text-sm">
-          <button onClick={copy} className="rounded-lg border border-slate-300 px-3 py-1.5">
+          <button onClick={copy} className="rounded-lg border border-[var(--rc-navy)]/25 px-3 py-1.5">
             {copied ? "Copied" : "Copy"}
           </button>
-          <button onClick={download} className="rounded-lg border border-slate-300 px-3 py-1.5">
+          <button onClick={download} className="rounded-lg border border-[var(--rc-navy)]/25 px-3 py-1.5">
             Download
           </button>
         </div>
       </div>
-      <pre className="mt-2 max-h-96 overflow-auto rounded-lg bg-slate-50 p-4 text-sm whitespace-pre-wrap font-sans">
+      <pre className="mt-2 max-h-96 overflow-auto rounded-lg bg-[var(--rc-navy)]/4 p-4 text-sm whitespace-pre-wrap font-sans">
         {text}
       </pre>
     </div>

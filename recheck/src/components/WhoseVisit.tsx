@@ -57,6 +57,7 @@ export function WhoseVisit({ members, currentId, chooseAction, addAction }: Prop
         <form action={add} className="flex flex-wrap items-center gap-2">
           <input
             name="name"
+            aria-label="Family member name"
             placeholder="Their name"
             autoFocus
             className="rounded-lg border border-slate-300 px-2 py-1.5"

@@ -23,7 +23,7 @@ export function ReviewForm({ action, initialDetails, initialLines, initialTotal 
   const [details, setDetails] = useState(initialDetails);
   const setDetail = (field: keyof ReviewedDetails, value: string) =>
     setDetails((current) => ({ ...current, [field]: value }));
-  const [nextKey, setNextKey] = useState(initialLines.length);
+  const [nextKey, setNextKey] = useState(Math.max(initialLines.length, 1));
   const [rows, setRows] = useState<Row[]>(() =>
     (initialLines.length > 0 ? initialLines : [emptyLine]).map((line, key) => ({ ...line, key })),
   );
@@ -147,7 +147,7 @@ export function ReviewForm({ action, initialDetails, initialLines, initialTotal 
         <p>
           Lines add up to <strong>{formatCents(lineSum)}</strong>
           {totalCents !== null && totalCents !== lineSum && (
-            <span className="block text-amber-700">
+            <span className="block text-[var(--rc-red)]">
               {formatCents(totalCents - lineSum)} difference from the printed total
             </span>
           )}

@@ -2,6 +2,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { signOut } from "@/app/(auth)/login/actions";
 import { getCurrentUser } from "@/lib/db/auth";
+import { AppNavigation } from "@/components/AppNavigation";
+import styles from "@/app/product.module.css";
 
 export default async function AppLayout({
   children,
@@ -12,24 +14,25 @@ export default async function AppLayout({
   if (!user) redirect("/login");
 
   return (
-    <div className="min-h-dvh">
-      <header className="border-b border-slate-200">
-        <div className="mx-auto flex max-w-3xl items-center justify-between gap-4 px-4 py-3">
-          <Link href="/visits" className="text-lg font-semibold tracking-tight">
+    <div className={styles.surface}>
+      <a href="#main-content" className={styles.skipLink}>Skip to content</a>
+      <header className={styles.header}>
+        <div className={styles.headerInner}>
+          <Link href="/visits" className={styles.brand}>
             Recheck
           </Link>
-          <div className="flex items-center gap-3 text-sm">
-            <span className="hidden text-slate-600 sm:inline">{user.email}</span>
+          <nav aria-label="Your account" className={styles.navigation}>
+            <AppNavigation />
             <form action={signOut}>
               <button className="rounded-lg border border-slate-300 px-3 py-1.5">
                 Log out
               </button>
             </form>
-          </div>
+          </nav>
         </div>
       </header>
-      <main className="mx-auto max-w-3xl px-4 py-8">{children}</main>
-      <footer className="mx-auto max-w-3xl px-4 pb-8 text-xs text-slate-500">
+      <main id="main-content" className={styles.main}>{children}</main>
+      <footer className={styles.footer}>
         Recheck explains medical bills and helps you ask questions about them. It does not give
         legal or medical advice.
       </footer>
