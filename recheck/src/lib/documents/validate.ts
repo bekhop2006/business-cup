@@ -1,5 +1,6 @@
 import { formatCents, parseMoneyToCents, sumCents } from "@/lib/money";
-import type { ExtractedDocument } from "@/lib/schemas/extracted";
+import type { DocumentType, ExtractedDocument } from "@/lib/schemas/extracted";
+import { cleanPersonName } from "@/lib/visits/match";
 
 // Pipeline step 3: turn the LLM's printed values into cents and decide whether
 // a person needs to look at the result before we trust it.
@@ -18,19 +19,61 @@ export type ReviewProblem =
   | { kind: "unreadable_amount"; line: string }
   | { kind: "total_mismatch"; lineSumCents: number; statedTotalCents: number };
 
+// Document-level values used to group documents into visits and total them.
+export type DocumentFields = {
+  type: DocumentType | null;
+  provider_name: string | null;
+  patient_name: string | null;
+  service_date: string | null;
+  insurance_paid_cents: number | null;
+  patient_responsibility_cents: number | null;
+};
+
 export type ValidatedExtraction = {
   lineItems: LineItemDraft[];
   statedTotalCents: number | null;
+  fields: DocumentFields;
   problems: ReviewProblem[];
 };
 
 const clean = (text: string | null) => text?.trim() || null;
 
+const EMPTY_FIELDS: DocumentFields = {
+  type: null,
+  provider_name: null,
+  patient_name: null,
+  service_date: null,
+  insurance_paid_cents: null,
+  patient_responsibility_cents: null,
+};
+
+function documentFields(extracted: ExtractedDocument): DocumentFields {
+  const insurancePaid =
+    extracted.insurance_paid === null ? null : parseMoneyToCents(extracted.insurance_paid);
+  return {
+    type: extracted.document_type,
+    provider_name: clean(extracted.provider_name),
+    patient_name: extracted.patient_name ? cleanPersonName(extracted.patient_name) || null : null,
+    service_date: extracted.service_date,
+    // Bills print payments as negative numbers; a payment is stored as positive.
+    insurance_paid_cents: insurancePaid === null ? null : Math.abs(insurancePaid),
+    patient_responsibility_cents:
+      extracted.patient_responsibility === null
+        ? null
+        : parseMoneyToCents(extracted.patient_responsibility),
+  };
+}
+
 export function validateExtraction(
   extracted: ExtractedDocument | null,
 ): ValidatedExtraction {
   if (!extracted || !extracted.readable) {
-    return { lineItems: [], statedTotalCents: null, problems: [{ kind: "unreadable" }] };
+    return {
+      lineItems: [],
+      statedTotalCents: null,
+      fields: { ...EMPTY_FIELDS, type: extracted?.document_type ?? null },
+      problems: [{ kind: "unreadable" }],
+    };
   }
 
   const lineItems: LineItemDraft[] = [];
@@ -62,7 +105,7 @@ export function validateExtraction(
     extracted.total_charges === null ? null : parseMoneyToCents(extracted.total_charges);
   problems.push(...findTotalMismatch(lineItems, statedTotalCents));
 
-  return { lineItems, statedTotalCents, problems };
+  return { lineItems, statedTotalCents, fields: documentFields(extracted), problems };
 }
 
 export function findTotalMismatch(

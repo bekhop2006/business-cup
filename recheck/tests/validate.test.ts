@@ -32,6 +32,28 @@ describe("validateExtraction", () => {
     expect(result.lineItems.map((line) => line.amount_cents)).toEqual([18500, 4500]);
   });
 
+  it("keeps the document fields used for visits, with payments as positive cents", () => {
+    const result = validateExtraction(
+      document({
+        patient_name: "  Mia   Ellis ",
+        insurance_paid: "-$148.40",
+        patient_responsibility: "$40.00",
+      }),
+    );
+    expect(result.fields).toEqual({
+      type: "bill",
+      provider_name: "Test Clinic",
+      patient_name: "Mia Ellis",
+      service_date: "2026-03-12",
+      insurance_paid_cents: 14840,
+      patient_responsibility_cents: 4000,
+    });
+  });
+
+  it("does not trust any field of an unreadable document", () => {
+    expect(validateExtraction(document({ readable: false })).fields.provider_name).toBeNull();
+  });
+
   it("uses the document's service date when a line has none", () => {
     const [first, second] = validateExtraction(document()).lineItems;
     expect(first.service_date).toBe("2026-03-12");

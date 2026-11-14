@@ -2,16 +2,17 @@ import { createAdminSupabase } from "@/lib/db/admin";
 import {
   DOCUMENTS_BUCKET,
   getDocument,
-  saveDocumentLines,
+  saveDocumentReading,
   setDocumentStatus,
 } from "@/lib/db/documents";
 import { validateExtraction } from "@/lib/documents/validate";
 import { LlmUnavailableError } from "@/lib/llm/client";
 import { extractDocument } from "@/lib/llm/extract";
+import { attachDocumentToVisit } from "@/lib/visits/attach";
 
 // Reads an uploaded document in the background. Steps (docs/STRUCTURE.md):
-// 1. store (done by the upload route), 2. extract, 3. validate.
-// Matching, checks, explanations and totals are added in later stages.
+// 1. store (done by the upload route), 2. extract, 3. validate,
+// 4. match to a visit and 7. total it. Checks and explanations come later.
 //
 // Runs without a user session, so it uses the admin client and passes userId
 // to every query. Logs ids and outcomes only, never document contents.
@@ -31,13 +32,14 @@ export async function processDocument(userId: string, documentId: string): Promi
     });
     const validated = validateExtraction(extracted);
 
-    await saveDocumentLines(db, userId, documentId, {
+    await saveDocumentReading(db, userId, documentId, {
       lineItems: validated.lineItems,
       statedTotalCents: validated.statedTotalCents,
+      fields: validated.fields,
       status: validated.problems.length > 0 ? "needs_review" : "parsed",
-      type: extracted?.document_type ?? null,
       extracted,
     });
+    await attachDocumentToVisit(db, userId, documentId);
   } catch (error) {
     const reason = error instanceof LlmUnavailableError ? `llm_unavailable_${error.status}` : "error";
     console.error("Document processing failed", { documentId, reason });

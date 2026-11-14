@@ -66,7 +66,8 @@
         ├── schemas/          # Zod schemas and inferred types
         ├── checks/           # pure functions, one file per check, index.ts runs all
         ├── visits/
-        │   ├── match.ts      # attach a document to a visit or create one
+        │   ├── match.ts      # pure rules: same provider, same person, matching visit
+        │   ├── attach.ts     # attach a document to a visit or create one, then recompute totals
         │   └── totals.ts     # billed / insurance paid / patient owes
         ├── documents/        # pure document logic: validation, review input, status labels
         ├── pipeline.ts       # orchestrates the steps below
@@ -82,10 +83,10 @@ Implemented in `src/lib/pipeline.ts`. Each step is a separate function so it can
 1. **Store.** Save the file to storage. Create a `documents` row with status `uploaded`.
 2. **Extract.** Send the file to the LLM. Receive `ExtractedDocument`: type, provider, dates, line items, totals. Status `processing`.
 3. **Validate.** Parse with Zod. Check that line items add up to the stated total. On failure set status `needs_review` and show the extracted lines to the user for correction.
-4. **Match.** Find a visit with the same provider and service date (same family member). Attach the document or create a new visit.
+4. **Match.** Find a visit with the same provider and service date (same family member). Attach the document or create a new visit. The family member is found or created from the patient name on the document; an unknown person matches any visit.
 5. **Check.** Run every function in `src/lib/checks/` on the visit. Replace the visit's flags with the result.
 6. **Explain.** Ask the LLM for a plain-language explanation of each line and each flag. The LLM receives the flags; it does not create them.
-7. **Total.** Recompute visit totals in code. Status `parsed`.
+7. **Total.** Recompute visit totals in code: billed and patient owes come from the newest bill, insurance paid from the newest EOB; with only one kind of document, its own figures are used. Status `parsed`.
 
 Dispute letter and call script are generated on demand from the visit and its flags.
 
@@ -100,13 +101,15 @@ All money columns are integer cents. All tables have `id uuid`, `created_at`, an
 | Table | Key columns |
 | --- | --- |
 | `profiles` | `user_id`, `email`, `inbound_alias`, `stripe_customer_id`, `plan` |
-| `family_members` | `name`, `relation` |
+| `family_members` | `name` (unique per user, ignoring case), `relation` |
 | `insurance_plans` | `year`, `deductible_cents`, `oop_max_cents` |
 | `visits` | `family_member_id`, `provider_name`, `service_date`, `status`, `billed_cents`, `insurance_paid_cents`, `patient_owes_cents` |
-| `documents` | `visit_id`, `type`, `source`, `storage_path`, `file_name`, `mime_type`, `status`, `extracted` (jsonb), `stated_total_cents` |
+| `documents` | `visit_id`, `type`, `source`, `storage_path`, `file_name`, `mime_type`, `status`, `extracted` (jsonb), `stated_total_cents`, `provider_name`, `patient_name`, `service_date`, `insurance_paid_cents`, `patient_responsibility_cents` |
 | `line_items` | `document_id`, `position`, `code`, `description`, `plain_explanation`, `service_date`, `quantity`, `amount_cents` |
 
 Files live in the private Storage bucket `documents` under `<user id>/<document id>.<ext>`; storage policies limit each user to their own folder.
+
+`documents.extracted` keeps the raw LLM output. The document columns next to it (`provider_name` … `patient_responsibility_cents`, `stated_total_cents`) are the trusted values used by matching, totals and checks: filled from the extraction, or by the person on the review screen.
 | `flags` | `visit_id`, `document_id`, `line_item_id`, `type`, `message`, `potential_savings_cents` |
 | `disputes` | `visit_id`, `status`, `letter_text`, `call_script`, `next_action_at` |
 

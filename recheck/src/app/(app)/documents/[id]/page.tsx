@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { z } from "zod";
+import { LineItemsList } from "@/components/LineItemsList";
 import { RefreshWhileReading } from "@/components/RefreshWhileReading";
 import { RetryReadingButton } from "@/components/RetryReadingButton";
 import { ReviewForm } from "@/components/ReviewForm";
@@ -15,11 +16,12 @@ import {
   isBeingRead,
 } from "@/lib/documents/status";
 import { describeProblem, validateExtraction } from "@/lib/documents/validate";
-import { formatCents, formatCentsForInput, parseMoneyToCents } from "@/lib/money";
+import { formatCents, formatCentsForInput } from "@/lib/money";
 import { extractedDocumentSchema } from "@/lib/schemas/extracted";
 import { saveReview } from "./actions";
 
-type LineItem = Awaited<ReturnType<typeof listLineItems>>[number];
+const amountForInput = (cents: number | null) => (cents === null ? "" : formatCentsForInput(cents));
+const amountOrNotStated = (cents: number | null) => (cents === null ? "Not stated" : formatCents(cents));
 
 export default async function DocumentPage({ params }: PageProps<"/documents/[id]">) {
   const { id } = await params;
@@ -33,22 +35,26 @@ export default async function DocumentPage({ params }: PageProps<"/documents/[id
   const lines = await listLineItems(supabase, user.id, id);
   const extracted = extractedDocumentSchema.safeParse(document.extracted).data ?? null;
 
-  const title = extracted?.provider_name ?? document.file_name;
   const subtitle = [
     documentTypeLabel(document.type),
-    extracted?.service_date && formatServiceDate(extracted.service_date),
+    document.service_date && formatServiceDate(document.service_date),
   ]
     .filter(Boolean)
     .join(" · ");
 
   return (
     <>
-      <Link href="/visits" className="text-sm text-slate-600 hover:underline">
-        ← All visits
+      <Link
+        href={document.visit_id ? `/visits/${document.visit_id}` : "/visits"}
+        className="text-sm text-slate-600 hover:underline"
+      >
+        {document.visit_id ? "← Back to the visit" : "← All visits"}
       </Link>
       <div className="mt-3 flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">{title}</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">
+            {document.provider_name ?? document.file_name}
+          </h1>
           <p className="mt-1 text-slate-600">{subtitle}</p>
         </div>
         <span className="rounded-full bg-slate-100 px-3 py-1 text-sm font-medium">
@@ -90,8 +96,8 @@ export default async function DocumentPage({ params }: PageProps<"/documents/[id
             </ul>
             <p className="mt-2 text-sm text-amber-900">
               {lines.length > 0
-                ? "Compare the lines below with your paper document and fix anything that's off, or "
-                : "Type the charges from your paper document below, or "}
+                ? "Compare what's below with your paper document and fix anything that's off, or "
+                : "Type the details from your paper document below, or "}
               <Link href="/upload" className="font-medium underline">
                 upload a clearer copy
               </Link>
@@ -100,6 +106,14 @@ export default async function DocumentPage({ params }: PageProps<"/documents/[id
           </div>
           <ReviewForm
             action={saveReview.bind(null, document.id)}
+            initialDetails={{
+              type: document.type ?? "bill",
+              provider_name: document.provider_name ?? "",
+              patient_name: document.patient_name ?? "",
+              service_date: document.service_date ?? "",
+              insurance_paid: amountForInput(document.insurance_paid_cents),
+              patient_responsibility: amountForInput(document.patient_responsibility_cents),
+            }}
             initialLines={lines.map((line) => ({
               code: line.code ?? "",
               description: line.description ?? "",
@@ -107,103 +121,71 @@ export default async function DocumentPage({ params }: PageProps<"/documents/[id
               amount: formatCentsForInput(line.amount_cents),
               quantity: line.quantity,
             }))}
-            initialTotal={
-              document.stated_total_cents === null ? "" : formatCentsForInput(document.stated_total_cents)
-            }
+            initialTotal={amountForInput(document.stated_total_cents)}
           />
         </section>
       )}
 
       {document.status === "parsed" && (
-        <ParsedDocument
-          lines={lines}
-          statedTotalCents={document.stated_total_cents}
-          details={[
-            ["Patient", extracted?.patient_name],
-            ["Insurer", extracted?.insurer_name],
-            ["Issued", extracted?.issued_date && formatServiceDate(extracted.issued_date)],
-            ["Claim number", extracted?.claim_number],
-            ["Account number", extracted?.account_number],
-          ]}
-          insurancePaid={extracted?.insurance_paid ?? null}
-          patientResponsibility={extracted?.patient_responsibility ?? null}
-        />
+        <section className="mt-6">
+          <DetailList
+            details={[
+              ["Patient", document.patient_name],
+              ["Insurer", extracted?.insurer_name],
+              ["Issued", extracted?.issued_date && formatServiceDate(extracted.issued_date)],
+              ["Claim number", extracted?.claim_number],
+              ["Account number", extracted?.account_number],
+            ]}
+          />
+
+          <h2 className="mt-8 font-semibold">Charges</h2>
+          <LineItemsList lines={lines} />
+
+          <dl className="mt-4 ml-auto flex max-w-xs flex-col gap-1 text-sm">
+            <div className="flex justify-between">
+              <dt>Total charges</dt>
+              <dd className="tabular-nums">{amountOrNotStated(document.stated_total_cents)}</dd>
+            </div>
+            <div className="flex justify-between">
+              <dt>Paid by insurance</dt>
+              <dd className="tabular-nums">{amountOrNotStated(document.insurance_paid_cents)}</dd>
+            </div>
+            <div className="flex justify-between border-t border-slate-200 pt-1 font-semibold">
+              <dt>You owe, per this document</dt>
+              <dd className="tabular-nums">{amountOrNotStated(document.patient_responsibility_cents)}</dd>
+            </div>
+          </dl>
+
+          {document.visit_id ? (
+            <Link
+              href={`/visits/${document.visit_id}`}
+              className="mt-8 inline-block rounded-lg bg-slate-900 px-4 py-2 font-medium text-white"
+            >
+              See the whole visit
+            </Link>
+          ) : (
+            <p className="mt-8 text-sm text-slate-600">
+              We couldn&apos;t tell which visit this belongs to, because the provider or the date
+              of service is missing.
+            </p>
+          )}
+        </section>
       )}
     </>
   );
 }
 
-function ParsedDocument(props: {
-  lines: LineItem[];
-  statedTotalCents: number | null;
-  details: [string, string | null | undefined][];
-  insurancePaid: string | null;
-  patientResponsibility: string | null;
-}) {
-  // Documents print payments as "-$148.40" or "$148.40"; show them the same way.
-  const printed = (text: string | null) => {
-    const cents = text === null ? null : parseMoneyToCents(text);
-    return cents === null ? "Not stated" : formatCents(Math.abs(cents));
-  };
-  const details = props.details.filter((detail): detail is [string, string] => Boolean(detail[1]));
-
+function DetailList({ details }: { details: [string, string | null | undefined][] }) {
+  const shown = details.filter((detail): detail is [string, string] => Boolean(detail[1]));
+  if (shown.length === 0) return null;
   return (
-    <section className="mt-6">
-      {details.length > 0 && (
-        <dl className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm sm:grid-cols-3">
-          {details.map(([label, value]) => (
-            <div key={label}>
-              <dt className="text-slate-500">{label}</dt>
-              <dd className="font-medium">{value}</dd>
-            </div>
-          ))}
-        </dl>
-      )}
-
-      <h2 className="mt-8 font-semibold">Charges</h2>
-      <ul className="mt-3 divide-y divide-slate-200 rounded-xl border border-slate-200">
-        {props.lines.map((line) => (
-          <li key={line.id} className="flex justify-between gap-4 p-4">
-            <div>
-              <p className="font-medium">{line.description ?? "No description"}</p>
-              <p className="text-sm text-slate-600">
-                {[
-                  line.code ?? "No code",
-                  line.service_date && formatServiceDate(line.service_date),
-                  line.quantity !== null && line.quantity > 1 && `${line.quantity} units`,
-                ]
-                  .filter(Boolean)
-                  .join(" · ")}
-              </p>
-            </div>
-            <span className="font-medium tabular-nums">{formatCents(line.amount_cents)}</span>
-          </li>
-        ))}
-      </ul>
-
-      <dl className="mt-4 ml-auto flex max-w-xs flex-col gap-1 text-sm">
-        <div className="flex justify-between">
-          <dt>Total charges</dt>
-          <dd className="tabular-nums">
-            {props.statedTotalCents === null ? "Not stated" : formatCents(props.statedTotalCents)}
-          </dd>
+    <dl className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm sm:grid-cols-3">
+      {shown.map(([label, value]) => (
+        <div key={label}>
+          <dt className="text-slate-500">{label}</dt>
+          <dd className="font-medium">{value}</dd>
         </div>
-        <div className="flex justify-between">
-          <dt>Paid by insurance</dt>
-          <dd className="tabular-nums">{printed(props.insurancePaid)}</dd>
-        </div>
-        <div className="flex justify-between border-t border-slate-200 pt-1 font-semibold">
-          <dt>You owe, per this document</dt>
-          <dd className="tabular-nums">{printed(props.patientResponsibility)}</dd>
-        </div>
-      </dl>
-
-      <Link
-        href="/upload"
-        className="mt-8 inline-block rounded-lg bg-slate-900 px-4 py-2 font-medium text-white"
-      >
-        Add another document
-      </Link>
-    </section>
+      ))}
+    </dl>
   );
 }

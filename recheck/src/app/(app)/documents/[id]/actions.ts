@@ -3,14 +3,15 @@
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { getCurrentUser } from "@/lib/db/auth";
-import { getDocument, saveDocumentLines } from "@/lib/db/documents";
+import { getDocument, saveDocumentReading } from "@/lib/db/documents";
 import { createServerSupabase } from "@/lib/db/supabase";
-import { reviewSchema, reviewToLineItems } from "@/lib/documents/review";
+import { reviewSchema, reviewToDocument } from "@/lib/documents/review";
+import { attachDocumentToVisit } from "@/lib/visits/attach";
 
 export type ReviewState = { error?: string };
 
-// Saves the lines a person checked on the review screen and marks the
-// document as read.
+// Saves what a person checked on the review screen, marks the document as
+// read and puts it into its visit.
 export async function saveReview(
   documentId: string,
   _previous: ReviewState,
@@ -29,7 +30,7 @@ export async function saveReview(
   const parsed = reviewSchema.safeParse(payload);
   if (!parsed.success) return { error: parsed.error.issues[0].message };
 
-  const result = reviewToLineItems(parsed.data);
+  const result = reviewToDocument(parsed.data);
   if ("error" in result) return { error: result.error };
 
   const supabase = await createServerSupabase();
@@ -38,10 +39,7 @@ export async function saveReview(
     return { error: "This document can't be changed right now. Reload the page." };
   }
 
-  await saveDocumentLines(supabase, user.id, documentId, {
-    lineItems: result.lineItems,
-    statedTotalCents: result.statedTotalCents,
-    status: "parsed",
-  });
-  redirect(`/documents/${documentId}`);
+  await saveDocumentReading(supabase, user.id, documentId, { ...result, status: "parsed" });
+  const visitId = await attachDocumentToVisit(supabase, user.id, documentId);
+  redirect(visitId ? `/visits/${visitId}` : `/documents/${documentId}`);
 }
