@@ -26,26 +26,6 @@
   mask-image: linear-gradient(90deg, black, transparent 32%, transparent 65%, black);
 }
 
-.page::after {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  width: 95%;
-  height: 380px;
-  top: 380px;
-  left: 20%;
-  border-radius: 50%;
-  pointer-events: none;
-  background: radial-gradient(ellipse, color-mix(in srgb, var(--rc-ivory) 35%, transparent), transparent 68%);
-  filter: blur(32px);
-  transform: rotate(-18deg);
-  animation: liquidDrift 18s ease-in-out infinite alternate;
-}
-
-@keyframes liquidDrift {
-  to { transform: translate(-12%, 10%) rotate(-6deg) scale(1.08); }
-}
-
 .page :focus-visible {
   outline: 3px solid var(--rc-navy);
   outline-offset: 5px;
@@ -175,13 +155,12 @@
   font-weight: 600;
   text-decoration: none;
   box-shadow: 0 4px 18px color-mix(in srgb, var(--rc-navy) 12%, transparent);
-  transition: transform 180ms ease, box-shadow 180ms ease;
+  transition: box-shadow 180ms ease;
 }
 
 .primaryLink:hover {
   background: var(--rc-accent);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px color-mix(in srgb, var(--rc-navy) 22%, transparent);
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--rc-navy) 16%, transparent);
 }
 
 .helper {
@@ -194,11 +173,11 @@
   background: color-mix(in srgb, var(--rc-navy) 84%, transparent);
   color: var(--rc-ivory);
   border: 1px solid color-mix(in srgb, var(--rc-ivory) 35%, transparent);
-  border-radius: 24px;
+  border-radius: 16px;
   padding: 32px;
   box-shadow: var(--rc-glass-shadow), inset 0 1px 0 color-mix(in srgb, var(--rc-ivory) 22%, transparent);
-  -webkit-backdrop-filter: blur(24px);
-  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
 }
 
 .documentMark {
@@ -269,11 +248,11 @@
 .stepsSection {
   padding: 44px;
   border: 1px solid var(--rc-glass-border);
-  border-radius: 24px;
+  border-radius: 16px;
   background: var(--rc-glass-background);
   box-shadow: var(--rc-glass-shadow);
-  -webkit-backdrop-filter: blur(24px);
-  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
   scroll-margin-top: 24px;
 }
 
@@ -433,11 +412,6 @@
 
   .page::before {
     height: 1000px;
-  }
-
-  .page::after {
-    top: 600px;
-    width: 150%;
   }
 
   .hero h1 {

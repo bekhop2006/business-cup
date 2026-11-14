@@ -10,45 +10,6 @@
   font-family: Arial, Helvetica, sans-serif;
 }
 
-.surface::before,
-.surface::after {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  pointer-events: none;
-}
-
-.surface::before {
-  inset: 100px 6% auto;
-  height: min(76vw, 760px);
-  background:
-    radial-gradient(ellipse at 18% 58%, color-mix(in srgb, var(--rc-ivory) 32%, transparent), transparent 52%),
-    radial-gradient(ellipse at 82% 36%, color-mix(in srgb, var(--rc-ivory) 24%, transparent), transparent 48%);
-  filter: blur(32px);
-  animation: liquidDrift 18s ease-in-out infinite alternate;
-}
-
-.surface::after {
-  inset: 100px 0 auto;
-  height: 640px;
-  background-image: radial-gradient(circle, var(--rc-liquid-dot, color-mix(in srgb, var(--rc-ivory) 32%, transparent)) 1px, transparent 1.5px);
-  background-size: 12px 12px;
-  -webkit-mask-image: linear-gradient(transparent, black 45%, transparent);
-  mask-image: linear-gradient(transparent, black 45%, transparent);
-  opacity: 0.45;
-}
-
-@keyframes liquidDrift {
-  from {
-    transform: translateY(-12px) scale(0.98);
-    opacity: 0.65;
-  }
-  to {
-    transform: translateY(18px) scale(1.04);
-    opacity: 1;
-  }
-}
-
 .surface :focus-visible {
   outline: 3px solid var(--rc-navy);
   outline-offset: 4px;
@@ -121,7 +82,7 @@
   padding: 32px;
   background: var(--rc-ivory);
   border: 1px solid var(--rc-glass-border, var(--rc-line));
-  border-radius: 24px;
+  border-radius: 16px;
   box-shadow: var(--rc-glass-shadow, 0 24px 64px color-mix(in srgb, var(--rc-navy) 18%, transparent));
 }
 
@@ -158,10 +119,10 @@
 .loginIntro {
   padding: 36px;
   border: 1px solid color-mix(in srgb, var(--rc-ivory) 24%, transparent);
-  border-radius: 28px;
+  border-radius: 16px;
   color: var(--rc-ivory);
   background: color-mix(in srgb, var(--rc-navy) 88%, transparent);
-  box-shadow: 0 20px 64px color-mix(in srgb, var(--rc-navy) 20%, transparent);
+  box-shadow: 0 12px 32px color-mix(in srgb, var(--rc-navy) 12%, transparent);
 }
 
 .loginIntro :focus-visible {
@@ -187,7 +148,7 @@
   padding: 32px;
   background: var(--rc-ivory);
   border: 1px solid var(--rc-glass-border, var(--rc-line));
-  border-radius: 24px;
+  border-radius: 16px;
   border-top: 4px solid var(--rc-accent);
   box-shadow: var(--rc-glass-shadow, 0 24px 64px color-mix(in srgb, var(--rc-navy) 18%, transparent));
 }
@@ -198,27 +159,17 @@
   .footer,
   .loginCard {
     background: var(--rc-glass-background, color-mix(in srgb, var(--rc-ivory) 94%, transparent));
-    -webkit-backdrop-filter: blur(24px) saturate(125%);
-    backdrop-filter: blur(24px) saturate(125%);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
   }
 
   .loginIntro {
-    -webkit-backdrop-filter: blur(20px);
-    backdrop-filter: blur(20px);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .surface::before {
-    animation: none;
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
   }
 }
 
 @media (max-width: 640px) {
-  .surface::before {
-    filter: blur(20px);
-  }
-
   .headerInner {
     gap: 8px;
     padding: 14px 20px;

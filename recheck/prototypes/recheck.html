@@ -30,9 +30,8 @@ button { border: 0; }
 
 
 .workspace { position: relative; isolation: isolate; display: flow-root; overflow: clip; background: var(--rc-liquid-background); }
-.workspace::before { content: ""; position: absolute; z-index: -1; inset: 120px 0 auto; height: 600px; pointer-events: none; background-image: radial-gradient(circle,var(--rc-liquid-dot) 1px,transparent 1.5px); background-size: 10px 10px; mask-image: linear-gradient(transparent,black,transparent); }
-.workspace .header { width: 100%; padding-inline: max(24px,calc((100% - 1080px)/2)); color: var(--rc-navy); background: var(--rc-glass-background); backdrop-filter: blur(24px); }
-.workmain { background: var(--rc-glass-background); padding: 36px; border: 1px solid var(--rc-glass-border); border-radius: 24px; box-shadow: var(--rc-glass-shadow); backdrop-filter: blur(24px); }
+.workspace .header { width: 100%; padding-inline: max(24px,calc((100% - 1080px)/2)); color: var(--rc-navy); background: var(--rc-glass-background); backdrop-filter: blur(12px); }
+.workmain { background: var(--rc-glass-background); padding: 36px; border: 1px solid var(--rc-glass-border); border-radius: 16px; box-shadow: var(--rc-glass-shadow); backdrop-filter: blur(12px); }
 .workmain h1 { font-family: Arial,Helvetica,sans-serif; font-weight: 500; }
 .workspace .footer { background: var(--rc-glass-background); width: min(820px,calc(100% - 40px)); border-radius: 16px; padding: 20px 24px; margin-bottom: 32px; }
 .worktabs button[aria-pressed=true] { background: color-mix(in srgb,var(--rc-accent) 28%,transparent); }
@@ -45,15 +44,15 @@ button { border: 0; }
   --rc-red: #B83434;
   --rc-accent: #E8F76B;
   --rc-blue-glow: color-mix(in srgb, var(--rc-navy) 38%, var(--rc-ivory));
-  --rc-blue-glow: oklch(from var(--rc-navy) 0.72 0.14 h);
+  --rc-blue-glow: oklch(from var(--rc-navy) 0.72 0.09 h);
   --rc-liquid-background:
     radial-gradient(ellipse at 16% 35%, color-mix(in srgb, var(--rc-blue-glow) 75%, transparent), transparent 48%),
     radial-gradient(ellipse at 90% 55%, color-mix(in srgb, var(--rc-ivory) 70%, transparent), transparent 45%),
     linear-gradient(165deg, var(--rc-navy) 3%, var(--rc-blue-glow) 60%, var(--rc-ivory) 100%);
   --rc-glass-background: color-mix(in srgb, var(--rc-ivory) 94%, transparent);
   --rc-glass-border: color-mix(in srgb, var(--rc-ivory) 65%, transparent);
-  --rc-glass-shadow: 0 24px 70px color-mix(in srgb, var(--rc-navy) 18%, transparent);
-  --rc-liquid-dot: color-mix(in srgb, var(--rc-ivory) 35%, transparent);
+  --rc-glass-shadow: 0 12px 32px color-mix(in srgb, var(--rc-navy) 12%, transparent);
+  --rc-liquid-dot: color-mix(in srgb, var(--rc-ivory) 15%, transparent);
   --rc-muted: color-mix(in srgb, var(--rc-navy) 72%, var(--rc-ivory));
   --rc-line: color-mix(in srgb, var(--rc-navy) 18%, var(--rc-ivory));
   --rc-wash: color-mix(in srgb, var(--rc-navy) 4%, var(--rc-ivory));
@@ -129,31 +128,15 @@ input, select, textarea {
   mask-image: linear-gradient(90deg, black, transparent 32%, transparent 65%, black);
 }
 
-.page::after {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  width: 95%;
-  height: 380px;
-  top: 380px;
-  left: 20%;
-  border-radius: 50%;
-  pointer-events: none;
-  background: radial-gradient(ellipse, color-mix(in srgb, var(--rc-ivory) 35%, transparent), transparent 68%);
-  filter: blur(32px);
-  transform: rotate(-18deg);
-  animation: liquidDrift 18s ease-in-out infinite alternate;
-}
-
-@keyframes liquidDrift {
-  to { transform: translate(-12%, 10%) rotate(-6deg) scale(1.08); }
-}
-
 .page :focus-visible {
   outline: 3px solid var(--rc-navy);
   outline-offset: 5px;
 }
-.header :focus-visible, .hero :focus-visible { outline-color: var(--rc-accent); }
+
+.header :focus-visible,
+.hero :focus-visible {
+  outline-color: var(--rc-accent);
+}
 
 .header,
 .hero,
@@ -274,13 +257,12 @@ input, select, textarea {
   font-weight: 600;
   text-decoration: none;
   box-shadow: 0 4px 18px color-mix(in srgb, var(--rc-navy) 12%, transparent);
-  transition: transform 180ms ease, box-shadow 180ms ease;
+  transition: box-shadow 180ms ease;
 }
 
 .primaryLink:hover {
   background: var(--rc-accent);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px color-mix(in srgb, var(--rc-navy) 22%, transparent);
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--rc-navy) 16%, transparent);
 }
 
 .helper {
@@ -293,11 +275,11 @@ input, select, textarea {
   background: color-mix(in srgb, var(--rc-navy) 84%, transparent);
   color: var(--rc-ivory);
   border: 1px solid color-mix(in srgb, var(--rc-ivory) 35%, transparent);
-  border-radius: 24px;
+  border-radius: 16px;
   padding: 32px;
   box-shadow: var(--rc-glass-shadow), inset 0 1px 0 color-mix(in srgb, var(--rc-ivory) 22%, transparent);
-  -webkit-backdrop-filter: blur(24px);
-  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
 }
 
 .documentMark {
@@ -368,11 +350,11 @@ input, select, textarea {
 .stepsSection {
   padding: 44px;
   border: 1px solid var(--rc-glass-border);
-  border-radius: 24px;
+  border-radius: 16px;
   background: var(--rc-glass-background);
   box-shadow: var(--rc-glass-shadow);
-  -webkit-backdrop-filter: blur(24px);
-  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
   scroll-margin-top: 24px;
 }
 
@@ -534,11 +516,6 @@ input, select, textarea {
     height: 1000px;
   }
 
-  .page::after {
-    top: 600px;
-    width: 150%;
-  }
-
   .hero h1 {
     font-size: clamp(45px, 12vw, 66px);
     letter-spacing: -2px;
@@ -585,6 +562,8 @@ input, select, textarea {
   }
 
 }
+
+.workspace .header :focus-visible { outline-color: var(--rc-navy); }
 </style></head><body><div class="prototype">INTERACTIVE DESIGN PROTOTYPE · OPEN LOCALLY · NO ACCOUNT REQUIRED</div>    <div class="page" id="home">
       <a class="skipLink" href="#main">
         Skip to content
