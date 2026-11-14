@@ -44,7 +44,12 @@
     │   ├── (auth)/login/page.tsx
     │   ├── (app)/
     │   │   ├── layout.tsx                # authenticated shell
-    │   │   ├── visits/page.tsx           # visit feed
+    │   │   ├── home/page.tsx             # start page: describe a problem, insurance overview, savings, recent cases
+    │   │   ├── onboarding/page.tsx       # about you → your insurance → summary; new users land here
+    │   │   ├── profile/page.tsx          # edit the same details later
+    │   │   ├── care/new/page.tsx         # describe a health need
+    │   │   ├── care/[id]/page.tsx        # safety questions → care options → providers and costs → checklist
+    │   │   ├── visits/page.tsx           # bills: visit feed
     │   │   ├── visits/[id]/page.tsx      # visit card: documents, lines, flags, actions
     │   │   ├── upload/page.tsx
     │   │   ├── documents/[id]/page.tsx   # one document: reading progress, lines, needs_review correction
@@ -61,6 +66,14 @@
     │       └── stripe/webhook/route.ts            # signed Stripe events keep the plan in sync
     ├── components/           # UI components, no business logic
     └── lib/
+        ├── care/
+        │   ├── safety.ts     # fixed warning signs and deterministic urgency
+        │   └── routes.ts     # care options: primary care, sports medicine, urgent care, ER, with CPT codes
+        ├── costs/
+        │   ├── benchmarks.ts # real CMS fee schedule amounts with source and year
+        │   ├── patientShare.ts  # the person's share from their own plan (copay, deductible, coinsurance, OOP)
+        │   └── scenarios.ts  # visit / + X-ray / + MRI forecasts
+        ├── providers/        # Google Places search, NPI Registry fallback, distance
         ├── llm/
         │   ├── client.ts     # the only file that talks to the LLM provider
         │   ├── extract.ts    # document -> ExtractedDocument
@@ -108,9 +121,9 @@ All money columns are integer cents. All tables have `id uuid`, `created_at`, an
 
 | Table | Key columns |
 | --- | --- |
-| `profiles` | `user_id`, `email`, `inbound_alias`, `stripe_customer_id`, `plan` |
+| `profiles` | `user_id`, `email`, `inbound_alias`, `stripe_customer_id`, `plan`, `full_name`, `zip_code`, `household_size`, `onboarded_at` (users may update only the last four) |
 | `family_members` | `name` (unique per user, ignoring case), `relation` |
-| `insurance_plans` | `year`, `deductible_cents`, `oop_max_cents` |
+| `insurance_plans` | the insurance profile: `year`, `insurer_name`, `plan_name`, `plan_type`, `deductible_cents`, `deductible_met_cents`, `oop_max_cents`, `oop_met_cents`, `coinsurance_bps`, `copay_primary_cents`, `copay_specialist_cents`, `copay_urgent_care_cents`, `copay_er_cents`, `updated_at` (all amounts optional) |
 | `visits` | `family_member_id`, `provider_name`, `service_date`, `status`, `billed_cents`, `insurance_paid_cents`, `patient_owes_cents` |
 | `documents` | `visit_id`, `type`, `source`, `storage_path`, `file_name`, `mime_type`, `status`, `extracted` (jsonb), `stated_total_cents`, `provider_name`, `patient_name`, `service_date`, `insurance_paid_cents`, `patient_responsibility_cents` |
 | `line_items` | `document_id`, `position`, `code`, `description`, `plain_explanation`, `service_date`, `quantity`, `amount_cents` |
@@ -120,6 +133,8 @@ Files live in the private Storage bucket `documents` under `<user id>/<document 
 `documents.extracted` keeps the raw LLM output. The document columns next to it (`provider_name` … `patient_responsibility_cents`, `stated_total_cents`) are the trusted values used by matching, totals and checks: filled from the extraction, or by the person on the review screen.
 | `flags` | `visit_id`, `document_id`, `line_item_id`, `type`, `message` (written by the check), `explanation` (written by the LLM), `potential_savings_cents` |
 | `disputes` | `visit_id` (one per visit), `status`, `letter_text`, `call_script`, `next_action_at` |
+| `care_cases` | `description`, `summary`, `body_area`, `warning_answers` (jsonb), `urgency`, `route`, `chosen_provider` (jsonb), `estimate` (jsonb snapshot with sources), `estimated_savings_cents` |
+| `case_providers` | `case_id`, `route`, `source` (`google_places`, `npi_registry`), `external_id`, `name`, `address`, `phone`, `website`, `rating`, `rating_count`, `distance_meters`, `maps_url`, `network_status` (always `not_verified`) |
 
 Enumerations:
 
@@ -159,6 +174,7 @@ EMAIL_API_KEY=
 INBOUND_EMAIL_SECRET=
 CRON_SECRET=
 APP_URL=
+GOOGLE_PLACES_API_KEY=
 ```
 
 ## Plans and payments
@@ -166,3 +182,12 @@ APP_URL=
 - Free: upload and read documents, visits and totals, and the full check (flags, explanations) of the user's first visit. Other visits show how many things were found and how much is worth asking about.
 - Paid (Recheck Family, $9 a month, Stripe test mode): every visit's flags, dispute letters and call scripts, the yearly dashboard.
 - `profiles.plan` is written only by the server: by `/api/billing/confirm` after Checkout and by the Stripe webhook (`checkout.session.completed`, `customer.subscription.updated`, `customer.subscription.deleted`). The price is set in code, so no product needs to exist in Stripe.
+
+## Care navigation (before the visit)
+
+1. **Describe.** The person writes what is going on. `src/lib/llm/intake.ts` returns a summary, body area, suggested routes and any warning signs mentioned; nothing else.
+2. **Safety.** `src/lib/care/safety.ts` asks fixed yes/no questions (pre-filled from step 1) and decides urgency in code. Any warning sign → "Get care now"; the flow stops there and is never paywalled.
+3. **Options.** `src/lib/care/routes.ts` lists the care routes with what each is for and its CPT codes.
+4. **Costs.** `src/lib/costs/` turns CMS benchmark amounts into a range of the person's own share using their insurance profile; every assumption and source travels with the numbers.
+5. **Providers.** `src/lib/providers/` searches Google Places near the person's ZIP and falls back to the CMS NPI Registry. Results are stored in `case_providers` with their source; network status is always "not verified".
+6. **Choose.** The chosen provider, the estimate snapshot and the estimated savings (vs the most expensive suitable option) are saved on the case, with a checklist of questions to ask before booking.

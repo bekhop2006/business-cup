@@ -6,17 +6,19 @@ Work through the stages in order. A stage is finished only when its "Done when" 
 
 Update the line above when a stage is finished.
 
+**Pivot at hour 12** (see `PROJECT.md`): Recheck now covers the whole visit. Stages 0–4 built the "after the visit" part (bill review, payment); stages 5–10 add "before the visit" (insurance profile, care options, real providers, cost forecast) and finish the submission.
+
 ## Priorities
 
 If time runs short, cut from the bottom of this list, never from the top:
 
-1. Upload → extraction → visit card with real numbers
-2. Checks and flags tied to line items
-3. Plain-language explanations, dispute letter, call script
-4. Yearly dashboard
-5. Stripe subscription
-6. Reminders
-7. Inbound email
+1. Onboarding with a reusable insurance profile
+2. Care case: description → safety questions → care options
+3. Cost forecast from real CMS benchmarks and the user's own plan
+4. Real providers nearby with "not verified" network status
+5. Home dashboard and the $9.99 plan
+6. Insurance card photo extraction
+7. Hardening extras (delete all data, phone polish)
 
 ## Stage 0 — Foundation (hours 0–2)
 
@@ -77,30 +79,58 @@ If time runs short, cut from the bottom of this list, never from the top:
 
 **Done when:** a new user can sign up, check one bill for free, hit the paywall, pay with a Stripe test card and open the letter.
 
-## Stage 5 — Hardening (hours 18–21)
+## Stage 5 — Pivot foundation (~2 h)
 
-- [ ] Run every fixture again on production; fix extraction misses
-- [ ] Large files, wrong file types, multi-page PDFs, LLM failures and timeouts handled
-- [ ] Responsive layout checked on a phone browser
-- [ ] "Delete all my data" works
-- [ ] No document contents in logs
+- [ ] `PROJECT.md`, `PLAN.md`, `STRUCTURE.md`, `RULES.md` describe the new product
+- [ ] Migration: profile fields (name, ZIP, household size, onboarded at), insurance profile fields, `care_cases`, `case_providers`
+- [ ] Onboarding: about you → your insurance (every field skippable) → summary; new users land here
+- [ ] `/profile`: edit the same details later
 
-**Done when:** three people outside the build can complete upload → flag → letter without help.
+**Done when:** a new user on production completes onboarding and the profile is saved and editable.
 
-## Stage 6 — Optional extras (only if stages 0–5 are finished)
+## Stage 6 — Cost engine (~1.5 h)
 
-- [ ] Dispute tracker: status and next-action date
-- [ ] Reminder emails from `api/cron/reminders`
-- [ ] Inbound email: personal forwarding address, webhook, attachments into the same pipeline
-- [ ] Emails without attachments create a "download and upload your bill" placeholder visit
+- [ ] `care/safety.ts`: fixed warning signs and deterministic urgency, with tests
+- [ ] `care/routes.ts`: primary care, sports medicine, urgent care, ER with CPT codes
+- [ ] `costs/benchmarks.ts`: real CMS fee schedule amounts with source and year
+- [ ] `costs/patientShare.ts` and `costs/scenarios.ts` with tests (Michael's plan and an empty plan)
 
-## Stage 7 — Submission (hours 21–24)
+**Done when:** tests are green and Michael's three scenarios are checked by hand.
 
+## Stage 7 — Care case (~2 h)
+
+- [ ] LLM intake: free text → summary, body area, suggested routes, mentioned warning signs
+- [ ] Case screen: safety questions → "Get care now" or care options with cost ranges
+- [ ] Cost forecast screen with assumptions and sources
+
+**Done when:** on production, "knee hurts after tennis" leads to care options with costs, and "I can't put weight on it" leads to "Get care now".
+
+## Stage 8 — Providers (~1.5 h)
+
+- [ ] Google Places search with NPI Registry fallback; source shown on every result
+- [ ] Provider cards: distance, rating, phone, website, directions, "Insurance: not verified"
+- [ ] Choose a provider → checklist of questions; case saved with estimated savings
+
+**Done when:** on production, real providers near 78701 appear for each route and choosing one saves the case.
+
+## Stage 9 — Home, plan and landing (~2 h)
+
+- [ ] Home: describe-a-problem box, insurance overview with deductible progress, savings (estimated vs on bills), recent cases and visits
+- [ ] Navigation: Home · Get care · Bills · Plan
+- [ ] Landing: "Stop overpaying for healthcare", CTA "Find my savings"
+- [ ] Recheck Plus at $9.99; first case free; safety never paywalled
+- [ ] Optional: insurance card photo fills the insurance profile
+
+**Done when:** a new user can go landing → onboarding → case → provider → paywall → pay → second case, and add a bill after the visit.
+
+## Stage 10 — Demo and submission (last ~2 h)
+
+- [ ] Michael's demo account created through the real onboarding and flows
+- [ ] LLM and provider API failures show a clear message; layout checked on a phone
 - [ ] `README.md`: what it is, live link, test account, how to run, architecture in five lines
 - [ ] Remove dead code, unused dependencies, stray console output
-- [ ] Demo account seeded through the real pipeline with `scripts/seed.ts`
 - [ ] All submission items prepared (list them here once confirmed): ______
 - [ ] Demo rehearsed twice end-to-end on production
-- [ ] Feature freeze at hour 22: bug fixes only
+- [ ] Feature freeze 2 hours before the deadline: bug fixes only
 
 **Done when:** everything is submitted and the production app has been clicked through after the last deploy.

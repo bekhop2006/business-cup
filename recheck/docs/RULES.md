@@ -14,7 +14,7 @@ These rules apply to every coding agent and every human contributor. If a reques
 ## 2. Scope
 
 - B2C, web only. The app must work in a desktop and a phone browser.
-- Do not build: lab results, diagnoses, appointments, prescriptions, hospital or insurer integrations, native apps, sending letters or calling on the user's behalf.
+- Do not build: diagnoses, lab results, appointment booking, prescriptions, hospital or insurer integrations, real-time insurance verification, native apps, sending letters or calling on the user's behalf.
 - Do not add features that are not in `PLAN.md` without asking.
 
 ## 3. The core value must be real
@@ -25,6 +25,9 @@ Judges read the repository and check that nothing is faked.
 - Sample documents live in `fixtures/`. They are used by tests and by `scripts/seed.ts`, which runs them through the real pipeline.
 - No feature flags or branches that return canned data for a demo account.
 - If a feature is not finished, hide it from the UI instead of faking it.
+- **Prices:** only real public benchmarks (CMS fee schedules) stored with their source URL and year, or numbers the user entered. The patient's share is computed in `src/lib/costs/` from the user's own insurance profile. Every assumption (for example a commercial-vs-Medicare multiplier) is labeled as an assumption in the UI. Never show a made-up price for a real clinic.
+- **Providers:** only real records from Google Places or the CMS NPI Registry, each carrying its source. Insurance network status is always "not verified". If both sources fail, say so; never substitute demo providers.
+- **Savings** from choosing a provider are labeled as estimates. Never call them realised savings.
 
 ## 4. LLM usage
 
@@ -33,6 +36,8 @@ Judges read the repository and check that nothing is faked.
 - Every structured response is parsed with a Zod schema. On failure: retry once, then mark the document `needs_review`.
 - **The LLM does not decide what is an error.** Flags come only from `src/lib/checks/`. The LLM receives existing flags and explains them.
 - **The LLM does not do arithmetic.** Sums, differences and totals are computed in code.
+- **The LLM does not decide urgency.** Warning signs and urgency come only from `src/lib/care/safety.ts`. The LLM may only pre-fill the safety questions from what the person wrote.
+- The LLM never diagnoses and never suggests skipping or delaying care to save money.
 - The LLM must not invent billing codes, prices or legal claims. Prompts tell it to say "not stated in the document" when information is missing.
 - Extraction and text generation are separate calls.
 - Set a timeout on every LLM call and handle failure with a clear message to the user.
@@ -56,6 +61,8 @@ Users upload medical and financial documents.
 - Validate every API input with Zod. Check file type and size on upload.
 - "Delete all my data" removes database rows and stored files.
 - The UI states that Recheck does not give legal or medical advice.
+- A warning sign always shows "Get care now" first. Safety guidance is never behind the paywall.
+- Collect only the health details needed for the case; insurance member IDs are never stored.
 - Do not put real personal documents in `fixtures/`. Use synthetic or fully anonymized samples.
 
 ## 7. Code quality
@@ -74,7 +81,7 @@ Users upload medical and financial documents.
 - Say what the user should do next on every screen.
 - Dollar amounts are always formatted the same way (`$1,234.56`).
 - Never present a flag as a certainty. Use "this looks like" and "worth asking about".
-- The tagline is "Don't pay it. Recheck it."
+- The tagline is "Stop overpaying for healthcare." The bill-review part may still say "Don't pay it. Recheck it."
 
 ## 9. Git
 
