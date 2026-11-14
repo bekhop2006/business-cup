@@ -5,6 +5,7 @@ vi.stubEnv("NEXT_PUBLIC_SUPABASE_ANON_KEY", "anon");
 vi.stubEnv("SUPABASE_SERVICE_ROLE_KEY", "service");
 vi.stubEnv("LLM_API_KEY", "llm-key");
 vi.stubEnv("LLM_MODEL", "llm-model");
+vi.stubEnv("APP_URL", "http://localhost:3000");
 
 const { parseEnv } = await import("@/lib/env");
 
@@ -14,6 +15,7 @@ const valid = {
   SUPABASE_SERVICE_ROLE_KEY: "service",
   LLM_API_KEY: "llm-key",
   LLM_MODEL: "llm-model",
+  APP_URL: "http://localhost:3000",
 };
 
 describe("parseEnv", () => {
@@ -23,7 +25,7 @@ describe("parseEnv", () => {
 
   it("names every missing required variable", () => {
     expect(() => parseEnv({})).toThrow(
-      "NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY, LLM_API_KEY, LLM_MODEL",
+      "NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY, LLM_API_KEY, LLM_MODEL, APP_URL",
     );
   });
 

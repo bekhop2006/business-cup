@@ -13,13 +13,13 @@ const envSchema = z.object({
   SUPABASE_SERVICE_ROLE_KEY: required,
   LLM_API_KEY: required,
   LLM_MODEL: required,
+  APP_URL: z.url(),
   DATABASE_URL: notYetUsed,
   STRIPE_SECRET_KEY: notYetUsed,
   STRIPE_WEBHOOK_SECRET: notYetUsed,
   EMAIL_API_KEY: notYetUsed,
   INBOUND_EMAIL_SECRET: notYetUsed,
   CRON_SECRET: notYetUsed,
-  APP_URL: notYetUsed,
 });
 
 export type Env = z.infer<typeof envSchema>;
