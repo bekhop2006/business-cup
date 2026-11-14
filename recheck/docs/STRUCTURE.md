@@ -27,11 +27,13 @@
 │   ├── STRUCTURE.md
 │   ├── PLAN.md
 │   └── RULES.md
-├── fixtures/                 # sample bills and EOBs for tests and demo seed only
+├── fixtures/                 # sample bills and EOBs for tests and demo seed only (see fixtures/README.md)
 ├── supabase/
 │   └── migrations/           # SQL migrations, never edited after being applied
 ├── scripts/
-│   └── seed.ts               # loads fixtures through the real pipeline
+│   ├── seed.ts               # loads fixtures through the real pipeline
+│   ├── check-extraction.ts   # runs fixtures through extraction, compares with fixtures/expected.json
+│   └── fixtures/make_fixtures.py  # renders the synthetic fixtures
 ├── tests/
 │   └── checks/               # unit tests for every check
 └── src/
@@ -43,11 +45,12 @@
     │   │   ├── visits/page.tsx           # visit feed
     │   │   ├── visits/[id]/page.tsx      # visit card: documents, lines, flags, actions
     │   │   ├── upload/page.tsx
+    │   │   ├── documents/[id]/page.tsx   # one document: reading progress, lines, needs_review correction
     │   │   ├── dashboard/page.tsx        # yearly picture
     │   │   └── billing/page.tsx          # subscription
     │   └── api/
     │       ├── documents/route.ts                 # POST upload
-    │       ├── documents/[id]/process/route.ts    # run the pipeline
+    │       ├── documents/[id]/process/route.ts    # run the pipeline again (retry)
     │       ├── visits/[id]/dispute/route.ts       # generate letter and call script
     │       ├── inbound-email/route.ts             # optional, stage 6
     │       ├── cron/reminders/route.ts
@@ -65,8 +68,9 @@
         ├── visits/
         │   ├── match.ts      # attach a document to a visit or create one
         │   └── totals.ts     # billed / insurance paid / patient owes
+        ├── documents/        # pure document logic: validation, review input, status labels
         ├── pipeline.ts       # orchestrates the steps below
-        ├── db/               # typed queries
+        ├── db/               # typed queries; admin.ts is the service-role client for background work
         ├── money.ts          # cents <-> display
         └── env.ts            # validated environment variables
 ```
@@ -87,6 +91,8 @@ Dispute letter and call script are generated on demand from the visit and its fl
 
 Processing runs in the background. The UI polls document status and shows progress.
 
+How it is built: the upload route stores the file and the row with the user's session, then starts the pipeline with Next.js `after()`. The pipeline has no session, so it uses the service-role client (`src/lib/db/admin.ts`) and filters every query by `user_id`. The LLM copies amounts as printed (`"$1,450.00"`); `src/lib/money.ts` turns them into cents. A document goes to `needs_review` when it is unreadable, an amount cannot be read, or the lines do not add up to the printed total. On the review screen the person confirms or fixes the lines; a confirmed total mismatch is later reported by the `total_mismatch` check.
+
 ## Data model
 
 All money columns are integer cents. All tables have `id uuid`, `created_at`, and `user_id` with row-level security: a user reads and writes only their own rows.
@@ -97,8 +103,10 @@ All money columns are integer cents. All tables have `id uuid`, `created_at`, an
 | `family_members` | `name`, `relation` |
 | `insurance_plans` | `year`, `deductible_cents`, `oop_max_cents` |
 | `visits` | `family_member_id`, `provider_name`, `service_date`, `status`, `billed_cents`, `insurance_paid_cents`, `patient_owes_cents` |
-| `documents` | `visit_id`, `type`, `source`, `storage_path`, `status`, `extracted` (jsonb), `stated_total_cents` |
-| `line_items` | `document_id`, `code`, `description`, `plain_explanation`, `service_date`, `quantity`, `amount_cents` |
+| `documents` | `visit_id`, `type`, `source`, `storage_path`, `file_name`, `mime_type`, `status`, `extracted` (jsonb), `stated_total_cents` |
+| `line_items` | `document_id`, `position`, `code`, `description`, `plain_explanation`, `service_date`, `quantity`, `amount_cents` |
+
+Files live in the private Storage bucket `documents` under `<user id>/<document id>.<ext>`; storage policies limit each user to their own folder.
 | `flags` | `visit_id`, `document_id`, `line_item_id`, `type`, `message`, `potential_savings_cents` |
 | `disputes` | `visit_id`, `status`, `letter_text`, `call_script`, `next_action_at` |
 

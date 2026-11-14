@@ -1,0 +1,47 @@
+"use server";
+
+import { redirect } from "next/navigation";
+import { z } from "zod";
+import { getCurrentUser } from "@/lib/db/auth";
+import { getDocument, saveDocumentLines } from "@/lib/db/documents";
+import { createServerSupabase } from "@/lib/db/supabase";
+import { reviewSchema, reviewToLineItems } from "@/lib/documents/review";
+
+export type ReviewState = { error?: string };
+
+// Saves the lines a person checked on the review screen and marks the
+// document as read.
+export async function saveReview(
+  documentId: string,
+  _previous: ReviewState,
+  formData: FormData,
+): Promise<ReviewState> {
+  const user = await getCurrentUser();
+  if (!user) redirect("/login");
+  if (!z.uuid().safeParse(documentId).success) return { error: "Document not found." };
+
+  let payload: unknown;
+  try {
+    payload = JSON.parse(String(formData.get("payload")));
+  } catch {
+    return { error: "Something went wrong. Please try again." };
+  }
+  const parsed = reviewSchema.safeParse(payload);
+  if (!parsed.success) return { error: parsed.error.issues[0].message };
+
+  const result = reviewToLineItems(parsed.data);
+  if ("error" in result) return { error: result.error };
+
+  const supabase = await createServerSupabase();
+  const document = await getDocument(supabase, user.id, documentId);
+  if (!document || document.status !== "needs_review") {
+    return { error: "This document can't be changed right now. Reload the page." };
+  }
+
+  await saveDocumentLines(supabase, user.id, documentId, {
+    lineItems: result.lineItems,
+    statedTotalCents: result.statedTotalCents,
+    status: "parsed",
+  });
+  redirect(`/documents/${documentId}`);
+}
