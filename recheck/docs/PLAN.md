@@ -2,7 +2,7 @@
 
 Work through the stages in order. A stage is finished only when its "Done when" line is true **on the deployed app**, not only locally.
 
-**Current stage:** 2
+**Current stage:** 3
 
 Update the line above when a stage is finished.
 
@@ -45,12 +45,12 @@ If time runs short, cut from the bottom of this list, never from the top:
 
 ## Stage 2 — Visits (hours 7–11)
 
-- [ ] `visits/match.ts`: attach by provider and service date, or create
-- [ ] `visits/totals.ts`: billed, insurance paid, patient owes
-- [ ] Visit feed grouped by family member, with status and amount owed
-- [ ] Visit card: documents, line items, totals
-- [ ] Add and pick family members
-- [ ] Empty, loading and error states
+- [x] `visits/match.ts`: attach by provider and service date, or create
+- [x] `visits/totals.ts`: billed, insurance paid, patient owes
+- [x] Visit feed grouped by family member, with status and amount owed
+- [x] Visit card: documents, line items, totals
+- [x] Add and pick family members
+- [x] Empty, loading and error states
 
 **Done when:** a bill and its EOB uploaded separately land in the same visit, and the three totals are correct.
 
