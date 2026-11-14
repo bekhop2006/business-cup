@@ -2,7 +2,7 @@
 
 Work through the stages in order. A stage is finished only when its "Done when" line is true **on the deployed app**, not only locally.
 
-**Current stage:** 8
+**Current stage:** 9
 
 Update the line above when a stage is finished.
 
@@ -111,11 +111,13 @@ Verified 2026-11-15 on production (`5d8d6c6`): real signup and Michael's full on
 
 ## Stage 8 — Providers (~1.5 h)
 
-- [ ] Google Places search with NPI Registry fallback; source shown on every result
-- [ ] Provider cards: distance, rating, phone, website, directions, "Insurance: not verified"
-- [ ] Choose a provider → checklist of questions; case saved with estimated savings
+- [x] Google Places search with NPI Registry fallback; source shown on every result
+- [x] Provider cards: distance, rating, phone, website, directions, "Insurance: not verified"
+- [x] Choose a provider → checklist of questions; case saved with estimated savings
 
 **Done when:** on production, real providers near 78701 appear for each route and choosing one saves the case.
+
+Verified 2026-11-15 on production (`8992fee`): new account with Michael's profile entered through onboarding (9 of 9 details); knee case with all-no safety answers; primary care, sports medicine and urgent care each returned 10 real Austin providers with "Insurance: not verified", phone, directions and "Source: CMS NPI Registry". Choosing a primary care provider saved the provider, the estimate snapshot with CMS PFS 2026 and KFF sources, the estimated difference vs. urgent care ($50.00) and the call checklist; the saved choice survives a reload. Production served NPI results, not Google Places, so distance and rating showed "not available": `GOOGLE_PLACES_API_KEY` is probably not set on Railway (not checked). Typecheck, lint and 210 tests passed locally.
 
 ## Stage 9 — Home, plan and landing (~2 h)
 
