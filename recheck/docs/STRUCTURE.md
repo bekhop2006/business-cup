@@ -33,6 +33,7 @@
 ├── scripts/
 │   ├── seed.ts               # loads fixtures through the real pipeline
 │   ├── check-extraction.ts   # runs fixtures through extraction, compares with fixtures/expected.json
+│   ├── refresh-visits.ts     # recomputes totals, flags and explanations for every visit
 │   └── fixtures/make_fixtures.py  # renders the synthetic fixtures
 ├── tests/
 │   └── checks/               # unit tests for every check
@@ -110,8 +111,8 @@ All money columns are integer cents. All tables have `id uuid`, `created_at`, an
 Files live in the private Storage bucket `documents` under `<user id>/<document id>.<ext>`; storage policies limit each user to their own folder.
 
 `documents.extracted` keeps the raw LLM output. The document columns next to it (`provider_name` … `patient_responsibility_cents`, `stated_total_cents`) are the trusted values used by matching, totals and checks: filled from the extraction, or by the person on the review screen.
-| `flags` | `visit_id`, `document_id`, `line_item_id`, `type`, `message`, `potential_savings_cents` |
-| `disputes` | `visit_id`, `status`, `letter_text`, `call_script`, `next_action_at` |
+| `flags` | `visit_id`, `document_id`, `line_item_id`, `type`, `message` (written by the check), `explanation` (written by the LLM), `potential_savings_cents` |
+| `disputes` | `visit_id` (one per visit), `status`, `letter_text`, `call_script`, `next_action_at` |
 
 Enumerations:
 
@@ -124,15 +125,15 @@ Enumerations:
 
 ## Checks
 
-Each check is a pure function: `(visit, documents, lineItems) => Flag[]`. No network, no database, no LLM.
+Each check is a pure function: `({ documents, lines }) => FlagDraft[]` over one visit. No network, no database, no LLM. Every flag has a `document_id`, plus a `line_item_id` when it is about one line. `potentialSavings()` in `checks/index.ts` sums a visit's savings without counting the same money twice (a duplicate line and the bill/EOB gap it causes are one overcharge) and never above what the person owes.
 
 | File | Flag type | Logic |
 | --- | --- | --- |
-| `duplicates.ts` | `duplicate_line` | Same code, date and amount appears more than once within a visit |
-| `eobMismatch.ts` | `eob_mismatch` | Patient responsibility on the bill differs from the EOB |
-| `billedBeforeInsurance.ts` | `billed_before_insurance` | A bill exists for the visit and no EOB is attached |
-| `unclearLine.ts` | `unclear_line` | Line has no code and no usable description |
-| `totals.ts` | `total_mismatch` | Line items do not add up to the stated total |
+| `duplicates.ts` | `duplicate_line` | Same code (or description when there is no code), date and amount appears more than once on one bill |
+| `eobMismatch.ts` | `eob_mismatch` | The newest bill asks the patient for more than the newest EOB's patient responsibility |
+| `billedBeforeInsurance.ts` | `billed_before_insurance` | A bill exists for the visit, no EOB is attached, and the bill shows no insurance payment |
+| `unclearLine.ts` | `unclear_line` | A bill line has no code and no usable description (only generic words such as "MISC SVC") |
+| `totals.ts` | `total_mismatch` | A bill's line items do not add up to its stated total |
 
 ## Environment variables
 

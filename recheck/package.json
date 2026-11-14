@@ -9,7 +9,8 @@
     "typecheck": "next typegen && tsc --noEmit",
     "lint": "eslint",
     "test": "vitest run",
-    "check:extraction": "tsx scripts/check-extraction.ts"
+    "check:extraction": "tsx scripts/check-extraction.ts",
+    "refresh:visits": "tsx scripts/refresh-visits.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",

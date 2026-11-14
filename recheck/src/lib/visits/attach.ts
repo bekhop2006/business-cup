@@ -1,28 +1,24 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import {
   getDocument,
-  listLineItemsForDocuments,
   listLooseReadDocumentsOnDate,
-  listVisitDocuments,
   setDocumentVisit,
 } from "@/lib/db/documents";
 import type { Database } from "@/lib/db/types";
 import {
   createVisit,
   findOrCreateFamilyMember,
-  getVisit,
   listVisitsOnDate,
-  saveVisitTotals,
   setVisitFamilyMember,
 } from "@/lib/db/visits";
 import { findMatchingVisit, samePerson, sameProvider } from "@/lib/visits/match";
-import { computeVisitTotals } from "@/lib/visits/totals";
+import { refreshVisit } from "@/lib/visits/refresh";
 
 type Db = SupabaseClient<Database>;
 
-// Pipeline step 4 (match) and step 7 (total): puts a read document into the
-// visit for its provider, date and patient, creating the visit and the family
-// member when needed, then recomputes the visit's totals.
+// Pipeline step 4 (match): puts a read document into the visit for its
+// provider, date and patient, creating the visit and the family member when
+// needed, then recomputes the visit's totals and flags.
 // Returns the visit id, or null when the document lacks a provider or a date.
 export async function attachDocumentToVisit(
   db: Db,
@@ -62,34 +58,6 @@ export async function attachDocumentToVisit(
     }
   }
 
-  await refreshVisitTotals(db, userId, visitId);
+  await refreshVisit(db, userId, visitId);
   return visitId;
-}
-
-export async function refreshVisitTotals(db: Db, userId: string, visitId: string) {
-  const visit = await getVisit(db, userId, visitId);
-  if (!visit) return;
-  const documents = await listVisitDocuments(db, userId, visitId);
-  const lines = await listLineItemsForDocuments(
-    db,
-    userId,
-    documents.map((document) => document.id),
-  );
-
-  const totals = computeVisitTotals(
-    documents
-      .filter((document) => document.status === "parsed")
-      .map((document) => ({
-        type: document.type,
-        created_at: document.created_at,
-        stated_total_cents: document.stated_total_cents,
-        insurance_paid_cents: document.insurance_paid_cents,
-        patient_responsibility_cents: document.patient_responsibility_cents,
-        line_amounts_cents: lines
-          .filter((line) => line.document_id === document.id)
-          .map((line) => line.amount_cents),
-      })),
-    visit.status,
-  );
-  await saveVisitTotals(db, userId, visitId, totals);
 }

@@ -1,12 +1,15 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { after } from "next/server";
 import { z } from "zod";
+import { createAdminSupabase } from "@/lib/db/admin";
 import { getCurrentUser } from "@/lib/db/auth";
 import { getDocument, saveDocumentReading } from "@/lib/db/documents";
 import { createServerSupabase } from "@/lib/db/supabase";
 import { reviewSchema, reviewToDocument } from "@/lib/documents/review";
 import { attachDocumentToVisit } from "@/lib/visits/attach";
+import { explainVisitText } from "@/lib/visits/refresh";
 
 export type ReviewState = { error?: string };
 
@@ -41,5 +44,9 @@ export async function saveReview(
 
   await saveDocumentReading(supabase, user.id, documentId, { ...result, status: "parsed" });
   const visitId = await attachDocumentToVisit(supabase, user.id, documentId);
+  if (visitId) {
+    const userId = user.id;
+    after(() => explainVisitText(createAdminSupabase(), userId, visitId));
+  }
   redirect(visitId ? `/visits/${visitId}` : `/documents/${documentId}`);
 }

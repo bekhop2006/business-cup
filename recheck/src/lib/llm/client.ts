@@ -40,16 +40,19 @@ function fileContent(file: LlmFile) {
   return { type: "input_image" as const, image_url: dataUrl, detail: "high" as const };
 }
 
-// Sends one file with instructions and returns output that matches the schema,
-// or null when the model's output does not match it.
-// Throws LlmUnavailableError when the provider fails.
-export async function readFileStructured<Schema extends z.ZodType>(options: {
+type StructuredRequest<Schema extends z.ZodType> = {
   instructions: string;
   request: string;
-  file: LlmFile;
   schema: Schema;
   schemaName: string;
-}): Promise<z.infer<Schema> | null> {
+};
+
+// Returns output that matches the schema, or null when the model's output does
+// not match it. Throws LlmUnavailableError when the provider fails.
+async function parseStructured<Schema extends z.ZodType>(
+  options: StructuredRequest<Schema>,
+  file?: LlmFile,
+): Promise<z.infer<Schema> | null> {
   try {
     const response = await getClient().responses.parse({
       model: env.LLM_MODEL,
@@ -59,7 +62,7 @@ export async function readFileStructured<Schema extends z.ZodType>(options: {
           role: "user",
           content: [
             { type: "input_text", text: options.request },
-            fileContent(options.file),
+            ...(file ? [fileContent(file)] : []),
           ],
         },
       ],
@@ -73,4 +76,18 @@ export async function readFileStructured<Schema extends z.ZodType>(options: {
     if (error instanceof OpenAI.APIError) throw new LlmUnavailableError(error.status);
     return null;
   }
+}
+
+// Sends one document file with instructions.
+export function readFileStructured<Schema extends z.ZodType>(
+  options: StructuredRequest<Schema> & { file: LlmFile },
+): Promise<z.infer<Schema> | null> {
+  return parseStructured(options, options.file);
+}
+
+// Sends text only, for writing explanations and letters.
+export function writeStructured<Schema extends z.ZodType>(
+  options: StructuredRequest<Schema>,
+): Promise<z.infer<Schema> | null> {
+  return parseStructured(options);
 }

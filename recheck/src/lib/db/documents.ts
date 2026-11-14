@@ -38,7 +38,7 @@ export async function listVisitDocuments(db: Db, userId: string, visitId: string
 export async function listLineItems(db: Db, userId: string, documentId: string) {
   const { data, error } = await db
     .from("line_items")
-    .select("id, document_id, code, description, service_date, quantity, amount_cents")
+    .select("id, document_id, code, description, plain_explanation, service_date, quantity, amount_cents")
     .eq("document_id", documentId)
     .eq("user_id", userId)
     .order("position");
@@ -50,7 +50,7 @@ export async function listLineItemsForDocuments(db: Db, userId: string, document
   if (documentIds.length === 0) return [];
   const { data, error } = await db
     .from("line_items")
-    .select("id, document_id, code, description, service_date, quantity, amount_cents")
+    .select("id, document_id, code, description, plain_explanation, service_date, quantity, amount_cents")
     .in("document_id", documentIds)
     .eq("user_id", userId)
     .order("position");
@@ -149,4 +149,19 @@ export async function saveDocumentReading(
     .eq("id", documentId)
     .eq("user_id", userId);
   if (updated.error) throw new Error("Could not save the document.");
+}
+
+export async function saveLineExplanations(
+  db: Db,
+  userId: string,
+  explanations: { id: string; explanation: string }[],
+) {
+  for (const { id, explanation } of explanations) {
+    const { error } = await db
+      .from("line_items")
+      .update({ plain_explanation: explanation })
+      .eq("id", id)
+      .eq("user_id", userId);
+    if (error) throw new Error("Could not save a line explanation.");
+  }
 }

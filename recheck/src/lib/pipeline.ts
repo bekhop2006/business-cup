@@ -9,10 +9,12 @@ import { validateExtraction } from "@/lib/documents/validate";
 import { LlmUnavailableError } from "@/lib/llm/client";
 import { extractDocument } from "@/lib/llm/extract";
 import { attachDocumentToVisit } from "@/lib/visits/attach";
+import { explainVisitText } from "@/lib/visits/refresh";
 
 // Reads an uploaded document in the background. Steps (docs/STRUCTURE.md):
 // 1. store (done by the upload route), 2. extract, 3. validate,
-// 4. match to a visit and 7. total it. Checks and explanations come later.
+// 4. match to a visit, 5. check and 7. total it (attachDocumentToVisit),
+// 6. explain lines and flags.
 //
 // Runs without a user session, so it uses the admin client and passes userId
 // to every query. Logs ids and outcomes only, never document contents.
@@ -39,7 +41,8 @@ export async function processDocument(userId: string, documentId: string): Promi
       status: validated.problems.length > 0 ? "needs_review" : "parsed",
       extracted,
     });
-    await attachDocumentToVisit(db, userId, documentId);
+    const visitId = await attachDocumentToVisit(db, userId, documentId);
+    if (visitId) await explainVisitText(db, userId, visitId);
   } catch (error) {
     const reason = error instanceof LlmUnavailableError ? `llm_unavailable_${error.status}` : "error";
     console.error("Document processing failed", { documentId, reason });

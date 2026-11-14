@@ -1,10 +1,14 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { z } from "zod";
+import { DisputePanel } from "@/components/DisputePanel";
+import { FlagNote } from "@/components/FlagNote";
 import { LineItemsList } from "@/components/LineItemsList";
 import { WhoseVisit } from "@/components/WhoseVisit";
+import { potentialSavings } from "@/lib/checks";
 import { getCurrentUser } from "@/lib/db/auth";
 import { listLineItemsForDocuments, listVisitDocuments } from "@/lib/db/documents";
+import { getDispute, listVisitFlags } from "@/lib/db/flags";
 import { createServerSupabase } from "@/lib/db/supabase";
 import { getVisit, listFamilyMembers } from "@/lib/db/visits";
 import { formatServiceDate } from "@/lib/dates";
@@ -22,9 +26,11 @@ export default async function VisitPage({ params }: PageProps<"/visits/[id]">) {
   const supabase = await createServerSupabase();
   const visit = await getVisit(supabase, user.id, id);
   if (!visit) notFound();
-  const [documents, members] = await Promise.all([
+  const [documents, members, flags, dispute] = await Promise.all([
     listVisitDocuments(supabase, user.id, id),
     listFamilyMembers(supabase, user.id),
+    listVisitFlags(supabase, user.id, id),
+    getDispute(supabase, user.id, id),
   ]);
   const lines = await listLineItemsForDocuments(
     supabase,
@@ -34,6 +40,7 @@ export default async function VisitPage({ params }: PageProps<"/visits/[id]">) {
 
   const hasBill = documents.some((document) => document.type === "bill");
   const hasEob = documents.some((document) => document.type === "eob");
+  const savings = potentialSavings(flags, visit.patient_owes_cents);
 
   return (
     <>
@@ -63,6 +70,27 @@ export default async function VisitPage({ params }: PageProps<"/visits/[id]">) {
         <Total label="You owe" cents={visit.patient_owes_cents} strong />
       </dl>
 
+      {flags.length > 0 ? (
+        <div className="mt-4 rounded-xl border border-amber-300 bg-amber-50 p-4">
+          <p className="font-semibold text-amber-950">
+            We found {flags.length === 1 ? "one thing" : `${flags.length} things`} worth asking about
+          </p>
+          <p className="mt-1 text-sm text-amber-900">
+            {savings > 0
+              ? `If the provider corrects them, you could pay up to ${formatCents(savings)} less. `
+              : ""}
+            Don&apos;t pay this bill until you&apos;ve asked. Each problem is marked below, and you
+            can send the provider a letter at the bottom of this page.
+          </p>
+        </div>
+      ) : (
+        documents.length > 0 && (
+          <p className="mt-4 rounded-xl bg-emerald-50 p-4 text-sm text-emerald-900">
+            Nothing looked unusual in what we checked on this visit.
+          </p>
+        )
+      )}
+
       {(!hasEob || !hasBill) && (
         <p className="mt-4 rounded-xl bg-slate-50 p-4 text-sm text-slate-700">
           {!hasEob
@@ -88,9 +116,29 @@ export default async function VisitPage({ params }: PageProps<"/visits/[id]">) {
             {document.patient_responsibility_cents !== null &&
               ` · says you owe ${formatCents(document.patient_responsibility_cents)}`}
           </p>
-          <LineItemsList lines={lines.filter((line) => line.document_id === document.id)} />
+          {flags
+            .filter((flag) => flag.document_id === document.id && flag.line_item_id === null)
+            .map((flag) => (
+              <FlagNote key={flag.id} flag={flag} />
+            ))}
+          <LineItemsList
+            lines={lines.filter((line) => line.document_id === document.id)}
+            flags={flags}
+          />
         </section>
       ))}
+
+      {flags.length > 0 && (
+        <DisputePanel
+          visitId={visit.id}
+          initialDraft={
+            dispute?.letter_text && dispute.call_script
+              ? { letter_text: dispute.letter_text, call_script: dispute.call_script }
+              : null
+          }
+          fileStem={`${visit.provider_name}-${visit.service_date}`.toLowerCase().replace(/[^a-z0-9]+/g, "-")}
+        />
+      )}
     </>
   );
 }

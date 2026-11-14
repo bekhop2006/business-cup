@@ -29,6 +29,10 @@ export default async function AppLayout({
         </div>
       </header>
       <main className="mx-auto max-w-3xl px-4 py-8">{children}</main>
+      <footer className="mx-auto max-w-3xl px-4 pb-8 text-xs text-slate-500">
+        Recheck explains medical bills and helps you ask questions about them. It does not give
+        legal or medical advice.
+      </footer>
     </div>
   );
 }
