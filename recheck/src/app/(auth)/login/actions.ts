@@ -4,6 +4,8 @@ import { redirect } from "next/navigation";
 import { HOME_PATH } from "@/lib/routes";
 import { z } from "zod";
 import { createServerSupabase } from "@/lib/db/supabase";
+import { translateMessage } from "@/lib/i18n/dictionaries";
+import { getLocale } from "@/lib/i18n/server";
 
 type Intent = "login" | "signup";
 
@@ -23,6 +25,15 @@ const credentialsSchema = z.object({
 });
 
 export async function authenticate(
+  previous: LoginState,
+  formData: FormData,
+): Promise<LoginState> {
+  const state = await checkCredentials(previous, formData);
+  const locale = await getLocale();
+  return { ...state, error: translateMessage(locale, state.error), message: translateMessage(locale, state.message) };
+}
+
+async function checkCredentials(
   _previous: LoginState,
   formData: FormData,
 ): Promise<LoginState> {

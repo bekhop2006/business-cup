@@ -3,6 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
+import { translateMessage } from "@/lib/i18n/dictionaries";
+import { getLocale } from "@/lib/i18n/server";
 import { getCurrentUser } from "@/lib/db/auth";
 import { createCareCase, getCareCase, saveCaseSafety } from "@/lib/db/care";
 import { createServerSupabase } from "@/lib/db/supabase";
@@ -12,7 +14,13 @@ import { caseDescriptionSchema, readCaseContext, type Intake } from "@/lib/schem
 
 export type CareFormState = { error?: string; description?: string };
 
-export async function startCareCase(_previous: CareFormState, form: FormData): Promise<CareFormState> {
+// The description form is on translated screens; its messages follow the language.
+export async function startCareCase(previous: CareFormState, form: FormData): Promise<CareFormState> {
+  const state = await saveCareDescription(previous, form);
+  return { ...state, error: translateMessage(await getLocale(), state.error) };
+}
+
+async function saveCareDescription(_previous: CareFormState, form: FormData): Promise<CareFormState> {
   const user = await getCurrentUser();
   if (!user) redirect("/login");
   const description = String(form.get("description") ?? "");

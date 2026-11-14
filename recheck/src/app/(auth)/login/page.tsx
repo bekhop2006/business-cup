@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { LoginForm } from "@/components/LoginForm";
+import { getT } from "@/lib/i18n/server";
 import { getCurrentUser } from "@/lib/db/auth";
 import { HOME_PATH } from "@/lib/routes";
 import { authenticate } from "./actions";
@@ -8,30 +10,26 @@ import styles from "@/app/product.module.css";
 
 export default async function LoginPage() {
   if (await getCurrentUser()) redirect(HOME_PATH);
+  const { locale, t } = await getT();
 
   return (
     <div className={styles.surface}>
       <main className={styles.login}>
         <div className={styles.loginIntro}>
-          <Link href="/" className={styles.brand} aria-label="Recheck home">
-            Recheck <span aria-hidden="true">↗</span>
-          </Link>
-          <h1>Your paperwork.<br />A clearer picture.</h1>
-          <p>
-            Keep your family&apos;s medical bills together, understand the
-            charges, and prepare your next conversation with the billing office.
-          </p>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <Link href="/" className={styles.brand} aria-label={t.login.homeLabel}>
+              Recheck <span aria-hidden="true">↗</span>
+            </Link>
+            <LanguageSwitcher current={locale} label={t.common.languageLabel} tone="dark" />
+          </div>
+          <h1>{t.login.titleLine1}<br />{t.login.titleLine2}</h1>
+          <p>{t.login.intro}</p>
         </div>
         <section className={styles.loginCard} aria-labelledby="account-heading">
-          <h2 id="account-heading" className="text-2xl font-semibold">Let&apos;s get started</h2>
-          <p className="mt-2 text-sm text-slate-600">
-            Log in, or create an account with your email and a password.
-          </p>
-          <LoginForm action={authenticate} />
-          <p className="mt-6 text-xs leading-relaxed text-slate-600">
-            Recheck helps explain billing documents. It does not give legal
-            or medical advice.
-          </p>
+          <h2 id="account-heading" className="text-2xl font-semibold">{t.login.cardTitle}</h2>
+          <p className="mt-2 text-sm text-slate-600">{t.login.cardText}</p>
+          <LoginForm action={authenticate} t={t.login} />
+          <p className="mt-6 text-xs leading-relaxed text-slate-600">{t.login.note}</p>
         </section>
       </main>
     </div>

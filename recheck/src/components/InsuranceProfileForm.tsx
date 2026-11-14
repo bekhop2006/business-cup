@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import type { ProfileFormState } from "@/app/(onboarding)/onboarding/actions";
+import type { Dictionary } from "@/lib/i18n/dictionaries";
 import { COMMON_INSURERS, type InsuranceInput } from "@/lib/profile/onboarding";
 
 type Props = {
@@ -9,6 +10,8 @@ type Props = {
   next: string;
   defaults: InsuranceInput;
   submitLabel: string;
+  t: Dictionary["insuranceForm"];
+  savingLabel: string;
 };
 
 const inputClass = "w-full rounded-lg border border-slate-300 bg-white/70 px-3 py-2 text-base font-normal";
@@ -22,6 +25,7 @@ function Field(props: {
   defaults: InsuranceInput;
   money?: boolean;
   placeholder?: string;
+  emptyPlaceholder: string;
 }) {
   return (
     <label className={labelClass}>
@@ -34,7 +38,7 @@ function Field(props: {
           name={props.name}
           defaultValue={props.defaults[props.name]}
           inputMode={props.money ? "decimal" : undefined}
-          placeholder={props.placeholder ?? "Not sure? Leave empty"}
+          placeholder={props.placeholder ?? props.emptyPlaceholder}
           className={`${inputClass} ${props.money ? "pl-7" : ""}`}
         />
       </span>
@@ -43,58 +47,56 @@ function Field(props: {
   );
 }
 
-export function InsuranceProfileForm({ action, next, defaults, submitLabel }: Props) {
+export function InsuranceProfileForm({ action, next, defaults, submitLabel, t, savingLabel }: Props) {
+  const empty = t.leaveEmpty;
   const [state, formAction, pending] = useActionState(action, {});
 
   return (
     <form action={formAction} className="mt-6 flex flex-col gap-6">
       <input type="hidden" name="next" value={next} />
-      <p className="text-sm text-slate-600">
-        Everything is optional. You&apos;ll find most of it on your insurance card or your plan&apos;s
-        Summary of Benefits. The more we know, the narrower your cost estimates.
-      </p>
+      <p className="text-sm text-slate-600">{t.intro}</p>
 
       <fieldset className="grid gap-4 sm:grid-cols-3">
-        <legend className="mb-2 font-semibold">Your plan</legend>
+        <legend className="mb-2 font-semibold">{t.yourPlan}</legend>
         <label className={labelClass}>
-          Insurance company
-          <input name="insurerName" list="insurers" defaultValue={defaults.insurerName} placeholder="e.g. Aetna" className={inputClass} />
+          {t.insurer}
+          <input name="insurerName" list="insurers" defaultValue={defaults.insurerName} placeholder={t.insurerPlaceholder} className={inputClass} />
           <datalist id="insurers">
             {COMMON_INSURERS.map((insurer) => (
               <option key={insurer} value={insurer} />
             ))}
           </datalist>
         </label>
-        <Field name="planName" label="Plan name" defaults={defaults} placeholder="e.g. Choice Plus" />
+        <Field name="planName" label={t.planName} defaults={defaults} placeholder={t.planNamePlaceholder} emptyPlaceholder={empty} />
         <label className={labelClass}>
-          Plan type
+          {t.planType}
           <select name="planType" defaultValue={defaults.planType} className={inputClass}>
-            <option value="">Not sure</option>
+            <option value="">{t.notSure}</option>
             <option value="PPO">PPO</option>
             <option value="HMO">HMO</option>
             <option value="EPO">EPO</option>
             <option value="POS">POS</option>
-            <option value="HDHP">High-deductible (HDHP)</option>
-            <option value="other">Other</option>
+            <option value="HDHP">{t.hdhp}</option>
+            <option value="other">{t.other}</option>
           </select>
         </label>
       </fieldset>
 
       <fieldset className="grid gap-4 sm:grid-cols-2">
-        <legend className="mb-2 font-semibold">This year</legend>
-        <Field name="deductible" label="Deductible" money defaults={defaults} hint="What you pay each year before your plan starts sharing costs." />
-        <Field name="deductibleMet" label="Already paid toward it" money defaults={defaults} hint="Your insurer's website or app shows this." />
-        <Field name="oopMax" label="Out-of-pocket maximum" money defaults={defaults} hint="The most you'd pay in a year for covered care." />
-        <Field name="oopMet" label="Already spent toward it" money defaults={defaults} />
-        <Field name="coinsurance" label="Coinsurance (%)" defaults={defaults} placeholder="e.g. 20" hint="Your share of the cost after the deductible." />
+        <legend className="mb-2 font-semibold">{t.thisYear}</legend>
+        <Field name="deductible" label={t.deductible} money defaults={defaults} hint={t.deductibleHint} emptyPlaceholder={empty} />
+        <Field name="deductibleMet" label={t.deductibleMet} money defaults={defaults} hint={t.deductibleMetHint} emptyPlaceholder={empty} />
+        <Field name="oopMax" label={t.oopMax} money defaults={defaults} hint={t.oopMaxHint} emptyPlaceholder={empty} />
+        <Field name="oopMet" label={t.oopMet} money defaults={defaults} emptyPlaceholder={empty} />
+        <Field name="coinsurance" label={t.coinsurance} defaults={defaults} placeholder={t.coinsurancePlaceholder} hint={t.coinsuranceHint} emptyPlaceholder={empty} />
       </fieldset>
 
       <fieldset className="grid gap-4 sm:grid-cols-4">
-        <legend className="mb-2 font-semibold">Copays</legend>
-        <Field name="copayPrimary" label="Primary care" money defaults={defaults} placeholder="" />
-        <Field name="copaySpecialist" label="Specialist" money defaults={defaults} placeholder="" />
-        <Field name="copayUrgentCare" label="Urgent care" money defaults={defaults} placeholder="" />
-        <Field name="copayEr" label="Emergency room" money defaults={defaults} placeholder="" />
+        <legend className="mb-2 font-semibold">{t.copays}</legend>
+        <Field name="copayPrimary" label={t.primaryCare} money defaults={defaults} placeholder="" emptyPlaceholder={empty} />
+        <Field name="copaySpecialist" label={t.specialist} money defaults={defaults} placeholder="" emptyPlaceholder={empty} />
+        <Field name="copayUrgentCare" label={t.urgentCare} money defaults={defaults} placeholder="" emptyPlaceholder={empty} />
+        <Field name="copayEr" label={t.er} money defaults={defaults} placeholder="" emptyPlaceholder={empty} />
       </fieldset>
 
       {state.error && (
@@ -106,7 +108,7 @@ export function InsuranceProfileForm({ action, next, defaults, submitLabel }: Pr
         disabled={pending}
         className="self-start rounded-lg bg-[var(--rc-accent)] px-5 py-2 font-medium text-[var(--rc-navy)] disabled:opacity-60"
       >
-        {pending ? "Saving…" : submitLabel}
+        {pending ? savingLabel : submitLabel}
       </button>
     </form>
   );

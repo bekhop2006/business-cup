@@ -1,6 +1,8 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { translateMessage } from "@/lib/i18n/dictionaries";
+import { getLocale } from "@/lib/i18n/server";
 import { getCurrentUser } from "@/lib/db/auth";
 import { markOnboarded, saveAboutYou, saveInsurancePlan } from "@/lib/db/profiles";
 import { createServerSupabase } from "@/lib/db/supabase";
@@ -27,7 +29,7 @@ async function requireUserId(): Promise<string> {
   return user.id;
 }
 
-export async function saveAboutYouAction(
+async function saveAboutYouDetails(
   _previous: ProfileFormState,
   formData: FormData,
 ): Promise<ProfileFormState> {
@@ -47,7 +49,7 @@ export async function saveAboutYouAction(
   redirect(nextPage(formData));
 }
 
-export async function saveInsuranceAction(
+async function saveInsuranceDetails(
   _previous: ProfileFormState,
   formData: FormData,
 ): Promise<ProfileFormState> {
@@ -81,6 +83,19 @@ export async function saveInsuranceAction(
     return { error: "We couldn't save your insurance details. Please try again." };
   }
   redirect(nextPage(formData));
+}
+
+// Messages are written in English; show them in the reader's language.
+async function translated(state: ProfileFormState): Promise<ProfileFormState> {
+  return { ...state, error: translateMessage(await getLocale(), state.error) };
+}
+
+export async function saveAboutYouAction(previous: ProfileFormState, formData: FormData): Promise<ProfileFormState> {
+  return translated(await saveAboutYouDetails(previous, formData));
+}
+
+export async function saveInsuranceAction(previous: ProfileFormState, formData: FormData): Promise<ProfileFormState> {
+  return translated(await saveInsuranceDetails(previous, formData));
 }
 
 // Finishing or skipping onboarding: the rest can be added later on /profile.
