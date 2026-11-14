@@ -2,7 +2,7 @@
 
 Work through the stages in order. A stage is finished only when its "Done when" line is true **on the deployed app**, not only locally.
 
-**Current stage:** 7
+**Current stage:** 8
 
 Update the line above when a stage is finished.
 
@@ -101,11 +101,13 @@ Verified 2026-11-15: Michael's specialist visit is $50; with a knee X-ray $100.0
 
 ## Stage 7 — Care case (~2 h)
 
-- [ ] LLM intake: free text → summary, body area, suggested routes, mentioned warning signs
-- [ ] Case screen: safety questions → "Get care now" or care options with cost ranges
-- [ ] Cost forecast screen with assumptions and sources
+- [x] LLM intake: free text → summary, body area, suggested routes, mentioned warning signs
+- [x] Case screen: safety questions → "Get care now" or care options with cost ranges
+- [x] Cost forecast screen with assumptions and sources
 
 **Done when:** on production, "knee hurts after tennis" leads to care options with costs, and "I can't put weight on it" leads to "Get care now".
+
+Verified 2026-11-15 on production (`5d8d6c6`): real signup and Michael's full onboarding; successful LLM intake; all-no safety answers show the three care options and expected cost ranges; inability to bear weight shows "Get care now" without prices, even if a client submits `urgency=routine`. Editing safety answers hides previous forecasts. Other body areas show the scope limit, and signed-out case requests redirect to login. Local browser verification also confirmed the immediate warning before saving. Typecheck, lint, production build and all 178 tests passed. Intake has a 20-second timeout and can be skipped; model failure still opens safety questions.
 
 ## Stage 8 — Providers (~1.5 h)
 
