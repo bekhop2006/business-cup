@@ -4,10 +4,15 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { createServerSupabase } from "@/lib/db/supabase";
 
+type Intent = "login" | "signup";
+
 export type LoginState = {
+  intent?: Intent;
   email?: string;
   error?: string;
   message?: string;
+  // The other form the person probably meant to use.
+  suggest?: Intent;
 };
 
 const credentialsSchema = z.object({
@@ -27,8 +32,9 @@ export async function authenticate(
   });
   // Returned so the form keeps the email after a failed attempt.
   const typedEmail = String(formData.get("email") ?? "");
+  const typedIntent: Intent = formData.get("intent") === "signup" ? "signup" : "login";
   if (!parsed.success) {
-    return { email: typedEmail, error: parsed.error.issues[0]?.message };
+    return { intent: typedIntent, email: typedEmail, error: parsed.error.issues[0]?.message };
   }
 
   const { email, password, intent } = parsed.data;
@@ -36,16 +42,23 @@ export async function authenticate(
 
   if (intent === "signup") {
     const { data, error } = await supabase.auth.signUp({ email, password });
-    if (error) return { email, error: error.message };
+    if (error?.code === "user_already_exists") {
+      return { intent, email, error: "There's already an account with this email.", suggest: "login" };
+    }
+    if (error) return { intent, email, error: error.message };
     if (!data.session) {
       return {
+        intent,
         email,
         message: "Check your inbox to confirm your email, then log in.",
       };
     }
   } else {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) return { email, error: error.message };
+    if (error?.code === "invalid_credentials") {
+      return { intent, email, error: "Wrong email or password.", suggest: "signup" };
+    }
+    if (error) return { intent, email, error: error.message };
   }
 
   redirect("/visits");
