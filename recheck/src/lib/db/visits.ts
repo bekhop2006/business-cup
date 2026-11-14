@@ -107,3 +107,17 @@ export async function findOrCreateFamilyMember(db: Db, userId: string, rawName: 
   if (added) return added.id;
   throw new Error("Could not add the family member.");
 }
+
+// The user's first visit: its check is free on the free plan.
+export async function getFirstVisitId(db: Db, userId: string): Promise<string | null> {
+  const { data, error } = await db
+    .from("visits")
+    .select("id")
+    .eq("user_id", userId)
+    .order("created_at")
+    .order("id")
+    .limit(1)
+    .maybeSingle();
+  if (error) throw new Error("Could not load visits.");
+  return data?.id ?? null;
+}

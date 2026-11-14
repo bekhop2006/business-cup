@@ -65,3 +65,12 @@ export async function saveDisputeDraft(
     );
   if (error) throw new Error("Could not save the dispute letter.");
 }
+
+export async function listUserFlags(db: Db, userId: string) {
+  const { data, error } = await db
+    .from("flags")
+    .select("visit_id, type, potential_savings_cents")
+    .eq("user_id", userId);
+  if (error) throw new Error("Could not load flags.");
+  return data;
+}

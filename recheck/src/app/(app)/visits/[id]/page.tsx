@@ -4,13 +4,16 @@ import { z } from "zod";
 import { DisputePanel } from "@/components/DisputePanel";
 import { FlagNote } from "@/components/FlagNote";
 import { LineItemsList } from "@/components/LineItemsList";
+import { Paywall } from "@/components/Paywall";
 import { WhoseVisit } from "@/components/WhoseVisit";
+import { canSeeVisitChecks, canWriteLetters } from "@/lib/billing/plan";
 import { potentialSavings } from "@/lib/checks";
 import { getCurrentUser } from "@/lib/db/auth";
 import { listLineItemsForDocuments, listVisitDocuments } from "@/lib/db/documents";
 import { getDispute, listVisitFlags } from "@/lib/db/flags";
+import { getPlan } from "@/lib/db/profiles";
 import { createServerSupabase } from "@/lib/db/supabase";
-import { getVisit, listFamilyMembers } from "@/lib/db/visits";
+import { getFirstVisitId, getVisit, listFamilyMembers } from "@/lib/db/visits";
 import { formatServiceDate } from "@/lib/dates";
 import { STATUS_LABELS, documentTypeLabel } from "@/lib/documents/status";
 import { formatCents } from "@/lib/money";
@@ -26,12 +29,18 @@ export default async function VisitPage({ params }: PageProps<"/visits/[id]">) {
   const supabase = await createServerSupabase();
   const visit = await getVisit(supabase, user.id, id);
   if (!visit) notFound();
-  const [documents, members, flags, dispute] = await Promise.all([
+  const [documents, members, flags, dispute, plan, firstVisitId] = await Promise.all([
     listVisitDocuments(supabase, user.id, id),
     listFamilyMembers(supabase, user.id),
     listVisitFlags(supabase, user.id, id),
     getDispute(supabase, user.id, id),
+    getPlan(supabase, user.id),
+    getFirstVisitId(supabase, user.id),
   ]);
+  // On the free plan only the first visit's check is shown in full; other
+  // visits show how much was found, and the details are part of the paid plan.
+  const showChecks = canSeeVisitChecks(plan, visit.id, firstVisitId);
+  const shownFlags = showChecks ? flags : [];
   const lines = await listLineItemsForDocuments(
     supabase,
     user.id,
@@ -79,9 +88,9 @@ export default async function VisitPage({ params }: PageProps<"/visits/[id]">) {
             {savings > 0
               ? `If the provider corrects them, you could pay up to ${formatCents(savings)} less. `
               : ""}
-            Ask your provider to review the flagged charges and confirm your
-            payment deadline. Each possible issue is marked below. You can
-            prepare a letter at the bottom of this page.
+            {showChecks
+              ? "Ask your provider to review the flagged charges and confirm your payment deadline. Each possible issue is marked below. You can prepare a letter at the bottom of this page."
+              : "Your free check was used on your first visit, so the details of this one are part of Recheck Family."}
           </p>
         </div>
       ) : (
@@ -117,19 +126,33 @@ export default async function VisitPage({ params }: PageProps<"/visits/[id]">) {
             {document.patient_responsibility_cents !== null &&
               ` · says you owe ${formatCents(document.patient_responsibility_cents)}`}
           </p>
-          {flags
+          {shownFlags
             .filter((flag) => flag.document_id === document.id && flag.line_item_id === null)
             .map((flag) => (
               <FlagNote key={flag.id} flag={flag} />
             ))}
           <LineItemsList
             lines={lines.filter((line) => line.document_id === document.id)}
-            flags={flags}
+            flags={shownFlags}
           />
         </section>
       ))}
 
-      {flags.length > 0 && (
+      {flags.length > 0 && !showChecks && (
+        <Paywall title="See what we found on this visit">
+          Each problem marked next to its charge, explained in plain words, with a dispute letter and
+          a phone script for the billing office.
+        </Paywall>
+      )}
+
+      {flags.length > 0 && showChecks && !canWriteLetters(plan) && (
+        <Paywall title="Ask the provider to fix it">
+          Get a dispute letter for the billing office and a script for calling them, written from
+          what we found on this visit.
+        </Paywall>
+      )}
+
+      {flags.length > 0 && canWriteLetters(plan) && (
         <DisputePanel
           visitId={visit.id}
           initialDraft={

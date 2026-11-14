@@ -1,5 +1,7 @@
 import { z } from "zod";
+import { canWriteLetters } from "@/lib/billing/plan";
 import { getCurrentUser } from "@/lib/db/auth";
+import { getPlan } from "@/lib/db/profiles";
 import { listVisitDocuments } from "@/lib/db/documents";
 import { listVisitFlags, saveDisputeDraft } from "@/lib/db/flags";
 import { createServerSupabase } from "@/lib/db/supabase";
@@ -21,6 +23,9 @@ export async function POST(_request: Request, context: RouteContext<"/api/visits
   if (!id.success) return fail("Visit not found.", 404);
 
   const supabase = await createServerSupabase();
+  if (!canWriteLetters(await getPlan(supabase, user.id))) {
+    return fail("Dispute letters are part of Recheck Family.", 402);
+  }
   const visit = await getVisit(supabase, user.id, id.data);
   if (!visit) return fail("Visit not found.", 404);
   const [flags, documents] = await Promise.all([

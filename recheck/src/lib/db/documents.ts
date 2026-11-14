@@ -165,3 +165,16 @@ export async function saveLineExplanations(
     if (error) throw new Error("Could not save a line explanation.");
   }
 }
+
+// Read EOBs of every visit, for the yearly picture.
+export async function listReadEobs(db: Db, userId: string) {
+  const { data, error } = await db
+    .from("documents")
+    .select("visit_id, created_at, patient_responsibility_cents")
+    .eq("user_id", userId)
+    .eq("status", "parsed")
+    .eq("type", "eob")
+    .not("visit_id", "is", null);
+  if (error) throw new Error("Could not load documents.");
+  return data;
+}

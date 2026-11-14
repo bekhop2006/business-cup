@@ -15,6 +15,12 @@ export function AppNavigation() {
       <Link href="/upload" aria-current={pathname === "/upload" ? "page" : undefined}>
         Add a document
       </Link>
+      <Link href="/dashboard" aria-current={pathname === "/dashboard" ? "page" : undefined}>
+        Your year
+      </Link>
+      <Link href="/billing" aria-current={pathname === "/billing" ? "page" : undefined}>
+        Plan
+      </Link>
     </>
   );
 }

@@ -56,7 +56,9 @@
     │       ├── visits/[id]/dispute/route.ts       # generate letter and call script
     │       ├── inbound-email/route.ts             # optional, stage 6
     │       ├── cron/reminders/route.ts
-    │       └── stripe/webhook/route.ts
+    │       ├── billing/checkout/route.ts          # start a Stripe Checkout for the paid plan
+    │       ├── billing/confirm/route.ts           # return from Checkout, confirm and upgrade
+    │       └── stripe/webhook/route.ts            # signed Stripe events keep the plan in sync
     ├── components/           # UI components, no business logic
     └── lib/
         ├── llm/
@@ -67,6 +69,10 @@
         │   └── prompts/      # prompt text, one file per task
         ├── schemas/          # Zod schemas and inferred types
         ├── checks/           # pure functions, one file per check, index.ts runs all
+        ├── billing/
+        │   ├── plan.ts       # what the free and paid plans include
+        │   └── stripe.ts     # the only file that talks to Stripe
+        ├── dashboard/yearly.ts  # the yearly picture, computed from visits
         ├── visits/
         │   ├── match.ts      # pure rules: same provider, same person, matching visit
         │   ├── attach.ts     # attach a document to a visit or create one, then recompute totals
@@ -154,3 +160,9 @@ INBOUND_EMAIL_SECRET=
 CRON_SECRET=
 APP_URL=
 ```
+
+## Plans and payments
+
+- Free: upload and read documents, visits and totals, and the full check (flags, explanations) of the user's first visit. Other visits show how many things were found and how much is worth asking about.
+- Paid (Recheck Family, $9 a month, Stripe test mode): every visit's flags, dispute letters and call scripts, the yearly dashboard.
+- `profiles.plan` is written only by the server: by `/api/billing/confirm` after Checkout and by the Stripe webhook (`checkout.session.completed`, `customer.subscription.updated`, `customer.subscription.deleted`). The price is set in code, so no product needs to exist in Stripe.
