@@ -2,7 +2,7 @@
 
 Work through the stages in order. A stage is finished only when its "Done when" line is true **on the deployed app**, not only locally.
 
-**Current stage:** 0
+**Current stage:** 1
 
 Update the line above when a stage is finished.
 
@@ -23,10 +23,10 @@ If time runs short, cut from the bottom of this list, never from the top:
 - [x] Create the Next.js + TypeScript project, strict mode, Tailwind, ESLint, Vitest
 - [x] Add `npm run typecheck`, `lint`, `test` scripts
 - [x] Decide database/auth/storage option (see `STRUCTURE.md`) and write it down here: **Supabase** (Postgres, Auth with email + password, Storage). "Confirm email" is off in Supabase Auth so sign-up logs in at once. Next.js Cache Components are off: every app page reads the session.
-- [ ] First migration: all tables from `STRUCTURE.md` with row-level security
-- [ ] Email login works
+- [x] First migration: all tables from `STRUCTURE.md` with row-level security
+- [x] Email login works
 - [x] `src/lib/env.ts` and `.env.example`
-- [ ] Deploy to Railway from GitHub, environment variables set
+- [x] Deploy to Railway from GitHub, environment variables set (root directory `/recheck`, production URL https://business-cup-production.up.railway.app)
 
 **Done when:** a logged-in user sees an empty visits page at the production URL.
 
