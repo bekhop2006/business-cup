@@ -2,7 +2,7 @@
 
 Work through the stages in order. A stage is finished only when its "Done when" line is true **on the deployed app**, not only locally.
 
-**Current stage:** 3
+**Current stage:** 4
 
 Update the line above when a stage is finished.
 
@@ -56,12 +56,12 @@ If time runs short, cut from the bottom of this list, never from the top:
 
 ## Stage 3 — Checks and actions (hours 11–15)
 
-- [ ] All five checks in `src/lib/checks/`, each with unit tests
-- [ ] Flags shown on the visit card next to their line, with potential savings
-- [ ] `explain.ts`: plain-language text for lines and flags
-- [ ] `dispute.ts`: dispute letter and phone script from the visit's flags
-- [ ] Copy and download buttons for the letter
-- [ ] "Not legal or medical advice" notice
+- [x] All five checks in `src/lib/checks/`, each with unit tests
+- [x] Flags shown on the visit card next to their line, with potential savings
+- [x] `explain.ts`: plain-language text for lines and flags
+- [x] `dispute.ts`: dispute letter and phone script from the visit's flags
+- [x] Copy and download buttons for the letter
+- [x] "Not legal or medical advice" notice
 
 **Done when:** the fixture with a duplicate line and the fixture with an EOB mismatch both produce the right flag, a readable explanation and a usable letter on production.
 
