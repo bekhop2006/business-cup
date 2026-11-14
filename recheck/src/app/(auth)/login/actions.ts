@@ -39,6 +39,10 @@ export async function authenticate(
   }
 
   const { email, password, intent } = parsed.data;
+  // Sign-up asks for the password twice; the server checks it too.
+  if (intent === "signup" && formData.get("confirmPassword") !== password) {
+    return { intent, email, error: "The passwords don't match. Type the same password twice." };
+  }
   const supabase = await createServerSupabase();
 
   if (intent === "signup") {

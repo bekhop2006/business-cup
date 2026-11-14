@@ -60,6 +60,28 @@ export function LoginForm({ action }: Props) {
           <span className="text-xs font-normal text-slate-600">At least 8 characters.</span>
         )}
       </label>
+      {mode === "signup" && (
+        <label className="flex flex-col gap-1 text-sm font-medium">
+          Confirm password
+          <input
+            name="confirmPassword"
+            type="password"
+            autoComplete="new-password"
+            minLength={8}
+            required
+            onInput={(event) => {
+              const field = event.currentTarget;
+              const password = field.form?.elements.namedItem("password");
+              field.setCustomValidity(
+                password instanceof HTMLInputElement && password.value !== field.value
+                  ? "The passwords don't match."
+                  : "",
+              );
+            }}
+            className="rounded-lg border border-slate-300 px-3 py-2 text-base font-normal"
+          />
+        </label>
+      )}
 
       {shown.error && (
         <p role="alert" className="text-sm text-red-700">
