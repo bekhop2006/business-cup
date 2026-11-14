@@ -125,7 +125,7 @@ Each check is a pure function: `(visit, documents, lineItems) => Flag[]`. No net
 
 ## Environment variables
 
-Listed in `.env.example`, validated in `src/lib/env.ts`. The app fails at start if one is missing.
+Listed in `.env.example`, validated in `src/lib/env.ts`. The app fails at start if one is missing. Variables for features that are not built yet stay optional until the commit that starts using them.
 
 ```
 DATABASE_URL=

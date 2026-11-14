@@ -20,12 +20,12 @@ If time runs short, cut from the bottom of this list, never from the top:
 
 ## Stage 0 — Foundation (hours 0–2)
 
-- [ ] Create the Next.js + TypeScript project, strict mode, Tailwind, ESLint, Vitest
-- [ ] Add `npm run typecheck`, `lint`, `test` scripts
-- [ ] Decide database/auth/storage option (see `STRUCTURE.md`) and write it down here: ______
+- [x] Create the Next.js + TypeScript project, strict mode, Tailwind, ESLint, Vitest
+- [x] Add `npm run typecheck`, `lint`, `test` scripts
+- [x] Decide database/auth/storage option (see `STRUCTURE.md`) and write it down here: **Supabase** (Postgres, Auth with email + password, Storage). "Confirm email" is off in Supabase Auth so sign-up logs in at once. Next.js Cache Components are off: every app page reads the session.
 - [ ] First migration: all tables from `STRUCTURE.md` with row-level security
 - [ ] Email login works
-- [ ] `src/lib/env.ts` and `.env.example`
+- [x] `src/lib/env.ts` and `.env.example`
 - [ ] Deploy to Railway from GitHub, environment variables set
 
 **Done when:** a logged-in user sees an empty visits page at the production URL.
