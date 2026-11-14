@@ -2,7 +2,7 @@
 
 Work through the stages in order. A stage is finished only when its "Done when" line is true **on the deployed app**, not only locally.
 
-**Current stage:** 6
+**Current stage:** 7
 
 Update the line above when a stage is finished.
 
@@ -90,12 +90,14 @@ If time runs short, cut from the bottom of this list, never from the top:
 
 ## Stage 6 — Cost engine (~1.5 h)
 
-- [ ] `care/safety.ts`: fixed warning signs and deterministic urgency, with tests
-- [ ] `care/routes.ts`: primary care, sports medicine, urgent care, ER with CPT codes
-- [ ] `costs/benchmarks.ts`: real CMS fee schedule amounts with source and year
-- [ ] `costs/patientShare.ts` and `costs/scenarios.ts` with tests (Michael's plan and an empty plan)
+- [x] `care/safety.ts`: fixed warning signs and deterministic urgency, with tests
+- [x] `care/routes.ts`: primary care, sports medicine, urgent care, ER with CPT codes
+- [x] `costs/benchmarks.ts`: real CMS fee schedule amounts with source and year
+- [x] `costs/patientShare.ts` and `costs/scenarios.ts` with tests (Michael's plan and an empty plan)
 
 **Done when:** tests are green and Michael's three scenarios are checked by hand.
+
+Verified 2026-11-15: Michael's specialist visit is $50; with a knee X-ray $100.06–$125.93; with a knee MRI $291.20–$415.89. All fit within his $1,200 remaining deductible. Cost modules are on production in commit `257cc4b`.
 
 ## Stage 7 — Care case (~2 h)
 

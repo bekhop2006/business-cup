@@ -45,6 +45,7 @@ type StructuredRequest<Schema extends z.ZodType> = {
   request: string;
   schema: Schema;
   schemaName: string;
+  timeoutMs?: number;
 };
 
 // Returns output that matches the schema, or null when the model's output does
@@ -69,7 +70,7 @@ async function parseStructured<Schema extends z.ZodType>(
       text: { format: zodTextFormat(options.schema, options.schemaName) },
       reasoning: { effort: "low" },
       store: false,
-    });
+    }, options.timeoutMs ? { timeout: options.timeoutMs, maxRetries: 0 } : undefined);
     const parsed = options.schema.safeParse(response.output_parsed);
     return parsed.success ? parsed.data : null;
   } catch (error) {

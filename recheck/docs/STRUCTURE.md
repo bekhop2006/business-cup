@@ -79,6 +79,7 @@
         │   ├── extract.ts    # document -> ExtractedDocument
         │   ├── explain.ts    # line items + flags -> plain-language text
         │   ├── dispute.ts    # visit + flags -> letter and call script
+        │   ├── intake.ts     # care description -> validated summary and suggestions; never urgency
         │   └── prompts/      # prompt text, one file per task
         ├── schemas/          # Zod schemas and inferred types
         ├── checks/           # pure functions, one file per check, index.ts runs all
@@ -96,6 +97,8 @@
         ├── money.ts          # cents <-> display
         └── env.ts            # validated environment variables
 ```
+
+Care cases keep the validated intake and confirmed safety answers separately in `warning_answers`. Urgency is recomputed from the confirmed answers, including when a case is reopened. An unavailable intake does not block safety questions. The current questions and imaging scenarios cover knee/leg pain; other health needs show the scope limit instead of unrelated estimates.
 
 ## Document pipeline
 

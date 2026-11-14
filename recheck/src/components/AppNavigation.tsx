@@ -9,6 +9,9 @@ export function AppNavigation() {
 
   return (
     <>
+      <Link href="/care/new" aria-current={pathname.startsWith("/care") ? "page" : undefined}>
+        Get care
+      </Link>
       <Link href="/visits" aria-current={inVisits ? "page" : undefined}>
         Your visits
       </Link>
