@@ -9,4 +9,4 @@ export function isPublicPath(pathname: string): boolean {
 }
 
 // Where people land after logging in or finishing onboarding.
-export const HOME_PATH = "/visits";
+export const HOME_PATH = "/home";

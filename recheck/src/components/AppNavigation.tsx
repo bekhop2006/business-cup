@@ -3,28 +3,28 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+// Home · Get care · Bills · Plan, plus the profile with the insurance details.
 export function AppNavigation() {
   const pathname = usePathname();
-  const inVisits = pathname.startsWith("/visits") || pathname.startsWith("/documents");
+  const current = (active: boolean) => (active ? "page" : undefined);
+  const inBills =
+    pathname.startsWith("/visits") || pathname.startsWith("/documents") || pathname === "/upload";
 
   return (
     <>
-      <Link href="/care/new" aria-current={pathname.startsWith("/care") ? "page" : undefined}>
+      <Link href="/home" aria-current={current(pathname === "/home" || pathname === "/dashboard")}>
+        Home
+      </Link>
+      <Link href="/care/new" aria-current={current(pathname.startsWith("/care"))}>
         Get care
       </Link>
-      <Link href="/visits" aria-current={inVisits ? "page" : undefined}>
-        Your visits
+      <Link href="/visits" aria-current={current(inBills)}>
+        Bills
       </Link>
-      <Link href="/upload" aria-current={pathname === "/upload" ? "page" : undefined}>
-        Add a document
-      </Link>
-      <Link href="/dashboard" aria-current={pathname === "/dashboard" ? "page" : undefined}>
-        Your year
-      </Link>
-      <Link href="/billing" aria-current={pathname === "/billing" ? "page" : undefined}>
+      <Link href="/billing" aria-current={current(pathname === "/billing")}>
         Plan
       </Link>
-      <Link href="/profile" aria-current={pathname === "/profile" ? "page" : undefined}>
+      <Link href="/profile" aria-current={current(pathname === "/profile")}>
         Profile
       </Link>
     </>

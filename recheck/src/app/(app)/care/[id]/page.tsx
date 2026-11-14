@@ -6,13 +6,15 @@ import { CareSafetyNotice } from "@/components/CareSafetyNotice";
 import { CostForecast } from "@/components/CostForecast";
 import { CaseProviders } from "@/components/CaseProviders";
 import { CareChoice } from "@/components/CareChoice";
+import { Paywall } from "@/components/Paywall";
+import { canCompareCareOptions } from "@/lib/billing/plan";
 import { CARE_ROUTES, COMPARISON_ROUTE_IDS } from "@/lib/care/routes";
 import { assessUrgency } from "@/lib/care/safety";
 import { insuranceToCostPlan } from "@/lib/care/profile";
 import { forecastScenarios } from "@/lib/costs/scenarios";
 import { getCurrentUser } from "@/lib/db/auth";
-import { getCareCase, listCaseProviders } from "@/lib/db/care";
-import { getInsurancePlan, getProfile } from "@/lib/db/profiles";
+import { getCareCase, getFirstCareCaseId, listCaseProviders } from "@/lib/db/care";
+import { getInsurancePlan, getPlan, getProfile } from "@/lib/db/profiles";
 import { createServerSupabase } from "@/lib/db/supabase";
 import { readCaseContext } from "@/lib/schemas/intake";
 import { chosenProviderSchema, comparisonRouteSchema } from "@/lib/schemas/providers";
@@ -29,7 +31,11 @@ export default async function CareCasePage({ params, searchParams }: PageProps<"
   const assessment = context.answers ? assessUrgency(context.answers) : null;
   const query = await searchParams;
   const editingSafety = !assessment || assessment.urgency !== "routine" || query.safety === "1";
-  const showOptions = !editingSafety && assessment?.urgency === "routine" && context.scope === "knee_leg";
+  const routineKnee = !editingSafety && assessment?.urgency === "routine" && context.scope === "knee_leg";
+  // Safety answers and warnings are always free; the options after them are not.
+  const showOptions = routineKnee && canCompareCareOptions(
+    await getPlan(db, user.id), id, await getFirstCareCaseId(db, user.id),
+  );
   const insurance = showOptions ? await getInsurancePlan(db, user.id, new Date().getUTCFullYear()) : null;
   const profile = showOptions ? await getProfile(db, user.id) : null;
   const selected = comparisonRouteSchema.safeParse(query.route ?? careCase.route);
@@ -58,6 +64,13 @@ export default async function CareCasePage({ params, searchParams }: PageProps<"
       <div id="next-steps" className="scroll-mt-6">
         {assessment?.urgency === "routine" && context.scope !== "knee_leg" && (
           <section className="mt-6 rounded-xl border border-[var(--rc-navy)]/20 p-5"><h2 className="font-semibold">This question needs a different kind of guidance</h2><p className="mt-2 text-sm">Our current safety questions and cost scenarios cover knee or leg pain only. Contact your primary care clinician or your insurer&apos;s nurse line about other symptoms. These answers cannot rule out an emergency.</p></section>
+        )}
+        {routineKnee && !showOptions && (
+          <Paywall title="Compare care options, costs and providers">
+            You haven&apos;t reported a warning sign in this check. Your first care question included
+            care options, cost forecasts for your plan and nearby providers. Upgrade to get them for
+            this question too.
+          </Paywall>
         )}
         {showOptions && <>
           <CareChoice providerValue={careCase.chosen_provider} estimateValue={careCase.estimate} />

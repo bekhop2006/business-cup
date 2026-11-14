@@ -38,6 +38,14 @@ export async function listCareCases(db: Db, userId: string) {
   return data;
 }
 
+// The user's first care question: it is free in full on the free plan.
+export async function getFirstCareCaseId(db: Db, userId: string): Promise<string | null> {
+  const { data, error } = await db.from("care_cases").select("id").eq("user_id", userId)
+    .order("created_at").order("id").limit(1).maybeSingle();
+  if (error) throw new Error("Could not load care questions.");
+  return data?.id ?? null;
+}
+
 export async function saveCaseSafety(db: Db, userId: string, caseId: string, context: CaseContext, urgency: Urgency) {
   let query = db.from("care_cases").update({
     warning_answers: { ...context, revision: randomUUID() }, urgency,

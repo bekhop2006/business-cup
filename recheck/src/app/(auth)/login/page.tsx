@@ -2,11 +2,12 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { LoginForm } from "@/components/LoginForm";
 import { getCurrentUser } from "@/lib/db/auth";
+import { HOME_PATH } from "@/lib/routes";
 import { authenticate } from "./actions";
 import styles from "@/app/product.module.css";
 
 export default async function LoginPage() {
-  if (await getCurrentUser()) redirect("/visits");
+  if (await getCurrentUser()) redirect(HOME_PATH);
 
   return (
     <div className={styles.surface}>

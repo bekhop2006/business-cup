@@ -1,6 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { HOME_PATH } from "@/lib/routes";
 import { z } from "zod";
 import { createServerSupabase } from "@/lib/db/supabase";
 
@@ -61,7 +62,7 @@ export async function authenticate(
     if (error) return { intent, email, error: error.message };
   }
 
-  redirect("/visits");
+  redirect(HOME_PATH);
 }
 
 export async function signOut() {

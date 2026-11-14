@@ -6,9 +6,10 @@ import { z } from "zod";
 import { CARE_ROUTES } from "@/lib/care/routes";
 import { insuranceToCostPlan } from "@/lib/care/profile";
 import { canCompareCare, makeSelectionEstimate } from "@/lib/care/selection";
+import { canCompareCareOptions } from "@/lib/billing/plan";
 import { getCurrentUser } from "@/lib/db/auth";
-import { getCareCase, getCaseProvider, saveCaseChoice, saveCaseProviders, saveCaseProviderSearch } from "@/lib/db/care";
-import { getInsurancePlan } from "@/lib/db/profiles";
+import { getCareCase, getCaseProvider, getFirstCareCaseId, saveCaseChoice, saveCaseProviders, saveCaseProviderSearch } from "@/lib/db/care";
+import { getInsurancePlan, getPlan } from "@/lib/db/profiles";
 import { createServerSupabase } from "@/lib/db/supabase";
 import { env } from "@/lib/env";
 import { findProviders, zipSchema } from "@/lib/providers";
@@ -18,6 +19,13 @@ import { chosenProviderSchema, comparisonRouteSchema } from "@/lib/schemas/provi
 export type ProviderFormState = { error?: string };
 const caseRouteSchema = z.object({ caseId: z.uuid(), route: comparisonRouteSchema });
 const safetyError = "Review your safety answers before comparing providers. If you need urgent care, don't wait for this page.";
+const paywallError = "Comparing providers for this care question is part of Recheck Plus.";
+
+type Db = Awaited<ReturnType<typeof createServerSupabase>>;
+
+async function mayCompare(db: Db, userId: string, caseId: string): Promise<boolean> {
+  return canCompareCareOptions(await getPlan(db, userId), caseId, await getFirstCareCaseId(db, userId));
+}
 
 export async function searchCaseProviders(_previous: ProviderFormState, form: FormData): Promise<ProviderFormState> {
   const user = await getCurrentUser();
@@ -32,6 +40,7 @@ export async function searchCaseProviders(_previous: ProviderFormState, form: Fo
     const careCase = await getCareCase(db, user.id, caseId);
     if (!careCase) return { error: "This care question wasn't found." };
     if (!canCompareCare(readCaseContext(careCase.warning_answers))) return { error: safetyError };
+    if (!await mayCompare(db, user.id, caseId)) return { error: paywallError };
     const option = CARE_ROUTES[route];
     const result = await findProviders({
       zip, placesQuery: option.placesQuery, npiTaxonomy: option.npiTaxonomy,
@@ -68,6 +77,7 @@ export async function chooseCaseProvider(_previous: ProviderFormState, form: For
     if (!careCase) return { error: "This care question wasn't found." };
     const context = readCaseContext(careCase.warning_answers);
     if (!canCompareCare(context)) return { error: safetyError };
+    if (!await mayCompare(db, user.id, caseId)) return { error: paywallError };
     if (!context.revision || !context.provider_searches?.[route]?.provider_ids.includes(providerId)) {
       return { error: "This provider isn't in the latest results for this care option. Search again." };
     }
