@@ -51,14 +51,14 @@ export function ProfileStack({ sections, defaultOpen }: { sections: ProfileSecti
             aria-labelledby={`title-${section.id}`}
             className="mt-3 scroll-mt-20 rounded-2xl bg-[var(--rc-navy)]/4 p-5"
           >
-            <div className="flex items-start justify-between gap-3">
+            <div className="flex items-center justify-between gap-3">
               <h2 id={`title-${section.id}`} className="font-medium">{section.title}</h2>
               <button
                 type="button"
                 aria-expanded={isOpen}
                 aria-controls={`edit-${section.id}`}
                 onClick={() => toggle(section.id)}
-                className="min-h-0 shrink-0 text-sm underline underline-offset-4"
+                className="shrink-0 text-sm underline underline-offset-4"
               >
                 {isOpen ? "Close" : "Edit"}
               </button>
