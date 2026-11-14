@@ -14,7 +14,9 @@ import { listVisits } from "@/lib/db/visits";
 import { formatServiceDate } from "@/lib/dates";
 import { formatCents } from "@/lib/money";
 import { chosenProviderSchema } from "@/lib/schemas/providers";
-import { VISIT_STATUS_LABELS } from "@/lib/visits/totals";
+import type { Dictionary } from "@/lib/i18n/dictionaries";
+import { fill, LOCALE_TAGS } from "@/lib/i18n/locales";
+import { getT } from "@/lib/i18n/server";
 
 const RECENT_CASES = 5;
 const RECENT_VISITS = 3;
@@ -24,6 +26,9 @@ export default async function HomePage() {
   if (!user) redirect("/login");
   const db = await createServerSupabase();
   const year = new Date().getUTCFullYear();
+  const { locale, t } = await getT();
+  const h = t.home;
+  const date = (iso: string) => formatServiceDate(iso, LOCALE_TAGS[locale]);
   const [profile, insurance, cases, visits, eobs, flags] = await Promise.all([
     getProfile(db, user.id),
     getInsurancePlan(db, user.id, year),
@@ -52,70 +57,66 @@ export default async function HomePage() {
   return (
     <>
       <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[var(--rc-navy)]/65">
-        {profile?.full_name ? `Hi, ${profile.full_name}` : "Welcome back"}
+        {profile?.full_name ? fill(h.greeting, { name: profile.full_name }) : h.welcome}
       </p>
-      <h1 className="mt-3 text-2xl font-semibold tracking-tight">What&apos;s going on? How can we help?</h1>
+      <h1 className="mt-3 text-2xl font-semibold tracking-tight">{h.title}</h1>
       <p className="mt-2 text-sm leading-relaxed text-[var(--rc-muted)]">
-        Describe a health problem to see where to go, who&apos;s nearby and what you might pay. This
-        version covers knee or leg pain.
+        {h.intro}
       </p>
       <p className="mt-4 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-950">
-        If you have chest pain, trouble breathing, or think this is an emergency,{" "}
-        <a href="tel:911" className="font-semibold underline">call 911</a> or get emergency care now.
+        {h.emergencyBefore}{" "}
+        <a href="tel:911" className="font-semibold underline">{h.call911}</a> {h.emergencyAfter}
       </p>
-      <CareDescriptionForm />
+      <CareDescriptionForm t={t.careForm} />
 
       <div className="mt-10 grid gap-4 md:grid-cols-2">
         <section className="rounded-xl border border-[var(--rc-navy)]/15 p-5">
           <div className="flex items-baseline justify-between gap-3">
-            <h2 className="font-semibold">Your {year} insurance</h2>
-            <Link href="/profile" className="text-sm underline underline-offset-4">Edit</Link>
+            <h2 className="font-semibold">{fill(h.insuranceTitle, { year })}</h2>
+            <Link href="/profile" className="text-sm underline underline-offset-4">{h.edit}</Link>
           </div>
-          <p className="mt-1 text-sm text-[var(--rc-muted)]">{planLine || "No plan details yet."}</p>
-          {summary.deductible && <ProgressBar label="Deductible" progress={summary.deductible} />}
-          {summary.outOfPocket && <ProgressBar label="Out-of-pocket maximum" progress={summary.outOfPocket} />}
+          <p className="mt-1 text-sm text-[var(--rc-muted)]">{planLine || h.noPlan}</p>
+          {summary.deductible && <ProgressBar label={h.deductible} progress={summary.deductible} of={h.of} />}
+          {summary.outOfPocket && <ProgressBar label={h.oopMax} progress={summary.outOfPocket} of={h.of} />}
           {summary.deductible || summary.outOfPocket ? (
             <p className="mt-3 text-xs text-[var(--rc-muted)]">
-              From what you entered and the insurer statements you&apos;ve added. Your insurer&apos;s
-              website has the exact numbers.
+              {h.insuranceNote}
             </p>
           ) : (
             <p className="mt-3 text-sm">
-              <Link href="/profile" className="font-medium underline">Add your deductible</Link> to see
-              how close you are and to narrow cost estimates.
+              <Link href="/profile" className="font-medium underline">{h.addDeductible}</Link>{" "}
+              {h.addDeductibleAfter}
             </p>
           )}
         </section>
 
         <section className="rounded-xl border border-[var(--rc-navy)]/15 p-5">
-          <h2 className="font-semibold">Your savings</h2>
+          <h2 className="font-semibold">{h.savingsTitle}</h2>
           <dl className="mt-3 grid grid-cols-2 gap-3">
             <div className="rounded-xl bg-[var(--rc-navy)]/4 p-4">
-              <dt className="text-xs text-[var(--rc-navy)]/70">Estimated from care choices</dt>
+              <dt className="text-xs text-[var(--rc-navy)]/70">{h.savedFromCare}</dt>
               <dd className="mt-1 text-lg font-semibold tabular-nums">{formatCents(estimatedCareSavingsCents(cases))}</dd>
             </div>
             <div className="rounded-xl bg-[var(--rc-navy)]/4 p-4">
-              <dt className="text-xs text-[var(--rc-navy)]/70">Worth asking about on bills</dt>
+              <dt className="text-xs text-[var(--rc-navy)]/70">{h.worthAsking}</dt>
               <dd className="mt-1 text-lg font-semibold tabular-nums">{formatCents(summary.savingsFoundCents)}</dd>
             </div>
           </dl>
           <p className="mt-3 text-xs text-[var(--rc-muted)]">
-            Care choices: the estimated difference against an urgent care visit for each provider you
-            chose, not money saved yet. Bills: possible errors found in {year}, worth a question to
-            your provider.
+            {fill(h.savingsNote, { year })}
           </p>
-          <Link href="/dashboard" className="mt-3 inline-block text-sm underline underline-offset-4">See your year in detail</Link>
+          <Link href="/dashboard" className="mt-3 inline-block text-sm underline underline-offset-4">{h.yearDetail}</Link>
         </section>
       </div>
 
       <section className="mt-10">
         <div className="flex items-baseline justify-between gap-3">
-          <h2 className="font-semibold">Your care questions</h2>
-          <Link href="/care/new" className="text-sm underline underline-offset-4">Ask a new one</Link>
+          <h2 className="font-semibold">{h.casesTitle}</h2>
+          <Link href="/care/new" className="text-sm underline underline-offset-4">{h.askNew}</Link>
         </div>
         {cases.length === 0 ? (
           <p className="mt-3 rounded-xl bg-[var(--rc-navy)]/4 p-5 text-sm">
-            No care questions yet. Describe what&apos;s bothering you above to get started.
+            {h.noCases}
           </p>
         ) : (
           <ul className="mt-3 divide-y divide-[var(--rc-navy)]/15 overflow-hidden rounded-lg border border-[var(--rc-navy)]/15">
@@ -125,7 +126,7 @@ export default async function HomePage() {
                   <span className="min-w-0">
                     <span className="block truncate font-medium">{careCase.summary ?? careCase.description}</span>
                     <span className="text-sm text-[var(--rc-navy)]/70">
-                      {formatServiceDate(careCase.created_at.slice(0, 10))} · {caseStatus(careCase)}
+                      {date(careCase.created_at.slice(0, 10))} · {caseStatus(careCase, h)}
                     </span>
                   </span>
                   <span aria-hidden="true" className="shrink-0">↗</span>
@@ -138,13 +139,13 @@ export default async function HomePage() {
 
       <section className="mt-10">
         <div className="flex items-baseline justify-between gap-3">
-          <h2 className="font-semibold">After the visit: your bills</h2>
-          <Link href="/upload" className="text-sm underline underline-offset-4">Add a bill</Link>
+          <h2 className="font-semibold">{h.billsTitle}</h2>
+          <Link href="/upload" className="text-sm underline underline-offset-4">{h.addBill}</Link>
         </div>
         {visits.length === 0 ? (
           <p className="mt-3 rounded-xl bg-[var(--rc-navy)]/4 p-5 text-sm">
-            Got a bill or an insurance statement? <Link href="/upload" className="font-medium underline">Add it</Link>{" "}
-            and we&apos;ll check it for possible errors.
+            {h.noBillsBefore} <Link href="/upload" className="font-medium underline">{h.noBillsLink}</Link>{" "}
+            {h.noBillsAfter}
           </p>
         ) : (
           <ul className="mt-3 divide-y divide-[var(--rc-navy)]/15 overflow-hidden rounded-lg border border-[var(--rc-navy)]/15">
@@ -154,7 +155,7 @@ export default async function HomePage() {
                   <span className="min-w-0">
                     <span className="block break-words font-medium">{visit.provider_name}</span>
                     <span className="text-sm text-[var(--rc-navy)]/70">
-                      {formatServiceDate(visit.service_date)} · {VISIT_STATUS_LABELS[visit.status]}
+                      {date(visit.service_date)} · {t.visitStatus[visit.status]}
                     </span>
                   </span>
                   <span className="shrink-0 font-semibold tabular-nums">{formatCents(visit.patient_owes_cents)}</span>
@@ -164,16 +165,16 @@ export default async function HomePage() {
           </ul>
         )}
         {visits.length > RECENT_VISITS && (
-          <Link href="/visits" className="mt-3 inline-block text-sm underline underline-offset-4">All bills</Link>
+          <Link href="/visits" className="mt-3 inline-block text-sm underline underline-offset-4">{h.allBills}</Link>
         )}
       </section>
     </>
   );
 }
 
-function caseStatus(careCase: CareCase): string {
-  if (careCase.urgency === "emergency" || careCase.urgency === "urgent") return "Get care now";
-  if (!careCase.urgency) return "Safety questions to answer";
+function caseStatus(careCase: CareCase, h: Dictionary["home"]): string {
+  if (careCase.urgency === "emergency" || careCase.urgency === "urgent") return h.caseGetCare;
+  if (!careCase.urgency) return h.caseSafety;
   const chosen = chosenProviderSchema.safeParse(careCase.chosen_provider);
-  return chosen.success ? `Chose ${chosen.data.name}` : "Compare care options";
+  return chosen.success ? fill(h.caseChose, { name: chosen.data.name }) : h.caseCompare;
 }
