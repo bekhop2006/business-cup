@@ -3,7 +3,6 @@ import { redirect } from "next/navigation";
 import { signOut } from "@/app/(auth)/login/actions";
 import { getCurrentUser } from "@/lib/db/auth";
 import { getProfile } from "@/lib/db/profiles";
-import { HOME_PATH } from "@/lib/routes";
 import { createServerSupabase } from "@/lib/db/supabase";
 import { AppNavigation } from "@/components/AppNavigation";
 import styles from "@/app/product.module.css";
@@ -24,7 +23,7 @@ export default async function AppLayout({
       <a href="#main-content" className={styles.skipLink}>Skip to content</a>
       <header className={styles.header}>
         <div className={styles.headerInner}>
-          <Link href={HOME_PATH} className={styles.brand}>
+          <Link href="/" className={styles.brand}>
             Recheck
           </Link>
           <nav aria-label="Your account" className={styles.navigation}>
