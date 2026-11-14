@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { chooseCaseProvider, searchCaseProviders } from "@/app/(app)/care/provider-actions";
 import { getCurrentUser } from "@/lib/db/auth";
-import { getCareCase, getCaseProvider, saveCaseChoice, saveCaseProviders, saveCaseProviderSearch } from "@/lib/db/care";
-import { getInsurancePlan } from "@/lib/db/profiles";
+import { getCareCase, getCaseProvider, getFirstCareCaseId, saveCaseChoice, saveCaseProviders, saveCaseProviderSearch } from "@/lib/db/care";
+import { getInsurancePlan, getPlan } from "@/lib/db/profiles";
 import { findProviders } from "@/lib/providers";
 import { careCase, CASE_ID, PROVIDER_ID, providerResult, providerRow, REVISION, routineContext, USER_ID } from "./provider-helpers";
 
@@ -11,10 +11,10 @@ vi.mock("next/cache", () => ({ revalidatePath: vi.fn() }));
 vi.mock("@/lib/db/auth", () => ({ getCurrentUser: vi.fn() }));
 vi.mock("@/lib/db/supabase", () => ({ createServerSupabase: vi.fn(async () => ({})) }));
 vi.mock("@/lib/db/care", () => ({
-  getCareCase: vi.fn(), getCaseProvider: vi.fn(), saveCaseChoice: vi.fn(),
+  getCareCase: vi.fn(), getCaseProvider: vi.fn(), getFirstCareCaseId: vi.fn(), saveCaseChoice: vi.fn(),
   saveCaseProviders: vi.fn(), saveCaseProviderSearch: vi.fn(),
 }));
-vi.mock("@/lib/db/profiles", () => ({ getInsurancePlan: vi.fn() }));
+vi.mock("@/lib/db/profiles", () => ({ getInsurancePlan: vi.fn(), getPlan: vi.fn() }));
 vi.mock("@/lib/env", () => ({ env: { GOOGLE_PLACES_API_KEY: undefined } }));
 vi.mock("@/lib/providers", async (importOriginal) => ({
   ...await importOriginal<typeof import("@/lib/providers")>(), findProviders: vi.fn(),
@@ -24,6 +24,9 @@ beforeEach(() => {
   vi.resetAllMocks();
   vi.mocked(getCurrentUser).mockResolvedValue({ id: USER_ID, email: null });
   vi.mocked(getCareCase).mockResolvedValue(careCase());
+  // A free user's first care question: options are included.
+  vi.mocked(getPlan).mockResolvedValue("free");
+  vi.mocked(getFirstCareCaseId).mockResolvedValue(CASE_ID);
   vi.mocked(getCaseProvider).mockResolvedValue(providerRow);
   vi.mocked(saveCaseProviders).mockResolvedValue([PROVIDER_ID]);
   vi.mocked(findProviders).mockResolvedValue({ providers: [providerResult], source: "npi_registry" });
@@ -68,6 +71,19 @@ describe("provider action access", () => {
     expect((await action({}, form())).error).toContain("safety");
     expect(findProviders).not.toHaveBeenCalled();
     expect(saveCaseChoice).not.toHaveBeenCalled();
+  });
+
+  it.each([searchCaseProviders, chooseCaseProvider])("keeps a free user's later care questions on the paid plan", async (action) => {
+    vi.mocked(getFirstCareCaseId).mockResolvedValue("00000000-0000-4000-8000-000000000999");
+    expect((await action({}, form())).error).toContain("Recheck Plus");
+    expect(findProviders).not.toHaveBeenCalled();
+    expect(saveCaseChoice).not.toHaveBeenCalled();
+  });
+
+  it.each([searchCaseProviders, chooseCaseProvider])("lets a paid user compare any care question", async (action) => {
+    vi.mocked(getPlan).mockResolvedValue("paid");
+    vi.mocked(getFirstCareCaseId).mockResolvedValue("00000000-0000-4000-8000-000000000999");
+    await expect(action({}, form())).rejects.toThrow("redirect:");
   });
 
   it("rejects emergency-room comparison and invalid ZIPs", async () => {

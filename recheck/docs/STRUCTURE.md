@@ -87,6 +87,7 @@
         │   ├── plan.ts       # what the free and paid plans include
         │   └── stripe.ts     # the only file that talks to Stripe
         ├── dashboard/yearly.ts  # the yearly picture, computed from visits
+        ├── dashboard/home.ts    # estimated savings from care choices, for the home page
         ├── visits/
         │   ├── match.ts      # pure rules: same provider, same person, matching visit
         │   ├── attach.ts     # attach a document to a visit or create one, then recompute totals

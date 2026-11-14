@@ -1,11 +1,14 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/db/auth";
+import { HOME_PATH } from "@/lib/routes";
+import { MONTHLY_PRICE_CENTS, PAID_PLAN_NAME } from "@/lib/billing/plan";
+import { formatCents } from "@/lib/money";
 import styles from "./home.module.css";
 
 export default async function Home() {
   const user = await getCurrentUser();
-  if (user) redirect("/visits");
+  if (user) redirect(HOME_PATH);
 
   return (
     <div className={styles.page}>
@@ -32,52 +35,53 @@ export default async function Home() {
       <main id="main">
         <section className={styles.hero} aria-labelledby="hero-heading">
           <div>
-            <p className={styles.eyebrow}>Medical bills. Checked with care.</p>
+            <p className={styles.eyebrow}>Before and after the visit</p>
             <h1 id="hero-heading">
-              Don&apos;t pay it.<br />
-              <span>Recheck it.</span>
+              Stop overpaying<br />
+              <span>for healthcare.</span>
             </h1>
             <p className={styles.intro}>
-              Before the next payment, get a clearer picture. Understand your
-              medical bills, spot possible mistakes, and prepare the questions
-              that matter.
+              Your AI-powered guide to smarter healthcare spending. Find out
+              where to go, who&apos;s nearby and what you&apos;re likely to pay
+              with your own insurance, then check the bill when it arrives.
             </p>
             <Link href="/login" className={styles.primaryLink}>
-              Check a bill <span aria-hidden="true">↗</span>
+              Find my savings <span aria-hidden="true">↗</span>
             </Link>
             <p className={styles.helper}>
-              Start with a PDF or a photo of your bill.
+              Free to start. Your first care question and first bill check are on us.
             </p>
           </div>
 
-          <aside className={styles.checklist} aria-label="What Recheck looks for">
+          <aside className={styles.checklist} aria-label="What Recheck helps with">
             <div className={styles.sheetHeading}>
               <span className={styles.eyebrow}>The Recheck method</span>
               <span className={styles.documentMark} aria-hidden="true">R.</span>
             </div>
             <h2>
-              Every charge deserves<br />
+              Every visit deserves<br />
               a second look.
             </h2>
             <ul>
               <li>
-                <span aria-hidden="true">01</span> Is a service listed twice?
+                <span aria-hidden="true">01</span> Is it safe to wait, or do I
+                need care now?
               </li>
               <li>
-                <span aria-hidden="true">02</span> Does the bill match your
-                insurance statement?
+                <span aria-hidden="true">02</span> Primary care, a specialist or
+                urgent care?
               </li>
               <li>
-                <span aria-hidden="true">03</span> Do the line items add up?
+                <span aria-hidden="true">03</span> What will I pay with my plan?
               </li>
               <li>
-                <span aria-hidden="true">04</span> Is anything unclear?
+                <span aria-hidden="true">04</span> Is my bill right?
               </li>
             </ul>
             <p className={styles.sheetNote}>
-              <span className={styles.attentionLabel}>Possible issues, clearly marked</span>
-              Each flag points back to its document or charge. You can see
-              what needs a question, and why.
+              <span className={styles.attentionLabel}>Real prices, clearly labeled</span>
+              Estimates start from public Medicare fee schedules and your own
+              deductible, copays and coinsurance. Every assumption is shown.
             </p>
           </aside>
         </section>
@@ -87,37 +91,40 @@ export default async function Home() {
           className={styles.stepsSection}
           aria-labelledby="steps-heading"
         >
-          <p className={styles.eyebrow}>From paperwork to a plan</p>
-          <h2 id="steps-heading">From a confusing bill<br />to an informed next step.</h2>
+          <p className={styles.eyebrow}>From a symptom to a settled bill</p>
+          <h2 id="steps-heading">One guide for<br />the whole visit.</h2>
           <ol className={styles.steps}>
             <li>
               <span className={styles.stepNumber} aria-hidden="true">
                 01 /
               </span>
-              <h3>Bring your paperwork</h3>
+              <h3>Before the visit</h3>
               <p>
-                Upload a bill or an Explanation of Benefits from your insurer.
-                Add both to compare them.
+                Describe what&apos;s wrong in your own words. We check warning
+                signs first, then explain your options: primary care, a
+                specialist or urgent care.
               </p>
             </li>
             <li>
               <span className={styles.stepNumber} aria-hidden="true">
                 02 /
               </span>
-              <h3>See what needs a look</h3>
+              <h3>Compare costs and providers</h3>
               <p>
-                Review the amounts, plain-language explanations, and possible
-                issues in one place. Correct anything read incorrectly.
+                See real providers near you and what a visit, an X-ray or an
+                MRI could cost you under your plan, with a checklist of
+                questions for the call.
               </p>
             </li>
             <li>
               <span className={styles.stepNumber} aria-hidden="true">
                 03 /
               </span>
-              <h3>Ask with confidence</h3>
+              <h3>After the visit</h3>
               <p>
-                Use a draft letter or phone script to ask your provider about
-                flagged charges. Review the wording before using it.
+                Upload the bill and your insurer&apos;s statement. We flag
+                possible errors and draft a letter and phone script for you to
+                use.
               </p>
             </li>
           </ol>
@@ -132,12 +139,28 @@ export default async function Home() {
           </div>
           <div className={styles.answers}>
             <details>
-              <summary>What should I upload?</summary>
+              <summary>Where do the prices come from?</summary>
               <p>
-                A readable PDF or photo of a medical bill or Explanation of
-                Benefits (EOB). An EOB shows how your insurer processed a claim.
-                Uploading both helps Recheck compare what you are being asked
-                to pay.
+                From the public Medicare Physician Fee Schedule, with a labeled
+                assumption for how much more commercial plans usually pay. Your
+                share is calculated from the deductible, copays and coinsurance
+                you enter. They are estimates, not quotes from a clinic.
+              </p>
+            </details>
+            <details>
+              <summary>Does Recheck know if a provider is in my network?</summary>
+              <p>
+                No. Every provider is marked &quot;not verified&quot;, and we give
+                you the questions to confirm network status with the provider
+                and your insurer before you book.
+              </p>
+            </details>
+            <details>
+              <summary>What if it&apos;s an emergency?</summary>
+              <p>
+                If you have a warning sign, Recheck tells you to get care now,
+                before anything else. Safety guidance is always free. If you
+                think it&apos;s an emergency, call 911.
               </p>
             </details>
             <details>
@@ -148,23 +171,16 @@ export default async function Home() {
                 with them before deciding what to do.
               </p>
             </details>
-            <details>
-              <summary>Will Recheck contact my provider?</summary>
-              <p>
-                You choose what to send and when to call. Recheck prepares a
-                draft letter and phone script for you to review and use yourself.
-              </p>
-            </details>
           </div>
         </section>
 
         <section className={styles.cta} aria-labelledby="cta-heading">
           <div>
-            <p className={styles.eyebrow}>Start with one bill</p>
-            <h2 id="cta-heading">Understand it before your next step.</h2>
+            <p className={styles.eyebrow}>{PAID_PLAN_NAME} · {formatCents(MONTHLY_PRICE_CENTS)} a month</p>
+            <h2 id="cta-heading">Know the cost before the visit.</h2>
           </div>
           <Link href="/login" className={styles.primaryLink}>
-            Get started <span aria-hidden="true">↗</span>
+            Find my savings <span aria-hidden="true">↗</span>
           </Link>
         </section>
       </main>
@@ -172,8 +188,8 @@ export default async function Home() {
       <footer className={styles.footer}>
         <span className={styles.brand}>Recheck</span>
         <p>
-          Recheck explains medical bills and helps you ask questions about them.
-          It does not give legal or medical advice.
+          Recheck helps you compare care options, estimate costs and question
+          medical bills. It does not give legal or medical advice.
         </p>
       </footer>
     </div>

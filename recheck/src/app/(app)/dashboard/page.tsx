@@ -3,7 +3,8 @@ import { redirect } from "next/navigation";
 import { InsurancePlanForm } from "@/components/InsurancePlanForm";
 import { Paywall } from "@/components/Paywall";
 import { canSeeDashboard } from "@/lib/billing/plan";
-import { summarizeYear, type Progress } from "@/lib/dashboard/yearly";
+import { ProgressBar } from "@/components/ProgressBar";
+import { summarizeYear } from "@/lib/dashboard/yearly";
 import { getCurrentUser } from "@/lib/db/auth";
 import { listReadEobs } from "@/lib/db/documents";
 import { listUserFlags } from "@/lib/db/flags";
@@ -86,8 +87,8 @@ export default async function DashboardPage() {
         <h2 className="font-semibold">Your {year} insurance plan</h2>
         {summary.deductible && summary.outOfPocket ? (
           <>
-            <Bar label="Deductible" progress={summary.deductible} />
-            <Bar label="Out-of-pocket maximum" progress={summary.outOfPocket} />
+            <ProgressBar label="Deductible" progress={summary.deductible} />
+            <ProgressBar label="Out-of-pocket maximum" progress={summary.outOfPocket} />
             <p className="mt-3 text-xs text-[var(--rc-navy)]/60">
               Based on the &quot;your responsibility&quot; amounts on the insurer statements you&apos;ve
               added ({formatCents(summary.confirmedByInsurerCents)} so far). Copays don&apos;t always
@@ -127,29 +128,6 @@ function Tile({ label, cents, strong = false }: { label: string; cents: number; 
     <div className={`rounded-xl p-4 ${strong ? "bg-[var(--rc-navy)] text-[var(--rc-ivory)]" : "bg-[var(--rc-navy)]/4"}`}>
       <dt className={`text-xs sm:text-sm ${strong ? "text-[var(--rc-ivory)]/75" : "text-[var(--rc-navy)]/70"}`}>{label}</dt>
       <dd className="mt-1 text-lg font-semibold tabular-nums sm:text-xl">{formatCents(cents)}</dd>
-    </div>
-  );
-}
-
-function Bar({ label, progress }: { label: string; progress: Progress }) {
-  return (
-    <div className="mt-4">
-      <div className="flex justify-between text-sm">
-        <span className="font-medium">{label}</span>
-        <span className="tabular-nums">
-          {formatCents(progress.usedCents)} of {formatCents(progress.limitCents)}
-        </span>
-      </div>
-      <div
-        role="progressbar"
-        aria-label={label}
-        aria-valuenow={progress.percent}
-        aria-valuemin={0}
-        aria-valuemax={100}
-        className="mt-1 h-2 overflow-hidden rounded-full bg-[var(--rc-navy)]/10"
-      >
-        <div className="h-full rounded-full bg-[var(--rc-navy)]" style={{ width: `${progress.percent}%` }} />
-      </div>
     </div>
   );
 }

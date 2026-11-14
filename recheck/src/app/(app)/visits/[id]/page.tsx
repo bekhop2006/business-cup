@@ -54,7 +54,7 @@ export default async function VisitPage({ params }: PageProps<"/visits/[id]">) {
   return (
     <>
       <Link href="/visits" className="text-sm text-[var(--rc-navy)]/70 hover:underline">
-        ← All visits
+        ← All bills
       </Link>
       <div className="mt-3 flex flex-wrap items-start justify-between gap-3">
         <div>

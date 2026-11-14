@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  canCompareCareOptions,
   canSeeDashboard,
   canSeeVisitChecks,
   canWriteLetters,
@@ -12,6 +13,13 @@ describe("plan access", () => {
     expect(canSeeVisitChecks("free", "first", "first")).toBe(true);
     expect(canSeeVisitChecks("free", "second", "first")).toBe(false);
     expect(canSeeVisitChecks("paid", "second", "first")).toBe(true);
+  });
+
+  it("gives a free user care options for their first care question only", () => {
+    expect(canCompareCareOptions("free", "first", "first")).toBe(true);
+    expect(canCompareCareOptions("free", "second", "first")).toBe(false);
+    expect(canCompareCareOptions("free", "first", null)).toBe(false);
+    expect(canCompareCareOptions("paid", "second", "first")).toBe(true);
   });
 
   it("keeps letters and the dashboard on the paid plan", () => {

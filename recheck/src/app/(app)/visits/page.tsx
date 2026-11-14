@@ -39,7 +39,7 @@ export default async function VisitsPage() {
         Your family billing record
       </p>
       <div className="mt-3 flex flex-wrap items-center justify-between gap-4">
-        <h1 className="text-2xl font-semibold tracking-tight">Your visits</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">Your bills</h1>
         <Link href="/upload" className="inline-flex min-h-11 items-center gap-6 rounded-md bg-[var(--rc-accent)] px-5 py-3 text-sm font-medium text-[var(--rc-navy)] hover:opacity-90">
           Add a document <span aria-hidden="true">↗</span>
         </Link>
