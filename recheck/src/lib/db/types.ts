@@ -23,7 +23,41 @@ export type Database = {
           }
         },"public": {
           Tables: {
-            "disputes": {
+            "care_cases": {
+                  Row: {
+                    "body_area": string | null,"chosen_provider": Json | null,"created_at": string,"description": string,"estimate": Json | null,"estimated_savings_cents": number | null,"id": string,"route": string | null,"summary": string | null,"urgency": Database["public"]['Enums']["care_urgency"] | null,"user_id": string,"warning_answers": Json | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "body_area"?: string | null,"chosen_provider"?: Json | null,"created_at"?: string,"description": string,"estimate"?: Json | null,"estimated_savings_cents"?: number | null,"id"?: string,"route"?: string | null,"summary"?: string | null,"urgency"?: Database["public"]['Enums']["care_urgency"] | null,"user_id"?: string,"warning_answers"?: Json | null
+                  }
+                  Update: {
+                    "body_area"?: string | null,"chosen_provider"?: Json | null,"created_at"?: string,"description"?: string,"estimate"?: Json | null,"estimated_savings_cents"?: number | null,"id"?: string,"route"?: string | null,"summary"?: string | null,"urgency"?: Database["public"]['Enums']["care_urgency"] | null,"user_id"?: string,"warning_answers"?: Json | null
+                  }
+                  Relationships: [
+                    
+                  ]
+                },"case_providers": {
+                  Row: {
+                    "address": string | null,"case_id": string,"created_at": string,"distance_meters": number | null,"external_id": string,"id": string,"maps_url": string | null,"name": string,"network_status": string,"phone": string | null,"rating": number | null,"rating_count": number | null,"route": string,"source": string,"user_id": string,"website": string | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "address"?: string | null,"case_id": string,"created_at"?: string,"distance_meters"?: number | null,"external_id": string,"id"?: string,"maps_url"?: string | null,"name": string,"network_status"?: string,"phone"?: string | null,"rating"?: number | null,"rating_count"?: number | null,"route": string,"source": string,"user_id"?: string,"website"?: string | null
+                  }
+                  Update: {
+                    "address"?: string | null,"case_id"?: string,"created_at"?: string,"distance_meters"?: number | null,"external_id"?: string,"id"?: string,"maps_url"?: string | null,"name"?: string,"network_status"?: string,"phone"?: string | null,"rating"?: number | null,"rating_count"?: number | null,"route"?: string,"source"?: string,"user_id"?: string,"website"?: string | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "case_providers_case_id_user_id_fkey"
+      columns: ["case_id","user_id"]
+isOneToOne: false
+      referencedRelation: "care_cases"
+      referencedColumns: ["id","user_id"]
+    }
+                  ]
+                },"disputes": {
                   Row: {
                     "call_script": string | null,"created_at": string,"id": string,"letter_text": string | null,"next_action_at": string | null,"status": Database["public"]['Enums']["dispute_status"],"user_id": string,"visit_id": string
                   }
@@ -111,14 +145,14 @@ isOneToOne: false
                   ]
                 },"insurance_plans": {
                   Row: {
-                    "created_at": string,"deductible_cents": number,"id": string,"oop_max_cents": number,"user_id": string,"year": number
+                    "coinsurance_bps": number | null,"copay_er_cents": number | null,"copay_primary_cents": number | null,"copay_specialist_cents": number | null,"copay_urgent_care_cents": number | null,"created_at": string,"deductible_cents": number | null,"deductible_met_cents": number | null,"id": string,"insurer_name": string | null,"oop_max_cents": number | null,"oop_met_cents": number | null,"plan_name": string | null,"plan_type": string | null,"updated_at": string,"user_id": string,"year": number
                   }
                   ComputedFields: never
                   Insert: {
-                    "created_at"?: string,"deductible_cents": number,"id"?: string,"oop_max_cents": number,"user_id"?: string,"year": number
+                    "coinsurance_bps"?: number | null,"copay_er_cents"?: number | null,"copay_primary_cents"?: number | null,"copay_specialist_cents"?: number | null,"copay_urgent_care_cents"?: number | null,"created_at"?: string,"deductible_cents"?: number | null,"deductible_met_cents"?: number | null,"id"?: string,"insurer_name"?: string | null,"oop_max_cents"?: number | null,"oop_met_cents"?: number | null,"plan_name"?: string | null,"plan_type"?: string | null,"updated_at"?: string,"user_id"?: string,"year": number
                   }
                   Update: {
-                    "created_at"?: string,"deductible_cents"?: number,"id"?: string,"oop_max_cents"?: number,"user_id"?: string,"year"?: number
+                    "coinsurance_bps"?: number | null,"copay_er_cents"?: number | null,"copay_primary_cents"?: number | null,"copay_specialist_cents"?: number | null,"copay_urgent_care_cents"?: number | null,"created_at"?: string,"deductible_cents"?: number | null,"deductible_met_cents"?: number | null,"id"?: string,"insurer_name"?: string | null,"oop_max_cents"?: number | null,"oop_met_cents"?: number | null,"plan_name"?: string | null,"plan_type"?: string | null,"updated_at"?: string,"user_id"?: string,"year"?: number
                   }
                   Relationships: [
                     
@@ -145,14 +179,14 @@ isOneToOne: false
                   ]
                 },"profiles": {
                   Row: {
-                    "created_at": string,"email": string,"id": string,"inbound_alias": string,"plan": Database["public"]['Enums']["subscription_plan"],"stripe_customer_id": string | null,"user_id": string
+                    "created_at": string,"email": string,"full_name": string | null,"household_size": number | null,"id": string,"inbound_alias": string,"onboarded_at": string | null,"plan": Database["public"]['Enums']["subscription_plan"],"stripe_customer_id": string | null,"user_id": string,"zip_code": string | null
                   }
                   ComputedFields: never
                   Insert: {
-                    "created_at"?: string,"email": string,"id"?: string,"inbound_alias": string,"plan"?: Database["public"]['Enums']["subscription_plan"],"stripe_customer_id"?: string | null,"user_id": string
+                    "created_at"?: string,"email": string,"full_name"?: string | null,"household_size"?: number | null,"id"?: string,"inbound_alias": string,"onboarded_at"?: string | null,"plan"?: Database["public"]['Enums']["subscription_plan"],"stripe_customer_id"?: string | null,"user_id": string,"zip_code"?: string | null
                   }
                   Update: {
-                    "created_at"?: string,"email"?: string,"id"?: string,"inbound_alias"?: string,"plan"?: Database["public"]['Enums']["subscription_plan"],"stripe_customer_id"?: string | null,"user_id"?: string
+                    "created_at"?: string,"email"?: string,"full_name"?: string | null,"household_size"?: number | null,"id"?: string,"inbound_alias"?: string,"onboarded_at"?: string | null,"plan"?: Database["public"]['Enums']["subscription_plan"],"stripe_customer_id"?: string | null,"user_id"?: string,"zip_code"?: string | null
                   }
                   Relationships: [
                     
@@ -186,7 +220,7 @@ isOneToOne: false
             [_ in never]: never
           }
           Enums: {
-            "dispute_status": "draft"|"sent"|"waiting"|"resolved","document_source": "upload"|"email","document_status": "uploaded"|"processing"|"parsed"|"needs_review"|"failed","document_type": "bill"|"eob"|"receipt"|"other","flag_type": "duplicate_line"|"eob_mismatch"|"billed_before_insurance"|"unclear_line"|"total_mismatch","subscription_plan": "free"|"paid","visit_status": "waiting_for_insurance"|"to_pay"|"disputing"|"closed"
+            "care_urgency": "emergency"|"urgent"|"routine","dispute_status": "draft"|"sent"|"waiting"|"resolved","document_source": "upload"|"email","document_status": "uploaded"|"processing"|"parsed"|"needs_review"|"failed","document_type": "bill"|"eob"|"receipt"|"other","flag_type": "duplicate_line"|"eob_mismatch"|"billed_before_insurance"|"unclear_line"|"total_mismatch","subscription_plan": "free"|"paid","visit_status": "waiting_for_insurance"|"to_pay"|"disputing"|"closed"
           }
           CompositeTypes: {
             [_ in never]: never
@@ -306,7 +340,7 @@ export const Constants = {
           }
         },"public": {
           Enums: {
-            "dispute_status": ["draft", "sent", "waiting", "resolved"],"document_source": ["upload", "email"],"document_status": ["uploaded", "processing", "parsed", "needs_review", "failed"],"document_type": ["bill", "eob", "receipt", "other"],"flag_type": ["duplicate_line", "eob_mismatch", "billed_before_insurance", "unclear_line", "total_mismatch"],"subscription_plan": ["free", "paid"],"visit_status": ["waiting_for_insurance", "to_pay", "disputing", "closed"]
+            "care_urgency": ["emergency", "urgent", "routine"],"dispute_status": ["draft", "sent", "waiting", "resolved"],"document_source": ["upload", "email"],"document_status": ["uploaded", "processing", "parsed", "needs_review", "failed"],"document_type": ["bill", "eob", "receipt", "other"],"flag_type": ["duplicate_line", "eob_mismatch", "billed_before_insurance", "unclear_line", "total_mismatch"],"subscription_plan": ["free", "paid"],"visit_status": ["waiting_for_insurance", "to_pay", "disputing", "closed"]
           }
         }
 } as const
