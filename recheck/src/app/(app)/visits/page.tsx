@@ -128,7 +128,7 @@ function VisitRow({ visit }: { visit: Visit }) {
         </span>
         <span className="shrink-0 text-right">
           <span className="block font-semibold tabular-nums">{formatCents(visit.patient_owes_cents)}</span>
-          <span className="text-xs text-[var(--rc-navy)]/65">listed balance <span aria-hidden="true">↗</span></span>
+          <span className="text-xs text-[var(--rc-navy)]/65">you owe <span aria-hidden="true">↗</span></span>
         </span>
       </Link>
     </li>

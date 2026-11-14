@@ -26,7 +26,8 @@
 │   ├── PROJECT.md
 │   ├── STRUCTURE.md
 │   ├── PLAN.md
-│   └── RULES.md
+│   ├── RULES.md
+│   └── design/prototype.html # static UI prototype; not part of the app
 ├── fixtures/                 # sample bills and EOBs for tests and demo seed only (see fixtures/README.md)
 ├── supabase/
 │   └── migrations/           # SQL migrations, never edited after being applied

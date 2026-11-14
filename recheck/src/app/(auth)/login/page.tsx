@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { LoginForm } from "@/components/LoginForm";
 import { getCurrentUser } from "@/lib/db/auth";
@@ -35,4 +36,3 @@ export default async function LoginPage() {
     </div>
   );
 }
-import Link from "next/link";
