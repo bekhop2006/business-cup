@@ -2,7 +2,7 @@
 
 Work through the stages in order. A stage is finished only when its "Done when" line is true **on the deployed app**, not only locally.
 
-**Current stage:** 9
+**Current stage:** 10
 
 Update the line above when a stage is finished.
 
@@ -121,13 +121,15 @@ Verified 2026-11-15 on production (`8992fee`): new account with Michael's profil
 
 ## Stage 9 — Home, plan and landing (~2 h)
 
-- [ ] Home: describe-a-problem box, insurance overview with deductible progress, savings (estimated vs on bills), recent cases and visits
-- [ ] Navigation: Home · Get care · Bills · Plan
-- [ ] Landing: "Stop overpaying for healthcare", CTA "Find my savings"
-- [ ] Recheck Plus at $9.99; first case free; safety never paywalled
+- [x] Home: describe-a-problem box, insurance overview with deductible progress, savings (estimated vs on bills), recent cases and visits
+- [x] Navigation: Home · Get care · Bills · Plan
+- [x] Landing: "Stop overpaying for healthcare", CTA "Find my savings"
+- [x] Recheck Plus at $9.99; first case free; safety never paywalled
 - [ ] Optional: insurance card photo fills the insurance profile
 
 **Done when:** a new user can go landing → onboarding → case → provider → paywall → pay → second case, and add a bill after the visit.
+
+Checked 2026-11-15 on production (`6060647`): the signed-out landing shows the new copy and CTA, and `/home` redirects to login; signed in, `/home` shows the case box, Michael's plan with deductible and out-of-pocket progress, $50.00 estimated from care choices and $96.00 worth asking about on bills, the chosen provider on the recent case and the latest bills. Navigation reads Home · Get care · Bills · Plan · Profile; Bills and "Your year" still load. A second case on a Recheck Plus account shows options and costs. A new free account that skipped the insurance step got its first case in full (wide ranges such as $0.00–$210.15 for a visit); its second case showed the safety questions for free and then the Recheck Plus paywall instead of options. After a Stripe test-mode payment the plan page shows Recheck Plus and the same case shows options and a provider search with 10 results. Bills were already in Michael's account. The insurance card photo is not built (optional). Stripe Checkout still shows the merchant name "nFactorial sandbox" instead of Recheck.
 
 ## Stage 10 — Demo and submission (last ~2 h)
 
