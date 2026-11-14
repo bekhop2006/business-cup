@@ -32,8 +32,8 @@
 ├── supabase/
 │   └── migrations/           # SQL migrations, never edited after being applied
 ├── scripts/
-│   ├── seed.ts               # loads fixtures through the real pipeline
 │   ├── check-extraction.ts   # runs fixtures through extraction, compares with fixtures/expected.json
+│   ├── check-providers.ts    # live smoke check of Google Places and the NPI Registry near 78701
 │   ├── refresh-visits.ts     # recomputes totals, flags and explanations for every visit
 │   └── fixtures/make_fixtures.py  # renders the synthetic fixtures
 ├── tests/
@@ -167,10 +167,9 @@ Each check is a pure function: `({ documents, lines }) => FlagDraft[]` over one 
 
 ## Environment variables
 
-Listed in `.env.example`, validated in `src/lib/env.ts`. The app fails at start if one is missing. Variables for features that are not built yet stay optional until the commit that starts using them.
+Listed in `.env.example`, validated in `src/lib/env.ts`. The app fails at start if a required one is missing. `GOOGLE_PLACES_API_KEY` is optional: without it, provider search uses the CMS NPI Registry only.
 
 ```
-DATABASE_URL=
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
 SUPABASE_SERVICE_ROLE_KEY=
@@ -178,9 +177,6 @@ LLM_API_KEY=
 LLM_MODEL=
 STRIPE_SECRET_KEY=
 STRIPE_WEBHOOK_SECRET=
-EMAIL_API_KEY=
-INBOUND_EMAIL_SECRET=
-CRON_SECRET=
 APP_URL=
 GOOGLE_PLACES_API_KEY=
 ```

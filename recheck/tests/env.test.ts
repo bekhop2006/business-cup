@@ -40,7 +40,7 @@ describe("parseEnv", () => {
   });
 
   it("treats an empty optional variable as not set", () => {
-    expect(parseEnv({ ...valid, CRON_SECRET: "" }).CRON_SECRET).toBe(
+    expect(parseEnv({ ...valid, GOOGLE_PLACES_API_KEY: "" }).GOOGLE_PLACES_API_KEY).toBe(
       undefined,
     );
   });

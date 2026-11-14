@@ -22,7 +22,7 @@ These rules apply to every coding agent and every human contributor. If a reques
 Judges read the repository and check that nothing is faked.
 
 - No hardcoded analysis results, sample responses or placeholder data in `src/`.
-- Sample documents live in `fixtures/`. They are used by tests and by `scripts/seed.ts`, which runs them through the real pipeline.
+- Sample documents live in `fixtures/`. They are used by tests and by `scripts/check-extraction.ts`; demo data is entered through the real app.
 - No feature flags or branches that return canned data for a demo account.
 - If a feature is not finished, hide it from the UI instead of faking it.
 - **Prices:** only real public benchmarks (CMS fee schedules) stored with their source URL and year, or numbers the user entered. The patient's share is computed in `src/lib/costs/` from the user's own insurance profile. Every assumption (for example a commercial-vs-Medicare multiplier) is labeled as an assumption in the UI. Never show a made-up price for a real clinic.
