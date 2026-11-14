@@ -79,14 +79,14 @@ isOneToOne: false
                   ]
                 },"flags": {
                   Row: {
-                    "created_at": string,"document_id": string | null,"id": string,"line_item_id": string | null,"message": string,"potential_savings_cents": number,"type": Database["public"]['Enums']["flag_type"],"user_id": string,"visit_id": string
+                    "created_at": string,"document_id": string | null,"explanation": string | null,"id": string,"line_item_id": string | null,"message": string,"potential_savings_cents": number,"type": Database["public"]['Enums']["flag_type"],"user_id": string,"visit_id": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "created_at"?: string,"document_id"?: string | null,"id"?: string,"line_item_id"?: string | null,"message": string,"potential_savings_cents"?: number,"type": Database["public"]['Enums']["flag_type"],"user_id"?: string,"visit_id": string
+                    "created_at"?: string,"document_id"?: string | null,"explanation"?: string | null,"id"?: string,"line_item_id"?: string | null,"message": string,"potential_savings_cents"?: number,"type": Database["public"]['Enums']["flag_type"],"user_id"?: string,"visit_id": string
                   }
                   Update: {
-                    "created_at"?: string,"document_id"?: string | null,"id"?: string,"line_item_id"?: string | null,"message"?: string,"potential_savings_cents"?: number,"type"?: Database["public"]['Enums']["flag_type"],"user_id"?: string,"visit_id"?: string
+                    "created_at"?: string,"document_id"?: string | null,"explanation"?: string | null,"id"?: string,"line_item_id"?: string | null,"message"?: string,"potential_savings_cents"?: number,"type"?: Database["public"]['Enums']["flag_type"],"user_id"?: string,"visit_id"?: string
                   }
                   Relationships: [
                     {
