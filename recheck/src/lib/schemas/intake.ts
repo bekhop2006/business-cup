@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { SAFETY_QUESTIONS } from "@/lib/care/safety";
+import { comparisonRouteSchema, providerSearchSchema } from "@/lib/schemas/providers";
 
 export const careRouteIdSchema = z.enum(["primary_care", "sports_medicine", "urgent_care", "emergency_room"]);
 export const safetyQuestionIdSchema = z.enum(SAFETY_QUESTIONS.map((question) => question.id));
@@ -17,9 +18,11 @@ export type Intake = z.infer<typeof intakeSchema>;
 
 // Keep suggestions separate from answers the person actually confirmed.
 export const caseContextSchema = z.object({
+  revision: z.uuid().optional(),
   intake: intakeSchema.nullable(),
   answers: z.partialRecord(safetyQuestionIdSchema, z.boolean()).optional(),
   scope: z.enum(["knee_leg", "other"]).optional(),
+  provider_searches: z.partialRecord(comparisonRouteSchema, providerSearchSchema).optional(),
 });
 
 export type CaseContext = z.infer<typeof caseContextSchema>;

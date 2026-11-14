@@ -100,6 +100,10 @@
 
 Care cases keep the validated intake and confirmed safety answers separately in `warning_answers`. Urgency is recomputed from the confirmed answers, including when a case is reopened. An unavailable intake does not block safety questions. The current questions and imaging scenarios cover knee/leg pain; other health needs show the scope limit instead of unrelated estimates.
 
+Provider searches are explicit server actions. Only ZIP and fixed care-type queries go to Google Places/NPI, never the symptom description or insurance profile. Results are stored in `case_providers`; `warning_answers.provider_searches` records each route's ZIP, source, time, status and active result IDs. A UUID revision guards context writes and provider selection against concurrent safety edits or searches. Search conflicts merge the latest context once. Reopening a case reads saved results without calling the directories again.
+
+Choosing a provider saves its directory snapshot in `chosen_provider`, the calculation's insurance values, all three cost scenarios and their CMS/KFF sources in `estimate`, and conservative estimated savings in `estimated_savings_cents`. Savings compare the selected care type's visit-only upper estimate with urgent care's lower estimate under the same profile; overlapping ranges count as zero. They never compare invented clinic prices. Saved estimates remain unchanged when the profile changes. A new search keeps the clearly labeled saved choice until the person explicitly chooses another provider; saving new safety answers clears the choice. Call-checklist checkmarks are local to the page and are not saved.
+
 ## Document pipeline
 
 Implemented in `src/lib/pipeline.ts`. Each step is a separate function so it can be tested and retried.

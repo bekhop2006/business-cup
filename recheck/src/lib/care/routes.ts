@@ -5,6 +5,9 @@
 
 export type CareRouteId = "primary_care" | "sports_medicine" | "urgent_care" | "emergency_room";
 
+export const COMPARISON_ROUTE_IDS = ["primary_care", "sports_medicine", "urgent_care"] as const;
+export type ComparisonRouteId = (typeof COMPARISON_ROUTE_IDS)[number];
+
 // Which copay from the user's plan applies to the visit itself.
 export type CopayKind = "primary" | "specialist" | "urgent_care" | "er";
 

@@ -84,7 +84,7 @@ describe("saveSafetyAnswers", () => {
     form.set("cannot_bear_weight", "yes");
     // A client-provided urgency must never override the deterministic check.
     form.set("urgency", "routine");
-    await expect(saveSafetyAnswers({}, form)).rejects.toThrow(`redirect:/care/${caseId}#next-steps`);
+    await expect(saveSafetyAnswers({}, form)).rejects.toThrow(`redirect:/care/${caseId}`);
     expect(getCareCase).toHaveBeenCalledWith({}, userId, caseId);
     expect(saveCaseSafety).toHaveBeenCalledWith({}, userId, caseId,
       expect.objectContaining({ scope: "knee_leg", answers: expect.objectContaining({ cannot_bear_weight: true }) }), "urgent");

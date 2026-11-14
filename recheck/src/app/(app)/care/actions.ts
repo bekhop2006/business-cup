@@ -50,16 +50,17 @@ export async function saveSafetyAnswers(_previous: CareFormState, form: FormData
     }
     if (value === "yes" || value === "no") answers[id] = value === "yes";
   }
+  const urgency = assessUrgency(answers).urgency;
   try {
     const db = await createServerSupabase();
     const careCase = await getCareCase(db, user.id, caseId);
     if (!careCase) return { error: "This care question wasn't found." };
     const context = readCaseContext(careCase.warning_answers);
-    await saveCaseSafety(db, user.id, caseId, { ...context, answers, scope }, assessUrgency(answers).urgency);
+    await saveCaseSafety(db, user.id, caseId, { ...context, answers, scope }, urgency);
   } catch {
     return { error: "We couldn't save your answers. Please try again. If you need urgent care, don't wait for this page." };
   }
   revalidatePath(`/care/${caseId}`);
   revalidatePath("/home");
-  redirect(`/care/${caseId}#next-steps`);
+  redirect(`/care/${caseId}${urgency === "routine" ? "#next-steps" : ""}`);
 }

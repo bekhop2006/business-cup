@@ -4,15 +4,18 @@ import { z } from "zod";
 import { CareSafetyForm } from "@/components/CareSafetyForm";
 import { CareSafetyNotice } from "@/components/CareSafetyNotice";
 import { CostForecast } from "@/components/CostForecast";
-import { CARE_ROUTES } from "@/lib/care/routes";
+import { CaseProviders } from "@/components/CaseProviders";
+import { CareChoice } from "@/components/CareChoice";
+import { CARE_ROUTES, COMPARISON_ROUTE_IDS } from "@/lib/care/routes";
 import { assessUrgency } from "@/lib/care/safety";
 import { insuranceToCostPlan } from "@/lib/care/profile";
 import { forecastScenarios } from "@/lib/costs/scenarios";
 import { getCurrentUser } from "@/lib/db/auth";
-import { getCareCase } from "@/lib/db/care";
-import { getInsurancePlan } from "@/lib/db/profiles";
+import { getCareCase, listCaseProviders } from "@/lib/db/care";
+import { getInsurancePlan, getProfile } from "@/lib/db/profiles";
 import { createServerSupabase } from "@/lib/db/supabase";
 import { readCaseContext } from "@/lib/schemas/intake";
+import { chosenProviderSchema, comparisonRouteSchema } from "@/lib/schemas/providers";
 
 export default async function CareCasePage({ params, searchParams }: PageProps<"/care/[id]">) {
   const { id } = await params;
@@ -24,9 +27,17 @@ export default async function CareCasePage({ params, searchParams }: PageProps<"
   if (!careCase) notFound();
   const context = readCaseContext(careCase.warning_answers);
   const assessment = context.answers ? assessUrgency(context.answers) : null;
-  const editingSafety = !assessment || assessment.urgency !== "routine" || (await searchParams).safety === "1";
+  const query = await searchParams;
+  const editingSafety = !assessment || assessment.urgency !== "routine" || query.safety === "1";
   const showOptions = !editingSafety && assessment?.urgency === "routine" && context.scope === "knee_leg";
   const insurance = showOptions ? await getInsurancePlan(db, user.id, new Date().getUTCFullYear()) : null;
+  const profile = showOptions ? await getProfile(db, user.id) : null;
+  const selected = comparisonRouteSchema.safeParse(query.route ?? careCase.route);
+  const selectedRoute = showOptions && selected.success ? selected.data : null;
+  const search = selectedRoute ? context.provider_searches?.[selectedRoute] : undefined;
+  const providers = selectedRoute && search?.status === "found"
+    ? await listCaseProviders(db, user.id, id, selectedRoute, search.provider_ids) : [];
+  const chosen = chosenProviderSchema.safeParse(careCase.chosen_provider);
 
   return (
     <>
@@ -49,17 +60,20 @@ export default async function CareCasePage({ params, searchParams }: PageProps<"
           <section className="mt-6 rounded-xl border border-[var(--rc-navy)]/20 p-5"><h2 className="font-semibold">This question needs a different kind of guidance</h2><p className="mt-2 text-sm">Our current safety questions and cost scenarios cover knee or leg pain only. Contact your primary care clinician or your insurer&apos;s nurse line about other symptoms. These answers cannot rule out an emergency.</p></section>
         )}
         {showOptions && <>
+          <CareChoice providerValue={careCase.chosen_provider} estimateValue={careCase.estimate} />
           <h2 className="mt-8 text-xl font-semibold">Compare ways to get care</h2>
           <p className="mt-2 text-sm text-[var(--rc-muted)]">You haven&apos;t reported a warning sign in this check. This doesn&apos;t rule out every problem. Contact a clinician if you&apos;re worried or your symptoms change.</p>
-          {([CARE_ROUTES.primary_care, CARE_ROUTES.sports_medicine, CARE_ROUTES.urgent_care]).map((route) => (
+          {COMPARISON_ROUTE_IDS.map((routeId) => CARE_ROUTES[routeId]).map((route) => (
             <section key={route.id} className="mt-6 rounded-xl border border-[var(--rc-navy)]/20 p-5">
               <h2 className="text-lg font-semibold">{route.label}</h2>
               <p className="mt-2 text-sm leading-relaxed">{route.forWhat}</p>
               <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-[var(--rc-muted)]">{route.accessNotes.map((note) => <li key={note}>{note}</li>)}</ul>
               <CostForecast scenarios={forecastScenarios(route, insuranceToCostPlan(insurance))} />
+              <Link href={`/care/${id}?route=${route.id}#providers`} aria-label={`Find ${route.label.toLowerCase()} providers`} className="mt-4 inline-block min-h-11 rounded-lg border border-[var(--rc-navy)]/25 px-4 py-3 text-sm font-medium hover:bg-[var(--rc-navy)]/5">Find providers for this option</Link>
             </section>
           ))}
           <p className="mt-5 text-sm">Missing insurance details? <Link href="/profile" className="font-medium underline">Update your profile</Link> to narrow the estimates.</p>
+          {selectedRoute && <CaseProviders caseId={id} route={selectedRoute} zip={profile?.zip_code ?? ""} search={search} providers={providers} chosenId={chosen.success ? chosen.data.id : undefined} />}
         </>}
       </div>
     </>
