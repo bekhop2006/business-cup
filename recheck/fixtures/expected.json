@@ -1,0 +1,45 @@
+{
+  "maple-grove-bill-photo.jpg": {
+    "status": "parsed",
+    "type": "bill",
+    "serviceDate": "2026-03-12",
+    "lineAmountsCents": [18500, 4500],
+    "statedTotalCents": 23000,
+    "patientResponsibilityCents": 4000
+  },
+  "maple-grove-eob.pdf": {
+    "status": "parsed",
+    "type": "eob",
+    "serviceDate": "2026-03-12",
+    "lineAmountsCents": [18500, 4500],
+    "statedTotalCents": 23000,
+    "patientResponsibilityCents": 4000
+  },
+  "lakeview-bill-duplicate-line.pdf": {
+    "status": "parsed",
+    "type": "bill",
+    "serviceDate": "2026-05-03",
+    "lineAmountsCents": [145000, 38000, 9600, 9600, 14200, 31000, 4800],
+    "statedTotalCents": 252200,
+    "patientResponsibilityCents": 39340
+  },
+  "lakeview-eob.pdf": {
+    "status": "parsed",
+    "type": "eob",
+    "serviceDate": "2026-05-03",
+    "lineAmountsCents": [145000, 38000, 9600, 14200, 31000, 4800],
+    "statedTotalCents": 242600,
+    "patientResponsibilityCents": 29740
+  },
+  "quickcare-bill-total-mismatch.pdf": {
+    "status": "needs_review",
+    "type": "bill",
+    "serviceDate": "2026-07-18",
+    "lineAmountsCents": [24500, 16500, 8500, 21000, 6000],
+    "statedTotalCents": 82500,
+    "patientResponsibilityCents": 82500
+  },
+  "blurry-bill-photo.jpg": {
+    "status": "needs_review"
+  }
+}
