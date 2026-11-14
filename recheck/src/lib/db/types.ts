@@ -45,14 +45,14 @@ isOneToOne: false
                   ]
                 },"documents": {
                   Row: {
-                    "created_at": string,"extracted": Json | null,"file_name": string,"id": string,"mime_type": string,"source": Database["public"]['Enums']["document_source"],"stated_total_cents": number | null,"status": Database["public"]['Enums']["document_status"],"storage_path": string,"type": Database["public"]['Enums']["document_type"] | null,"user_id": string,"visit_id": string | null
+                    "created_at": string,"extracted": Json | null,"file_name": string,"id": string,"insurance_paid_cents": number | null,"mime_type": string,"patient_name": string | null,"patient_responsibility_cents": number | null,"provider_name": string | null,"service_date": string | null,"source": Database["public"]['Enums']["document_source"],"stated_total_cents": number | null,"status": Database["public"]['Enums']["document_status"],"storage_path": string,"type": Database["public"]['Enums']["document_type"] | null,"user_id": string,"visit_id": string | null
                   }
                   ComputedFields: never
                   Insert: {
-                    "created_at"?: string,"extracted"?: Json | null,"file_name": string,"id"?: string,"mime_type": string,"source"?: Database["public"]['Enums']["document_source"],"stated_total_cents"?: number | null,"status"?: Database["public"]['Enums']["document_status"],"storage_path": string,"type"?: Database["public"]['Enums']["document_type"] | null,"user_id"?: string,"visit_id"?: string | null
+                    "created_at"?: string,"extracted"?: Json | null,"file_name": string,"id"?: string,"insurance_paid_cents"?: number | null,"mime_type": string,"patient_name"?: string | null,"patient_responsibility_cents"?: number | null,"provider_name"?: string | null,"service_date"?: string | null,"source"?: Database["public"]['Enums']["document_source"],"stated_total_cents"?: number | null,"status"?: Database["public"]['Enums']["document_status"],"storage_path": string,"type"?: Database["public"]['Enums']["document_type"] | null,"user_id"?: string,"visit_id"?: string | null
                   }
                   Update: {
-                    "created_at"?: string,"extracted"?: Json | null,"file_name"?: string,"id"?: string,"mime_type"?: string,"source"?: Database["public"]['Enums']["document_source"],"stated_total_cents"?: number | null,"status"?: Database["public"]['Enums']["document_status"],"storage_path"?: string,"type"?: Database["public"]['Enums']["document_type"] | null,"user_id"?: string,"visit_id"?: string | null
+                    "created_at"?: string,"extracted"?: Json | null,"file_name"?: string,"id"?: string,"insurance_paid_cents"?: number | null,"mime_type"?: string,"patient_name"?: string | null,"patient_responsibility_cents"?: number | null,"provider_name"?: string | null,"service_date"?: string | null,"source"?: Database["public"]['Enums']["document_source"],"stated_total_cents"?: number | null,"status"?: Database["public"]['Enums']["document_status"],"storage_path"?: string,"type"?: Database["public"]['Enums']["document_type"] | null,"user_id"?: string,"visit_id"?: string | null
                   }
                   Relationships: [
                     {
