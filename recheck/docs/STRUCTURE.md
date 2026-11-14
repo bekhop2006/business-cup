@@ -180,7 +180,7 @@ GOOGLE_PLACES_API_KEY=
 ## Plans and payments
 
 - Free: upload and read documents, visits and totals, and the full check (flags, explanations) of the user's first visit. Other visits show how many things were found and how much is worth asking about.
-- Paid (Recheck Family, $9 a month, Stripe test mode): every visit's flags, dispute letters and call scripts, the yearly dashboard.
+- Paid (Recheck Plus, $9.99 a month, Stripe test mode): unlimited care cases with cost forecasts, every visit's flags, dispute letters and call scripts, the yearly dashboard. Safety guidance is never paywalled.
 - `profiles.plan` is written only by the server: by `/api/billing/confirm` after Checkout and by the Stripe webhook (`checkout.session.completed`, `customer.subscription.updated`, `customer.subscription.deleted`). The price is set in code, so no product needs to exist in Stripe.
 
 ## Care navigation (before the visit)

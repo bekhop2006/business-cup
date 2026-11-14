@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-export function UpgradeButton({ label = "Upgrade to Recheck Family" }: { label?: string }) {
+export function UpgradeButton({ label = "Upgrade to Recheck Plus" }: { label?: string }) {
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 

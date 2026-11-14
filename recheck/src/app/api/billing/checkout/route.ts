@@ -14,7 +14,7 @@ export async function POST() {
   const admin = createAdminSupabase();
   const profile = await getProfile(admin, user.id);
   if (!profile) return fail("We couldn't find your account. Please log in again.", 404);
-  if (profile.plan === "paid") return fail("You're already on Recheck Family.", 409);
+  if (profile.plan === "paid") return fail("You're already on Recheck Plus.", 409);
 
   try {
     let customerId = profile.stripe_customer_id;

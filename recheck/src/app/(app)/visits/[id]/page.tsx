@@ -90,7 +90,7 @@ export default async function VisitPage({ params }: PageProps<"/visits/[id]">) {
               : ""}
             {showChecks
               ? "Ask your provider to review the flagged charges and confirm your payment deadline. Each possible issue is marked below. You can prepare a letter at the bottom of this page."
-              : "Your free check was used on your first visit, so the details of this one are part of Recheck Family."}
+              : "Your free check was used on your first visit, so the details of this one are part of Recheck Plus."}
           </p>
         </div>
       ) : (

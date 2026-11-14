@@ -20,6 +20,8 @@ const envSchema = z.object({
   EMAIL_API_KEY: notYetUsed,
   INBOUND_EMAIL_SECRET: notYetUsed,
   CRON_SECRET: notYetUsed,
+  // Optional: without it, provider search uses the free NPI Registry only.
+  GOOGLE_PLACES_API_KEY: notYetUsed,
 });
 
 export type Env = z.infer<typeof envSchema>;

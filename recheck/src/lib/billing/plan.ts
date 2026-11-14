@@ -4,8 +4,8 @@
 
 export type Plan = "free" | "paid";
 
-export const PAID_PLAN_NAME = "Recheck Family";
-export const MONTHLY_PRICE_CENTS = 900;
+export const PAID_PLAN_NAME = "Recheck Plus";
+export const MONTHLY_PRICE_CENTS = 999;
 
 export function canSeeVisitChecks(plan: Plan, visitId: string, firstVisitId: string | null): boolean {
   return plan === "paid" || visitId === firstVisitId;

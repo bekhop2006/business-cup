@@ -24,7 +24,7 @@ export async function POST(_request: Request, context: RouteContext<"/api/visits
 
   const supabase = await createServerSupabase();
   if (!canWriteLetters(await getPlan(supabase, user.id))) {
-    return fail("Dispute letters are part of Recheck Family.", 402);
+    return fail("Dispute letters are part of Recheck Plus.", 402);
   }
   const visit = await getVisit(supabase, user.id, id.data);
   if (!visit) return fail("Visit not found.", 404);

@@ -14,7 +14,7 @@ export function Paywall({ title, children }: { title: string; children: React.Re
         <UpgradeButton />
       </div>
       <p className="mt-3 text-xs text-[var(--rc-navy)]/60">
-        Covers your whole family: every visit checked, dispute letters and phone scripts, and your
+        Unlimited care questions with cost forecasts, every bill checked, dispute letters and phone scripts, and your
         yearly picture.
       </p>
     </section>

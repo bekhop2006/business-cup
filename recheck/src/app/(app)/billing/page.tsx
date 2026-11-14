@@ -7,7 +7,8 @@ import { createServerSupabase } from "@/lib/db/supabase";
 import { formatCents } from "@/lib/money";
 
 const INCLUDED = [
-  "Every visit checked for duplicate charges, bill and insurance mismatches, unclear charges and totals that don't add up",
+  "Unlimited care questions: where to go, real providers near you, and what you might pay under your own plan",
+  "Every bill checked for duplicate charges, bill and insurance mismatches, unclear charges and totals that don't add up",
   "A dispute letter and a phone script for each visit with something worth asking about",
   "Your yearly picture: what you've spent, your deductible and out-of-pocket progress, and what you owe now",
 ];
@@ -40,7 +41,7 @@ export default async function BillingPage({ searchParams }: PageProps<"/billing"
 
       <section className="mt-6 rounded-xl border border-[var(--rc-navy)]/15 p-5">
         <h2 className="font-semibold">
-          {PAID_PLAN_NAME} · {formatCents(MONTHLY_PRICE_CENTS)} a month for your whole family
+          {PAID_PLAN_NAME} · {formatCents(MONTHLY_PRICE_CENTS)} a month for your household
         </h2>
         <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-[var(--rc-navy)]/75">
           {INCLUDED.map((item) => (
@@ -50,7 +51,7 @@ export default async function BillingPage({ searchParams }: PageProps<"/billing"
         {plan === "free" ? (
           <>
             <p className="mt-4 text-sm text-[var(--rc-navy)]/75">
-              On the free plan, the check of your first visit is included.
+              On the free plan, your first care question and your first bill check are included.
             </p>
             <div className="mt-4">
               <UpgradeButton />
