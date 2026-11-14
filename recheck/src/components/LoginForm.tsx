@@ -2,33 +2,22 @@
 
 import { useActionState, useState } from "react";
 import type { LoginState } from "@/app/(auth)/login/actions";
+import type { Dictionary } from "@/lib/i18n/dictionaries";
 
 type Props = {
   action: (state: LoginState, formData: FormData) => Promise<LoginState>;
+  t: Dictionary["login"];
 };
 
 type Mode = "login" | "signup";
 
-const COPY: Record<Mode, { submit: string; pending: string; switchPrompt: string; switchLabel: string }> = {
-  login: {
-    submit: "Log in",
-    pending: "Logging you in…",
-    switchPrompt: "New to Recheck?",
-    switchLabel: "Create an account",
-  },
-  signup: {
-    submit: "Create my account",
-    pending: "Creating your account…",
-    switchPrompt: "Already have an account?",
-    switchLabel: "Log in",
-  },
-};
-
 // One form with two modes, so pressing Enter always does what the button says.
-export function LoginForm({ action }: Props) {
+export function LoginForm({ action, t }: Props) {
   const [state, formAction, pending] = useActionState(action, {});
   const [mode, setMode] = useState<Mode>("login");
-  const copy = COPY[mode];
+  const copy = mode === "login"
+    ? { submit: t.logIn, pending: t.loggingIn, switchPrompt: t.newHere, switchLabel: t.createAccount }
+    : { submit: t.createMyAccount, pending: t.creatingAccount, switchPrompt: t.haveAccount, switchLabel: t.logIn };
   // Messages belong to the mode that produced them.
   const shown = state.intent === mode ? state : {};
 
@@ -36,7 +25,7 @@ export function LoginForm({ action }: Props) {
     <form action={formAction} aria-busy={pending} className="mt-8 flex flex-col gap-4">
       <input type="hidden" name="intent" value={mode} />
       <label className="flex flex-col gap-1 text-sm font-medium">
-        Email
+        {t.email}
         <input
           name="email"
           type="email"
@@ -47,7 +36,7 @@ export function LoginForm({ action }: Props) {
         />
       </label>
       <label className="flex flex-col gap-1 text-sm font-medium">
-        Password
+        {t.password}
         <input
           name="password"
           type="password"
@@ -57,12 +46,12 @@ export function LoginForm({ action }: Props) {
           className="rounded-lg border border-slate-300 px-3 py-2 text-base font-normal"
         />
         {mode === "signup" && (
-          <span className="text-xs font-normal text-slate-600">At least 8 characters.</span>
+          <span className="text-xs font-normal text-slate-600">{t.passwordHint}</span>
         )}
       </label>
       {mode === "signup" && (
         <label className="flex flex-col gap-1 text-sm font-medium">
-          Confirm password
+          {t.confirmPassword}
           <input
             name="confirmPassword"
             type="password"
@@ -74,7 +63,7 @@ export function LoginForm({ action }: Props) {
               const password = field.form?.elements.namedItem("password");
               field.setCustomValidity(
                 password instanceof HTMLInputElement && password.value !== field.value
-                  ? "The passwords don't match."
+                  ? t.passwordsDontMatch
                   : "",
               );
             }}
@@ -88,7 +77,7 @@ export function LoginForm({ action }: Props) {
           {shown.error}{" "}
           {shown.suggest && (
             <button type="button" onClick={() => setMode(shown.suggest!)} className="font-medium underline">
-              {shown.suggest === "signup" ? "New to Recheck? Create an account" : "Log in instead"}
+              {shown.suggest === "signup" ? t.newCreateAccount : t.logInInstead}
             </button>
           )}
         </p>

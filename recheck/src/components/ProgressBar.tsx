@@ -1,13 +1,14 @@
 import type { Progress } from "@/lib/dashboard/yearly";
+import { fill } from "@/lib/i18n/locales";
 import { formatCents } from "@/lib/money";
 
-export function ProgressBar({ label, progress }: { label: string; progress: Progress }) {
+export function ProgressBar({ label, progress, of = "{used} of {limit}" }: { label: string; progress: Progress; of?: string }) {
   return (
     <div className="mt-4">
       <div className="flex justify-between gap-3 text-sm">
         <span className="font-medium">{label}</span>
         <span className="tabular-nums">
-          {formatCents(progress.usedCents)} of {formatCents(progress.limitCents)}
+          {fill(of, { used: formatCents(progress.usedCents), limit: formatCents(progress.limitCents) })}
         </span>
       </div>
       <div

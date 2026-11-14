@@ -1,7 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { authenticate } from "@/app/(auth)/login/actions";
 import { createServerSupabase } from "@/lib/db/supabase";
+import { getLocale } from "@/lib/i18n/server";
 
+vi.mock("@/lib/i18n/server", () => ({ getLocale: vi.fn(async () => "en") }));
 vi.mock("next/navigation", () => ({ redirect: vi.fn((path: string) => { throw new Error(`redirect:${path}`); }) }));
 vi.mock("@/lib/db/supabase", () => ({ createServerSupabase: vi.fn() }));
 
@@ -15,6 +17,7 @@ beforeEach(() => {
   );
   signUp.mockResolvedValue({ data: { session: {} }, error: null });
   signInWithPassword.mockResolvedValue({ error: null });
+  vi.mocked(getLocale).mockResolvedValue("en");
 });
 
 function form(fields: Record<string, string>): FormData {
@@ -50,5 +53,13 @@ describe("authenticate", () => {
     await expect(authenticate({}, form({ intent: "login", email: "michael@example.com", password: "kneepain123" })))
       .rejects.toThrow("redirect:/home");
     expect(signInWithPassword).toHaveBeenCalled();
+  });
+
+  it("shows the error in the chosen language", async () => {
+    vi.mocked(getLocale).mockResolvedValue("ru");
+    signInWithPassword.mockResolvedValue({ error: { code: "invalid_credentials" } });
+    const state = await authenticate({}, form({ intent: "login", email: "michael@example.com", password: "kneepain123" }));
+    expect(state.error).toBe("Неверный email или пароль.");
+    expect(state.suggest).toBe("signup");
   });
 });

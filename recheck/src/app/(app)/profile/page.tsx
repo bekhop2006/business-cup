@@ -6,6 +6,7 @@ import { getCurrentUser } from "@/lib/db/auth";
 import { getInsurancePlan, getProfile } from "@/lib/db/profiles";
 import { createServerSupabase } from "@/lib/db/supabase";
 import { insuranceToInput } from "@/lib/profile/onboarding";
+import { getT } from "@/lib/i18n/server";
 
 const updatedFormat = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric" });
 
@@ -14,6 +15,7 @@ export default async function ProfilePage({ searchParams }: PageProps<"/profile"
   if (!user) redirect("/login");
   const supabase = await createServerSupabase();
   const year = new Date().getUTCFullYear();
+  const { t } = await getT();
   const [profile, insurance, params] = await Promise.all([
     getProfile(supabase, user.id),
     getInsurancePlan(supabase, user.id, year),
@@ -37,7 +39,9 @@ export default async function ProfilePage({ searchParams }: PageProps<"/profile"
         <AboutYouForm
           action={saveAboutYouAction}
           next="/profile?saved=1"
-          submitLabel="Save"
+          submitLabel={t.common.save}
+          t={t.aboutForm}
+          savingLabel={t.common.saving}
           defaults={{
             fullName: profile?.full_name ?? "",
             zipCode: profile?.zip_code ?? "",
@@ -57,6 +61,8 @@ export default async function ProfilePage({ searchParams }: PageProps<"/profile"
           action={saveInsuranceAction}
           next="/profile?saved=1"
           submitLabel="Save insurance details"
+          t={t.insuranceForm}
+          savingLabel={t.common.saving}
           defaults={insuranceToInput(insurance)}
         />
       </section>

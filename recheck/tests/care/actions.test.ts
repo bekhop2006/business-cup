@@ -5,6 +5,7 @@ import { createCareCase, getCareCase, saveCaseSafety } from "@/lib/db/care";
 import { intakeCareCase } from "@/lib/llm/intake";
 import { SAFETY_QUESTIONS } from "@/lib/care/safety";
 
+vi.mock("@/lib/i18n/server", () => ({ getLocale: vi.fn(async () => "en") }));
 vi.mock("next/navigation", () => ({ redirect: vi.fn((path: string) => { throw new Error(`redirect:${path}`); }) }));
 vi.mock("next/cache", () => ({ revalidatePath: vi.fn() }));
 vi.mock("@/lib/db/auth", () => ({ getCurrentUser: vi.fn() }));

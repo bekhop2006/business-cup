@@ -77,7 +77,7 @@ Users upload medical and financial documents.
 
 ## 8. UI and copy
 
-- All user-facing text is in English, in plain language, at the reading level of a busy parent.
+- All user-facing text is in plain language, at the reading level of a busy parent. English is the default. The first screens (landing, login, onboarding, navigation, home) also have Russian and Kazakh: strings live in `src/lib/i18n/` (`en.ts` sets the shape, `ru.ts` and `kk.ts` must match, a test checks it). AI output and dispute letters stay in English because they go to US providers and insurers.
 - Say what the user should do next on every screen.
 - Dollar amounts are always formatted the same way (`$1,234.56`).
 - Never present a flag as a certainty. Use "this looks like" and "worth asking about".
