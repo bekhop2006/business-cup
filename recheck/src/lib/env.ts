@@ -3,9 +3,7 @@ import { z } from "zod";
 const emptyToUndefined = (value: unknown) => (value === "" ? undefined : value);
 
 const required = z.string().min(1);
-// Variables for features that are not built yet. Each one becomes required
-// in the same commit that starts using it (see docs/PLAN.md).
-const notYetUsed = z.preprocess(emptyToUndefined, z.string().min(1).optional());
+const optional = z.preprocess(emptyToUndefined, z.string().min(1).optional());
 
 const envSchema = z.object({
   NEXT_PUBLIC_SUPABASE_URL: z.url(),
@@ -16,12 +14,8 @@ const envSchema = z.object({
   APP_URL: z.url(),
   STRIPE_SECRET_KEY: required,
   STRIPE_WEBHOOK_SECRET: required,
-  DATABASE_URL: notYetUsed,
-  EMAIL_API_KEY: notYetUsed,
-  INBOUND_EMAIL_SECRET: notYetUsed,
-  CRON_SECRET: notYetUsed,
   // Optional: without it, provider search uses the free NPI Registry only.
-  GOOGLE_PLACES_API_KEY: notYetUsed,
+  GOOGLE_PLACES_API_KEY: optional,
 });
 
 export type Env = z.infer<typeof envSchema>;

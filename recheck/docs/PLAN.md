@@ -135,8 +135,8 @@ Checked 2026-11-15 on production (`6060647`): the signed-out landing shows the n
 
 - [ ] Michael's demo account created through the real onboarding and flows
 - [ ] LLM and provider API failures show a clear message; layout checked on a phone
-- [ ] `README.md`: what it is, live link, test account, how to run, architecture in five lines
-- [ ] Remove dead code, unused dependencies, stray console output
+- [x] `README.md`: what it is, live link, test account, how to run, architecture in five lines
+- [x] Remove dead code, unused dependencies, stray console output
 - [ ] All submission items prepared (list them here once confirmed): ______
 - [ ] Demo rehearsed twice end-to-end on production
 - [ ] Feature freeze 2 hours before the deadline: bug fixes only

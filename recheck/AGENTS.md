@@ -14,7 +14,7 @@ Before writing any code, read these files in order:
 ## The ten rules that matter most
 
 1. **Work on the current stage in `docs/PLAN.md`.** Tick a checkbox when its task is done and verified. Do not start a later stage early.
-2. **The core value must be real.** No hardcoded results, no mock data in production code paths. Sample documents live only in `fixtures/` and are used only by tests and the seed script.
+2. **The core value must be real.** No hardcoded results, no mock data in production code paths. Sample documents live only in `fixtures/` and are used only by tests and scripts.
 3. **Checks are code, not LLM.** Every flag on a bill is produced by a pure function in `src/lib/checks/`. The LLM reads documents and writes text. It never decides what is an error.
 4. **Every flag points to a line item.** A flag without a `lineItemId` or `documentId` reference must not exist.
 5. **The LLM never does arithmetic.** It returns numbers; code adds, compares and totals them.

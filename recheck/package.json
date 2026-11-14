@@ -10,6 +10,7 @@
     "lint": "eslint",
     "test": "vitest run",
     "check:extraction": "tsx scripts/check-extraction.ts",
+    "check:providers": "tsx scripts/check-providers.ts",
     "refresh:visits": "tsx scripts/refresh-visits.ts"
   },
   "dependencies": {
