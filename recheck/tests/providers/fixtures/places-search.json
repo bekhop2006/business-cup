@@ -1,0 +1,26 @@
+{
+  "places": [
+    {
+      "id": "test-place-far",
+      "displayName": { "text": "Example Orthopedics North", "languageCode": "en" },
+      "formattedAddress": "200 Example Blvd, Austin, TX 78758, USA",
+      "location": { "latitude": 30.3889, "longitude": -97.7203 },
+      "rating": 4.6,
+      "userRatingCount": 312,
+      "websiteUri": "https://example.com/ortho-north",
+      "nationalPhoneNumber": "(512) 555-0100",
+      "googleMapsUri": "https://maps.google.com/?cid=1"
+    },
+    {
+      "id": "test-place-near",
+      "displayName": { "text": "Example Sports Medicine Downtown", "languageCode": "en" },
+      "formattedAddress": "100 Example St, Austin, TX 78701, USA",
+      "location": { "latitude": 30.2701, "longitude": -97.7421 },
+      "googleMapsUri": "https://maps.google.com/?cid=2"
+    },
+    {
+      "id": "test-place-service-area",
+      "displayName": { "text": "Example Mobile Physio", "languageCode": "en" }
+    }
+  ]
+}

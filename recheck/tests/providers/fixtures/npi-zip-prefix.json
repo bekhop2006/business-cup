@@ -1,0 +1,208 @@
+{
+  "result_count": 3,
+  "results": [
+    {
+      "addresses": [
+        {
+          "address_1": "900 W 38TH ST",
+          "address_2": "SUITE 300",
+          "address_purpose": "MAILING",
+          "address_type": "DOM",
+          "city": "AUSTIN",
+          "country_code": "US",
+          "country_name": "United States",
+          "fax_number": "512-450-1339",
+          "postal_code": "787051130",
+          "state": "TX",
+          "telephone_number": "512-450-1300"
+        },
+        {
+          "address_1": "900 W 38TH ST",
+          "address_2": "SUITE 300",
+          "address_purpose": "LOCATION",
+          "address_type": "DOM",
+          "city": "AUSTIN",
+          "country_code": "US",
+          "country_name": "United States",
+          "fax_number": "512-450-1339",
+          "postal_code": "787051130",
+          "state": "TX",
+          "telephone_number": "512-450-1300"
+        }
+      ],
+      "basic": {
+        "enumeration_date": "2006-01-24",
+        "last_updated": "2013-02-07",
+        "organization_name": "AUSTIN SPORTS MEDICINE LLP",
+        "organizational_subpart": "NO",
+        "status": "A"
+      },
+      "created_epoch": "1138135210000",
+      "endpoints": [],
+      "enumeration_type": "NPI-2",
+      "identifiers": [],
+      "last_updated_epoch": "1360273409000",
+      "number": "1770553653",
+      "other_names": [],
+      "practiceLocations": [],
+      "taxonomies": [
+        {
+          "code": "207XX0005X",
+          "desc": "Orthopaedic Surgery, Sports Medicine",
+          "license": null,
+          "primary": true,
+          "state": null,
+          "taxonomy_group": "193400000X - Single Specialty Group"
+        }
+      ]
+    },
+    {
+      "addresses": [
+        {
+          "address_1": "711 W 38TH ST STE G4",
+          "address_purpose": "LOCATION",
+          "address_type": "DOM",
+          "city": "AUSTIN",
+          "country_code": "US",
+          "country_name": "United States",
+          "postal_code": "787051134",
+          "state": "TX",
+          "telephone_number": "512-257-2500"
+        },
+        {
+          "address_1": "305 W 55TH ST",
+          "address_purpose": "MAILING",
+          "address_type": "DOM",
+          "city": "AUSTIN",
+          "country_code": "US",
+          "country_name": "United States",
+          "fax_number": "512-257-2504",
+          "postal_code": "787511101",
+          "state": "TX",
+          "telephone_number": "512-257-2500"
+        }
+      ],
+      "basic": {
+        "certification_date": "2022-04-25",
+        "enumeration_date": "2008-12-31",
+        "last_updated": "2022-04-25",
+        "organization_name": "MEDICINE IN MOTION, MARTHA PYRON MD",
+        "organizational_subpart": "NO",
+        "status": "A"
+      },
+      "created_epoch": "1230753281000",
+      "endpoints": [],
+      "enumeration_type": "NPI-2",
+      "identifiers": [],
+      "last_updated_epoch": "1650911839000",
+      "number": "1407092166",
+      "other_names": [
+        {
+          "code": "3",
+          "organization_name": "MEDICINE IN MOTION",
+          "type": "Doing Business As"
+        }
+      ],
+      "practiceLocations": [],
+      "taxonomies": [
+        {
+          "code": "261QM2500X",
+          "desc": "Clinic/Center, Medical Specialty",
+          "license": "K9877",
+          "primary": false,
+          "state": "TX",
+          "taxonomy_group": ""
+        },
+        {
+          "code": "207QS0010X",
+          "desc": "Family Medicine, Sports Medicine",
+          "license": null,
+          "primary": true,
+          "state": null,
+          "taxonomy_group": "193200000X - Multi-Specialty Group"
+        }
+      ]
+    },
+    {
+      "addresses": [
+        {
+          "address_1": "823 CONGRESS AVE STE 150-518",
+          "address_purpose": "LOCATION",
+          "address_type": "DOM",
+          "city": "AUSTIN",
+          "country_code": "US",
+          "country_name": "United States",
+          "fax_number": "289-236-3022",
+          "postal_code": "787012405",
+          "state": "TX",
+          "telephone_number": "888-380-0988"
+        },
+        {
+          "address_1": "2950 BUSKIRK AVE STE 300",
+          "address_purpose": "MAILING",
+          "address_type": "DOM",
+          "city": "WALNUT CREEK",
+          "country_code": "US",
+          "country_name": "United States",
+          "fax_number": "289-236-3022",
+          "postal_code": "945976900",
+          "state": "CA",
+          "telephone_number": "888-380-0988"
+        }
+      ],
+      "basic": {
+        "certification_date": "2021-11-11",
+        "credential": "DO",
+        "enumeration_date": "2006-05-10",
+        "first_name": "SHEILA",
+        "last_name": "PATEL",
+        "last_updated": "2022-01-13",
+        "middle_name": "B.",
+        "sole_proprietor": "NO",
+        "status": "A"
+      },
+      "created_epoch": "1147289264000",
+      "endpoints": [
+        {
+          "address_1": "823 Congress Ave Ste 150-518",
+          "address_type": "DOM",
+          "affiliation": "N",
+          "city": "Austin",
+          "contentTypeDescription": "",
+          "country_code": "US",
+          "country_name": "United States",
+          "endpoint": "SHEILA.PATEL@hca8.eclinicaldirectplus.com",
+          "endpointType": "DIRECT",
+          "endpointTypeDescription": "Direct Messaging Address",
+          "postal_code": "787012405",
+          "state": "TX",
+          "useDescription": ""
+        }
+      ],
+      "enumeration_type": "NPI-1",
+      "identifiers": [],
+      "last_updated_epoch": "1642086129000",
+      "number": "1972553303",
+      "other_names": [],
+      "practiceLocations": [],
+      "taxonomies": [
+        {
+          "code": "2081S0010X",
+          "desc": "Physical Medicine & Rehabilitation, Sports Medicine",
+          "license": "M2005",
+          "primary": false,
+          "state": "TX",
+          "taxonomy_group": ""
+        },
+        {
+          "code": "208100000X",
+          "desc": "Physical Medicine & Rehabilitation",
+          "license": "M2005",
+          "primary": true,
+          "state": "TX",
+          "taxonomy_group": ""
+        }
+      ]
+    }
+  ]
+}

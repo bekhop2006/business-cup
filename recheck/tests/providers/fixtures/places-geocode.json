@@ -1,0 +1,8 @@
+{
+  "places": [
+    {
+      "formattedAddress": "Austin, TX 78701, USA",
+      "location": { "latitude": 30.2711, "longitude": -97.7437 }
+    }
+  ]
+}
