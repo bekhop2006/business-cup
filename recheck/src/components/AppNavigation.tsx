@@ -21,6 +21,9 @@ export function AppNavigation() {
       <Link href="/billing" aria-current={pathname === "/billing" ? "page" : undefined}>
         Plan
       </Link>
+      <Link href="/profile" aria-current={pathname === "/profile" ? "page" : undefined}>
+        Profile
+      </Link>
     </>
   );
 }

@@ -89,3 +89,29 @@ describe("summarizeYear", () => {
     expect(summary).toMatchObject({ visitCount: 0, billedCents: 0, deductible: null, outOfPocket: null });
   });
 });
+
+describe("summarizeYear with what the person told us", () => {
+  it("uses the reported amount met when it is higher than the EOBs", () => {
+    const visit: YearVisit = {
+      service_date: "2026-03-12",
+      status: "to_pay",
+      billed_cents: 23000,
+      patient_owes_cents: 4000,
+      eob_patient_responsibility_cents: 4000,
+      flags: [],
+    };
+    const summary = summarizeYear(2026, [visit], {
+      deductible_cents: 150000,
+      oop_max_cents: 600000,
+      deductible_met_cents: 30000,
+      oop_met_cents: 30000,
+    });
+    expect(summary.deductible).toEqual({ usedCents: 30000, limitCents: 150000, percent: 20 });
+  });
+
+  it("shows no progress for a limit the person doesn't know", () => {
+    const summary = summarizeYear(2026, [], { deductible_cents: null, oop_max_cents: 600000 });
+    expect(summary.deductible).toBeNull();
+    expect(summary.outOfPocket).toMatchObject({ limitCents: 600000 });
+  });
+});

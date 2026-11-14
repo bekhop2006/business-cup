@@ -103,8 +103,8 @@ export default async function DashboardPage() {
         <InsurancePlanForm
           action={saveInsurance}
           year={year}
-          deductible={insurance ? formatCentsForInput(insurance.deductible_cents) : ""}
-          oopMax={insurance ? formatCentsForInput(insurance.oop_max_cents) : ""}
+          deductible={insurance?.deductible_cents != null ? formatCentsForInput(insurance.deductible_cents) : ""}
+          oopMax={insurance?.oop_max_cents != null ? formatCentsForInput(insurance.oop_max_cents) : ""}
         />
       </section>
     </>

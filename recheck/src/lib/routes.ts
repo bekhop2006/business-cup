@@ -7,3 +7,6 @@ export function isPublicPath(pathname: string): boolean {
     pathname.startsWith("/api/")
   );
 }
+
+// Where people land after logging in or finishing onboarding.
+export const HOME_PATH = "/visits";

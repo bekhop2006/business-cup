@@ -2,6 +2,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { signOut } from "@/app/(auth)/login/actions";
 import { getCurrentUser } from "@/lib/db/auth";
+import { getProfile } from "@/lib/db/profiles";
+import { createServerSupabase } from "@/lib/db/supabase";
 import { AppNavigation } from "@/components/AppNavigation";
 import styles from "@/app/product.module.css";
 
@@ -12,6 +14,9 @@ export default async function AppLayout({
 }) {
   const user = await getCurrentUser();
   if (!user) redirect("/login");
+  // New accounts set up their profile and insurance first.
+  const profile = await getProfile(await createServerSupabase(), user.id);
+  if (!profile?.onboarded_at) redirect("/onboarding");
 
   return (
     <div className={styles.surface}>

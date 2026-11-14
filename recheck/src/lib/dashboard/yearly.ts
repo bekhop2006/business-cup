@@ -16,7 +16,13 @@ export type YearVisit = {
   flags: { type: FlagType; potential_savings_cents: number }[];
 };
 
-export type InsurancePlan = { deductible_cents: number; oop_max_cents: number };
+export type InsurancePlan = {
+  deductible_cents: number | null;
+  oop_max_cents: number | null;
+  // What the person told us is already met; EOB amounts are used when higher.
+  deductible_met_cents?: number | null;
+  oop_met_cents?: number | null;
+};
 
 export type Progress = { usedCents: number; limitCents: number; percent: number };
 
@@ -63,7 +69,13 @@ export function summarizeYear(year: number, allVisits: YearVisit[], plan: Insura
     savingsFoundCents: sumCents(
       visits.map((visit) => potentialSavings(visit.flags, visit.patient_owes_cents)),
     ),
-    deductible: plan ? progress(confirmed, plan.deductible_cents) : null,
-    outOfPocket: plan ? progress(confirmed, plan.oop_max_cents) : null,
+    deductible:
+      plan?.deductible_cents != null
+        ? progress(Math.max(confirmed, plan.deductible_met_cents ?? 0), plan.deductible_cents)
+        : null,
+    outOfPocket:
+      plan?.oop_max_cents != null
+        ? progress(Math.max(confirmed, plan.oop_met_cents ?? 0), plan.oop_max_cents)
+        : null,
   };
 }
