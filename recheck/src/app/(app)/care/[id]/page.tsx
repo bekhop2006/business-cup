@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ScrollToHash } from "@/components/ScrollToHash";
 import { notFound, redirect } from "next/navigation";
 import { z } from "zod";
 import { CareSafetyForm } from "@/components/CareSafetyForm";
@@ -47,6 +48,7 @@ export default async function CareCasePage({ params, searchParams }: PageProps<"
 
   return (
     <>
+      <ScrollToHash />
       <Link href="/care/new" className="text-sm underline underline-offset-4">Ask another care question</Link>
       <h1 className="mt-4">Your care question</h1>
       {assessment && <CareSafetyNotice assessment={assessment} />}

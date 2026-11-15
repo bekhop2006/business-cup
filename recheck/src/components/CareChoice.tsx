@@ -1,11 +1,12 @@
 import Link from "next/link";
+import { formatServiceDate } from "@/lib/dates";
 import { priceRange } from "@/components/CostForecast";
 import { BookAppointment } from "@/components/BookAppointment";
 import { ProviderDetails } from "@/components/ProviderDetails";
 import { appointmentEmail, appointmentStage } from "@/lib/care/appointment";
 import { CARE_ROUTES } from "@/lib/care/routes";
 import { formatCents } from "@/lib/money";
-import { safeHttpUrl } from "@/lib/providers/links";
+import { displayProviderName, safeHttpUrl } from "@/lib/providers/links";
 import { chosenProviderSchema, savedEstimateSchema } from "@/lib/schemas/providers";
 
 const QUESTIONS = [
@@ -44,7 +45,7 @@ export function CareChoice({ providerValue, estimateValue, appointment }: { prov
           <dt className="text-sm">{scenario.label}</dt><dd className="mt-1 font-medium tabular-nums">{priceRange(scenario.patientShare)}</dd>
         </div>)}
       </dl>
-      <p className="mt-2 text-xs text-[var(--rc-muted)]">Your estimated share using your profile when saved on {snapshot.calculated_at.slice(0, 10)} UTC. Not a clinic quote. This does not mean you need an X-ray or MRI.</p>
+      <p className="mt-2 text-xs text-[var(--rc-muted)]">Your estimated share using your profile when saved on {formatServiceDate(snapshot.calculated_at.slice(0, 10))}. Not a clinic quote. This does not mean you need an X-ray or MRI.</p>
       <p className="mt-3 text-sm font-medium">Estimated difference vs. an urgent care visit only: {formatCents(snapshot.comparison.estimated_savings_cents)}.</p>
       <p className="mt-1 text-xs leading-relaxed text-[var(--rc-muted)]">The urgent care estimate was {priceRange(snapshot.comparison.baseline_patient_share)}. This compares care types under the same insurance assumptions, not prices at individual clinics. Overlapping ranges count as $0 estimated savings. This is not money already saved, and cost should never delay necessary care.</p>
       <p className="mt-2 text-xs text-[var(--rc-muted)]">Saved sources: {medicare && <a href={medicare} target="_blank" rel="noreferrer" className="underline">CMS PFS {snapshot.sources.medicare.year}</a>}; multiplier assumption ×{snapshot.sources.commercial_multiplier.lowBps / 10000}–{snapshot.sources.commercial_multiplier.highBps / 10000}{commercial && <> from <a href={commercial} target="_blank" rel="noreferrer" className="underline">KFF ({snapshot.sources.commercial_multiplier.source.year})</a></>}.</p>
@@ -61,7 +62,7 @@ export function CareChoice({ providerValue, estimateValue, appointment }: { prov
         stage={appointmentStage(appointment.at, appointment.status, new Date())}
         phone={provider.data.phone}
         email={appointmentEmail({
-          providerName: provider.data.name,
+          providerName: displayProviderName(provider.data.name),
           careLabel: CARE_ROUTES[snapshot.route].label,
           insurance: appointment.insurance,
           name: appointment.name,

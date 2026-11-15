@@ -14,7 +14,7 @@ export type ProfileSection = {
   editor: React.ReactNode;
 };
 
-export function ProfileStack({ sections, defaultOpen }: { sections: ProfileSection[]; defaultOpen: string[] }) {
+export function ProfileStack({ sections, defaultOpen, labels }: { sections: ProfileSection[]; defaultOpen: string[]; labels: { nav: string; edit: string; close: string } }) {
   const [open, setOpen] = useState<string[]>(defaultOpen);
   const cards = useRef<Record<string, HTMLElement | null>>({});
 
@@ -26,7 +26,7 @@ export function ProfileStack({ sections, defaultOpen }: { sections: ProfileSecti
 
   return (
     <>
-      <nav aria-label="Profile sections" className="sticky top-2 z-10 mt-6 flex gap-2 rounded-full border border-[var(--rc-navy)]/10 bg-[var(--rc-ivory)] p-1.5">
+      <nav aria-label={labels.nav} className="sticky top-2 z-10 mt-6 flex gap-2 rounded-full border border-[var(--rc-navy)]/10 bg-[var(--rc-ivory)] p-1.5">
         {sections.map((section) => (
           <button
             key={section.id}
@@ -60,7 +60,7 @@ export function ProfileStack({ sections, defaultOpen }: { sections: ProfileSecti
                 onClick={() => toggle(section.id)}
                 className="shrink-0 text-sm underline underline-offset-4"
               >
-                {isOpen ? "Close" : "Edit"}
+                {isOpen ? labels.close : labels.edit}
               </button>
             </div>
             <div className="mt-3">{section.summary}</div>

@@ -9,9 +9,17 @@ const subscribe = () => () => {};
 export function LocalDateTime({ iso, localeTag }: { iso: string; localeTag: string }) {
   const text = useSyncExternalStore(
     subscribe,
-    () => new Intl.DateTimeFormat(localeTag, {
-      weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit",
-    }).format(new Date(iso)),
+    () => {
+      const date = new Date(iso);
+      // Browsers often ship without Kazakh month names and print "M11"; use digits.
+      if (localeTag.startsWith("kk")) {
+        const pad = (n: number) => String(n).padStart(2, "0");
+        return `${pad(date.getDate())}.${pad(date.getMonth() + 1)}.${date.getFullYear()}, ${pad(date.getHours())}:${pad(date.getMinutes())}`;
+      }
+      return new Intl.DateTimeFormat(localeTag, {
+        weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit",
+      }).format(date);
+    },
     () => null,
   );
   return <time dateTime={iso}>{text ?? "…"}</time>;

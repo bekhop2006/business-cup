@@ -53,11 +53,13 @@ export default async function Home() {
               <Link href={startHref} className={styles.primaryLink}>
                 {l.cta} <span aria-hidden="true">↗</span>
               </Link>
-              <form action={startDemo}>
-                <button className={styles.demoButton}>{l.demoCta}</button>
-              </form>
+              {!user && (
+                <form action={startDemo}>
+                  <button className={styles.demoButton}>{l.demoCta}</button>
+                </form>
+              )}
             </div>
-            <p className={styles.helper}>{l.helper} {l.demoHelper}</p>
+            <p className={styles.helper}>{l.helper}{!user && ` ${l.demoHelper}`}</p>
           </div>
 
           <aside className={styles.checklist} aria-label={l.methodLabel}>
