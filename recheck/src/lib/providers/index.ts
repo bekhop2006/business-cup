@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { addDistances } from "./geocode";
 import { searchNpi } from "./npi";
 import { geocodeZip, searchPlaces } from "./places";
 import type { ProviderResult, ProviderSource } from "./types";
@@ -63,7 +64,9 @@ export async function findProviders(input: FindProvidersInput): Promise<FindProv
 
   try {
     const providers = await searchNpi({ taxonomy: input.npiTaxonomy, zip: input.zip, limit: input.limit });
-    return { providers: sortByDistance(providers), source: "npi_registry" };
+    // The registry has no coordinates; free geocoders add a distance where they can.
+    const withDistances = await addDistances(providers, input.zip);
+    return { providers: sortByDistance(withDistances), source: "npi_registry" };
   } catch (error) {
     logFailure("npi_registry", error);
     return { providers: [], source: null, error: "unavailable" };
