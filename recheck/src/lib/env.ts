@@ -16,6 +16,8 @@ const envSchema = z.object({
   STRIPE_WEBHOOK_SECRET: required,
   // Optional: without it, provider search uses the free NPI Registry only.
   GOOGLE_PLACES_API_KEY: optional,
+  // Optional: the shared demo account judges and visitors open without signing up.
+  DEMO_EMAIL: optional,
 });
 
 export type Env = z.infer<typeof envSchema>;

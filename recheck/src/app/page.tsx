@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { startDemo } from "@/app/actions/demo";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { getCurrentUser } from "@/lib/db/auth";
 import { fill } from "@/lib/i18n/locales";
@@ -48,10 +49,15 @@ export default async function Home() {
               <span>{l.titleLine2}</span>
             </h1>
             <p className={styles.intro}>{l.intro}</p>
-            <Link href={startHref} className={styles.primaryLink}>
-              {l.cta} <span aria-hidden="true">↗</span>
-            </Link>
-            <p className={styles.helper}>{l.helper}</p>
+            <div className={styles.heroActions}>
+              <Link href={startHref} className={styles.primaryLink}>
+                {l.cta} <span aria-hidden="true">↗</span>
+              </Link>
+              <form action={startDemo}>
+                <button className={styles.demoButton}>{l.demoCta}</button>
+              </form>
+            </div>
+            <p className={styles.helper}>{l.helper} {l.demoHelper}</p>
           </div>
 
           <aside className={styles.checklist} aria-label={l.methodLabel}>
