@@ -26,7 +26,7 @@ export default async function LoginPage() {
           <p>{t.login.intro}</p>
         </div>
         <section className={styles.loginCard} aria-labelledby="account-heading">
-          <h2 id="account-heading" className="text-2xl font-semibold">{t.login.cardTitle}</h2>
+          <h2 id="account-heading" className="text-2xl font-medium">{t.login.cardTitle}</h2>
           <p className="mt-2 text-sm text-slate-600">{t.login.cardText}</p>
           <LoginForm action={authenticate} t={t.login} />
           <p className="mt-6 text-xs leading-relaxed text-slate-600">{t.login.note}</p>

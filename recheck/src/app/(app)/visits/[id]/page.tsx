@@ -58,7 +58,7 @@ export default async function VisitPage({ params }: PageProps<"/visits/[id]">) {
       </Link>
       <div className="mt-3 flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">{visit.provider_name}</h1>
+          <h1>{visit.provider_name}</h1>
           <p className="mt-1 text-[var(--rc-navy)]/70">{formatServiceDate(visit.service_date)}</p>
         </div>
         <span className="rounded-full bg-[var(--rc-navy)]/8 px-3 py-1 text-sm font-medium">
@@ -81,7 +81,7 @@ export default async function VisitPage({ params }: PageProps<"/visits/[id]">) {
 
       {flags.length > 0 ? (
         <div className="mt-4 rounded-xl border border-[var(--rc-red)]/25 bg-[var(--rc-red)]/5 p-4">
-          <p className="font-semibold text-[var(--rc-red)]">
+          <p className="font-medium text-[var(--rc-red)]">
             We found {flags.length === 1 ? "one thing" : `${flags.length} things`} worth asking about
           </p>
           <p className="mt-1 text-sm text-[var(--rc-red)]">
@@ -112,7 +112,7 @@ export default async function VisitPage({ params }: PageProps<"/visits/[id]">) {
         </p>
       )}
 
-      <h2 className="mt-10 font-semibold">Documents</h2>
+      <h2 className="mt-10 font-medium">Documents</h2>
       {documents.map((document) => (
         <section key={document.id} className="mt-4 rounded-xl border border-[var(--rc-navy)]/15 p-4">
           <div className="flex flex-wrap items-baseline justify-between gap-2">
@@ -171,7 +171,7 @@ function Total({ label, cents, strong = false }: { label: string; cents: number;
   return (
     <div className={`rounded-xl p-3 sm:p-4 ${strong ? "bg-[var(--rc-navy)] text-[var(--rc-ivory)]" : "bg-[var(--rc-navy)]/4"}`}>
       <dt className={`text-xs sm:text-sm ${strong ? "text-[var(--rc-ivory)]/75" : "text-[var(--rc-navy)]/70"}`}>{label}</dt>
-      <dd className="mt-1 text-lg font-semibold tabular-nums sm:text-xl">{formatCents(cents)}</dd>
+      <dd className="mt-1 text-lg font-medium tabular-nums sm:text-xl">{formatCents(cents)}</dd>
     </div>
   );
 }

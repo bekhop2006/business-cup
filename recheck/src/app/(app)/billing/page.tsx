@@ -21,10 +21,10 @@ export default async function BillingPage({ searchParams }: PageProps<"/billing"
 
   return (
     <>
-      <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[var(--rc-navy)]/65">
+      <p className="text-sm text-[var(--rc-muted)]">
         Your plan
       </p>
-      <h1 className="mt-3 text-2xl font-semibold tracking-tight">
+      <h1 className="mt-3">
         {plan === "paid" ? `You're on ${PAID_PLAN_NAME}` : "You're on the free plan"}
       </h1>
 
@@ -40,7 +40,7 @@ export default async function BillingPage({ searchParams }: PageProps<"/billing"
       )}
 
       <section className="mt-6 rounded-xl border border-[var(--rc-navy)]/15 p-5">
-        <h2 className="font-semibold">
+        <h2 className="font-medium">
           {PAID_PLAN_NAME} · {formatCents(MONTHLY_PRICE_CENTS)} a month for your household
         </h2>
         <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-[var(--rc-navy)]/75">

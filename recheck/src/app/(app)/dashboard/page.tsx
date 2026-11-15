@@ -84,7 +84,7 @@ export default async function DashboardPage() {
       )}
 
       <section className="mt-10 rounded-xl border border-[var(--rc-navy)]/15 p-5">
-        <h2 className="font-semibold">Your {year} insurance plan</h2>
+        <h2 className="font-medium">Your {year} insurance plan</h2>
         {summary.deductible && summary.outOfPocket ? (
           <>
             <ProgressBar label="Deductible" progress={summary.deductible} />
@@ -115,10 +115,10 @@ export default async function DashboardPage() {
 function Heading({ year }: { year: number }) {
   return (
     <>
-      <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[var(--rc-navy)]/65">
+      <p className="text-sm text-[var(--rc-muted)]">
         Your {year} picture
       </p>
-      <h1 className="mt-3 text-2xl font-semibold tracking-tight">Your family&apos;s year in medical bills</h1>
+      <h1 className="mt-3">Your family&apos;s year in medical bills</h1>
     </>
   );
 }
@@ -127,7 +127,7 @@ function Tile({ label, cents, strong = false }: { label: string; cents: number; 
   return (
     <div className={`rounded-xl p-4 ${strong ? "bg-[var(--rc-navy)] text-[var(--rc-ivory)]" : "bg-[var(--rc-navy)]/4"}`}>
       <dt className={`text-xs sm:text-sm ${strong ? "text-[var(--rc-ivory)]/75" : "text-[var(--rc-navy)]/70"}`}>{label}</dt>
-      <dd className="mt-1 text-lg font-semibold tabular-nums sm:text-xl">{formatCents(cents)}</dd>
+      <dd className="mt-1 text-lg font-medium tabular-nums sm:text-xl">{formatCents(cents)}</dd>
     </div>
   );
 }

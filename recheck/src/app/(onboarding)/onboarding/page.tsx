@@ -31,13 +31,13 @@ export default async function OnboardingPage({ searchParams }: PageProps<"/onboa
 
   return (
     <>
-      <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[var(--rc-navy)]/65">
+      <p className="text-sm text-[var(--rc-muted)]">
         {fill(o.step, { n: STEPS.indexOf(step) + 1, total: STEPS.length })}
       </p>
 
       {step === "about" && (
         <>
-          <h1 className="mt-3 text-2xl font-semibold tracking-tight">{o.aboutTitle}</h1>
+          <h1 className="mt-3">{o.aboutTitle}</h1>
           <p className="mt-2 text-[var(--rc-navy)]/70">{o.aboutIntro}</p>
           <AboutYouForm
             action={saveAboutYouAction}
@@ -56,7 +56,7 @@ export default async function OnboardingPage({ searchParams }: PageProps<"/onboa
 
       {step === "insurance" && (
         <>
-          <h1 className="mt-3 text-2xl font-semibold tracking-tight">{o.insuranceTitle}</h1>
+          <h1 className="mt-3">{o.insuranceTitle}</h1>
           <InsuranceProfileForm
             action={saveInsuranceAction}
             next="/onboarding?step=done"
@@ -111,7 +111,7 @@ function Summary({
 
   return (
     <>
-      <h1 className="mt-3 text-2xl font-semibold tracking-tight">{o.summaryTitle}</h1>
+      <h1 className="mt-3">{o.summaryTitle}</h1>
       <dl className="mt-6 divide-y divide-[var(--rc-navy)]/10 rounded-xl border border-[var(--rc-navy)]/15">
         {rows.map(([label, value]) => (
           <div key={label} className="flex flex-col gap-1 p-4 sm:flex-row sm:justify-between">

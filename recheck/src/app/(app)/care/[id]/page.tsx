@@ -51,7 +51,7 @@ export default async function CareCasePage({ params, searchParams }: PageProps<"
       <h1 className="mt-4">Your care question</h1>
       {assessment && <CareSafetyNotice assessment={assessment} />}
       <section className="mt-5 rounded-xl bg-[var(--rc-navy)]/4 p-5">
-        <h2 className="font-semibold">{context.intake ? "What we understood" : "What you told us"}</h2>
+        <h2 className="font-medium">{context.intake ? "What we understood" : "What you told us"}</h2>
         <p className="mt-2 whitespace-pre-wrap text-sm leading-relaxed">{careCase.summary ?? careCase.description}</p>
         {context.intake && <details className="mt-3 text-sm"><summary className="cursor-pointer py-2">Your original description</summary><p className="mt-2 whitespace-pre-wrap">{careCase.description}</p></details>}
         {!context.intake && <p role="status" className="mt-3 text-xs text-[var(--rc-muted)]">AI summary skipped or unavailable. You can still answer the safety questions and compare costs.</p>}
@@ -63,7 +63,7 @@ export default async function CareCasePage({ params, searchParams }: PageProps<"
       )}
       <div id="next-steps" className="scroll-mt-6">
         {assessment?.urgency === "routine" && context.scope !== "knee_leg" && (
-          <section className="mt-6 rounded-xl border border-[var(--rc-navy)]/20 p-5"><h2 className="font-semibold">This question needs a different kind of guidance</h2><p className="mt-2 text-sm">Our current safety questions and cost scenarios cover knee or leg pain only. Contact your primary care clinician or your insurer&apos;s nurse line about other symptoms. These answers cannot rule out an emergency.</p></section>
+          <section className="mt-6 rounded-xl border border-[var(--rc-navy)]/20 p-5"><h2 className="font-medium">This question needs a different kind of guidance</h2><p className="mt-2 text-sm">Our current safety questions and cost scenarios cover knee or leg pain only. Contact your primary care clinician or your insurer&apos;s nurse line about other symptoms. These answers cannot rule out an emergency.</p></section>
         )}
         {routineKnee && !showOptions && (
           <Paywall title="Compare care options, costs and providers">
@@ -74,11 +74,11 @@ export default async function CareCasePage({ params, searchParams }: PageProps<"
         )}
         {showOptions && <>
           <CareChoice providerValue={careCase.chosen_provider} estimateValue={careCase.estimate} />
-          <h2 className="mt-8 text-xl font-semibold">Compare ways to get care</h2>
+          <h2 className="mt-8 text-xl font-medium">Compare ways to get care</h2>
           <p className="mt-2 text-sm text-[var(--rc-muted)]">You haven&apos;t reported a warning sign in this check. This doesn&apos;t rule out every problem. Contact a clinician if you&apos;re worried or your symptoms change.</p>
           {COMPARISON_ROUTE_IDS.map((routeId) => CARE_ROUTES[routeId]).map((route) => (
             <section key={route.id} className="mt-6 rounded-xl border border-[var(--rc-navy)]/20 p-5">
-              <h2 className="text-lg font-semibold">{route.label}</h2>
+              <h2 className="text-lg font-medium">{route.label}</h2>
               <p className="mt-2 text-sm leading-relaxed">{route.forWhat}</p>
               <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-[var(--rc-muted)]">{route.accessNotes.map((note) => <li key={note}>{note}</li>)}</ul>
               <CostForecast scenarios={forecastScenarios(route, insuranceToCostPlan(insurance))} />

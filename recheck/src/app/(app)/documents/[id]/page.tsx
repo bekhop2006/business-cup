@@ -52,7 +52,7 @@ export default async function DocumentPage({ params }: PageProps<"/documents/[id
       </Link>
       <div className="mt-3 flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">
+          <h1>
             {document.provider_name ?? document.file_name}
           </h1>
           <p className="mt-1 text-slate-600">{subtitle}</p>
@@ -138,7 +138,7 @@ export default async function DocumentPage({ params }: PageProps<"/documents/[id
             ]}
           />
 
-          <h2 className="mt-8 font-semibold">Charges</h2>
+          <h2 className="mt-8 font-medium">Charges</h2>
           <LineItemsList lines={lines} />
 
           <dl className="mt-4 ml-auto flex max-w-xs flex-col gap-1 text-sm">
@@ -150,7 +150,7 @@ export default async function DocumentPage({ params }: PageProps<"/documents/[id
               <dt>Paid by insurance</dt>
               <dd className="tabular-nums">{amountOrNotStated(document.insurance_paid_cents)}</dd>
             </div>
-            <div className="flex justify-between border-t border-slate-200 pt-1 font-semibold">
+            <div className="flex justify-between border-t border-slate-200 pt-1 font-medium">
               <dt>You owe, per this document</dt>
               <dd className="tabular-nums">{amountOrNotStated(document.patient_responsibility_cents)}</dd>
             </div>

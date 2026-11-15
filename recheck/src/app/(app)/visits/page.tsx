@@ -35,11 +35,11 @@ export default async function VisitsPage() {
 
   return (
     <>
-      <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[var(--rc-navy)]/65">
+      <p className="text-sm text-[var(--rc-muted)]">
         Your family billing record
       </p>
       <div className="mt-3 flex flex-wrap items-center justify-between gap-4">
-        <h1 className="text-2xl font-semibold tracking-tight">Your bills</h1>
+        <h1>Your bills</h1>
         <Link href="/upload" className="inline-flex min-h-11 items-center gap-6 rounded-md bg-[var(--rc-accent)] px-5 py-3 text-sm font-medium text-[var(--rc-navy)] hover:opacity-90">
           Add a document <span aria-hidden="true">↗</span>
         </Link>
@@ -52,12 +52,12 @@ export default async function VisitsPage() {
       {visits.length === 0 ? (
         <div className="mt-8 rounded-lg border border-[var(--rc-navy)]/15 bg-[var(--rc-navy)]/4 px-6 py-12 text-center">
           <span aria-hidden="true" className="mx-auto mb-5 flex size-12 items-center justify-center rounded-full border border-[var(--rc-navy)]/25 text-xl">↥</span>
-          <h2 className="font-serif text-3xl">Start with one bill.</h2>
+          <h2 className="font-serif text-3xl">Start with one bill</h2>
           <p className="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-[var(--rc-navy)]/70">
             Add a medical bill or insurance statement. We&apos;ll read it and
             organize its charges into a visit for you to review.
           </p>
-          <Link href="/upload" className="mt-5 inline-block py-2 text-sm font-semibold underline underline-offset-4">
+          <Link href="/upload" className="mt-5 inline-block py-2 text-sm font-medium underline underline-offset-4">
             Add your first bill
           </Link>
         </div>
@@ -65,7 +65,7 @@ export default async function VisitsPage() {
         groups.map((group) => (
           <section key={group.key} className="mt-8">
             <div className="flex items-baseline justify-between gap-3">
-              <h2 className="font-semibold">{group.name}</h2>
+              <h2 className="font-medium">{group.name}</h2>
               <span className="text-xs text-[var(--rc-navy)]/65">
                 {group.visits.length} {group.visits.length === 1 ? "visit" : "visits"}
               </span>
@@ -81,7 +81,7 @@ export default async function VisitsPage() {
 
       {documents.length > 0 && (
         <section className="mt-10">
-          <h2 className="font-semibold">Documents to finish</h2>
+          <h2 className="font-medium">Documents to finish</h2>
           <p className="mt-1 text-sm text-[var(--rc-navy)]/70">
             These documents are still being read or need details before they can
             join a visit. Open one to check its progress.
@@ -127,7 +127,7 @@ function VisitRow({ visit }: { visit: Visit }) {
           </span>
         </span>
         <span className="shrink-0 text-right">
-          <span className="block font-semibold tabular-nums">{formatCents(visit.patient_owes_cents)}</span>
+          <span className="block font-medium tabular-nums">{formatCents(visit.patient_owes_cents)}</span>
           <span className="text-xs text-[var(--rc-navy)]/65">you owe <span aria-hidden="true">↗</span></span>
         </span>
       </Link>
