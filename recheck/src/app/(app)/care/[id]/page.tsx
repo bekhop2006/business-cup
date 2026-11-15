@@ -73,7 +73,17 @@ export default async function CareCasePage({ params, searchParams }: PageProps<"
           </Paywall>
         )}
         {showOptions && <>
-          <CareChoice providerValue={careCase.chosen_provider} estimateValue={careCase.estimate} />
+          <CareChoice
+            providerValue={careCase.chosen_provider}
+            estimateValue={careCase.estimate}
+            appointment={{
+              caseId: id,
+              at: careCase.appointment_at,
+              status: careCase.appointment_status,
+              name: profile?.full_name ?? null,
+              insurance: [insurance?.insurer_name, insurance?.plan_name].filter(Boolean).join(" ") || null,
+            }}
+          />
           <h2 className="mt-8 text-xl font-medium">Compare ways to get care</h2>
           <p className="mt-2 text-sm text-[var(--rc-muted)]">You haven&apos;t reported a warning sign in this check. This doesn&apos;t rule out every problem. Contact a clinician if you&apos;re worried or your symptoms change.</p>
           {COMPARISON_ROUTE_IDS.map((routeId) => CARE_ROUTES[routeId]).map((route) => (

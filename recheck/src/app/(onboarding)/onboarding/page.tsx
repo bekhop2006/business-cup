@@ -1,17 +1,20 @@
 import { redirect } from "next/navigation";
 import { AboutYouForm } from "@/components/AboutYouForm";
 import { InsuranceProfileForm } from "@/components/InsuranceProfileForm";
+import { PreventiveForm } from "@/components/PreventiveForm";
+import { getPreventiveRecords } from "@/lib/db/preventive";
 import { getCurrentUser } from "@/lib/db/auth";
 import { getInsurancePlan, getProfile } from "@/lib/db/profiles";
 import { createServerSupabase } from "@/lib/db/supabase";
 import { formatCents } from "@/lib/money";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
-import { fill } from "@/lib/i18n/locales";
+import { fill, LOCALE_TAGS } from "@/lib/i18n/locales";
 import { getT } from "@/lib/i18n/server";
-import { estimateDetailsKnown, insuranceToInput } from "@/lib/profile/onboarding";
-import { finishOnboardingAction, saveAboutYouAction, saveInsuranceAction } from "./actions";
+import { preventiveChecklist, preventiveProfileOf } from "@/lib/preventive/schedule";
+import { aboutYouDefaults, estimateDetailsKnown, insuranceToInput } from "@/lib/profile/onboarding";
+import { finishOnboardingAction, saveAboutYouAction, saveInsuranceAction, savePreventiveAction } from "./actions";
 
-const STEPS = ["about", "insurance", "done"] as const;
+const STEPS = ["about", "insurance", "prevention", "done"] as const;
 type Step = (typeof STEPS)[number];
 
 export default async function OnboardingPage({ searchParams }: PageProps<"/onboarding">) {
@@ -22,11 +25,12 @@ export default async function OnboardingPage({ searchParams }: PageProps<"/onboa
 
   const supabase = await createServerSupabase();
   const year = new Date().getUTCFullYear();
-  const { t } = await getT();
+  const { locale, t } = await getT();
   const o = t.onboarding;
-  const [profile, insurance] = await Promise.all([
+  const [profile, insurance, records] = await Promise.all([
     getProfile(supabase, user.id),
     getInsurancePlan(supabase, user.id, year),
+    step === "prevention" ? getPreventiveRecords(supabase, user.id) : Promise.resolve([]),
   ]);
 
   return (
@@ -45,11 +49,7 @@ export default async function OnboardingPage({ searchParams }: PageProps<"/onboa
             submitLabel={t.common.continue}
             t={t.aboutForm}
             savingLabel={t.common.saving}
-            defaults={{
-              fullName: profile?.full_name ?? "",
-              zipCode: profile?.zip_code ?? "",
-              householdSize: profile?.household_size == null ? "" : String(profile.household_size),
-            }}
+            defaults={aboutYouDefaults(profile)}
           />
         </>
       )}
@@ -59,11 +59,27 @@ export default async function OnboardingPage({ searchParams }: PageProps<"/onboa
           <h1 className="mt-3">{o.insuranceTitle}</h1>
           <InsuranceProfileForm
             action={saveInsuranceAction}
-            next="/onboarding?step=done"
+            next="/onboarding?step=prevention"
             submitLabel={t.common.continue}
             t={t.insuranceForm}
             savingLabel={t.common.saving}
             defaults={insuranceToInput(insurance)}
+          />
+        </>
+      )}
+
+      {step === "prevention" && (
+        <>
+          <h1 className="mt-3">{o.preventiveTitle}</h1>
+          <p className="mt-2 text-[var(--rc-navy)]/70">{o.preventiveIntro}</p>
+          <PreventiveForm
+            action={savePreventiveAction}
+            next="/onboarding?step=done"
+            {...preventiveChecklist(preventiveProfileOf(profile), records, new Date())}
+            localeTag={LOCALE_TAGS[locale]}
+            submitLabel={t.common.continue}
+            savingLabel={t.common.saving}
+            t={{ preventiveForm: t.preventiveForm, preventiveServices: t.preventiveServices, preventiveMethods: t.preventiveMethods }}
           />
         </>
       )}

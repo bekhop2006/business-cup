@@ -1,16 +1,21 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { saveAboutYouAction, saveInsuranceAction } from "@/app/(onboarding)/onboarding/actions";
+import { saveAboutYouAction, saveInsuranceAction, savePreventiveAction } from "@/app/(onboarding)/onboarding/actions";
 import { AboutYouForm } from "@/components/AboutYouForm";
 import { InsuranceProfileForm } from "@/components/InsuranceProfileForm";
+import { PreventiveForm } from "@/components/PreventiveForm";
+import { StatusBadge } from "@/components/PreventiveStatus";
 import { ProfileStack } from "@/components/ProfileStack";
 import { MONTHLY_PRICE_CENTS, PAID_PLAN_NAME } from "@/lib/billing/plan";
 import { getCurrentUser } from "@/lib/db/auth";
+import { getPreventiveRecords } from "@/lib/db/preventive";
 import { getInsurancePlan, getProfile } from "@/lib/db/profiles";
 import { createServerSupabase } from "@/lib/db/supabase";
 import { formatCents } from "@/lib/money";
-import { estimateDetailsKnown, insuranceToInput } from "@/lib/profile/onboarding";
+import { LOCALE_TAGS } from "@/lib/i18n/locales";
 import { getT } from "@/lib/i18n/server";
+import { preventiveChecklist, preventiveProfileOf } from "@/lib/preventive/schedule";
+import { aboutYouDefaults, estimateDetailsKnown, insuranceToInput } from "@/lib/profile/onboarding";
 
 const updatedFormat = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric" });
 
@@ -19,12 +24,16 @@ export default async function ProfilePage({ searchParams }: PageProps<"/profile"
   if (!user) redirect("/login");
   const supabase = await createServerSupabase();
   const year = new Date().getUTCFullYear();
-  const { t } = await getT();
-  const [profile, insurance, params] = await Promise.all([
+  const { locale, t } = await getT();
+  const [profile, insurance, records, params] = await Promise.all([
     getProfile(supabase, user.id),
     getInsurancePlan(supabase, user.id, year),
+    getPreventiveRecords(supabase, user.id),
     searchParams,
   ]);
+  const preventive = preventiveChecklist(preventiveProfileOf(profile), records, new Date());
+  const localeTag = LOCALE_TAGS[locale];
+  const preventiveText = { preventiveForm: t.preventiveForm, preventiveServices: t.preventiveServices, preventiveMethods: t.preventiveMethods };
   const details = estimateDetailsKnown(insurance);
   const paid = profile?.plan === "paid";
   const money = (cents: number | null | undefined) => (cents == null ? null : formatCents(cents));
@@ -74,7 +83,7 @@ export default async function ProfilePage({ searchParams }: PageProps<"/profile"
       </section>
 
       <ProfileStack
-        defaultOpen={details.known === 0 ? ["insurance"] : []}
+        defaultOpen={params.open === "preventive" ? ["preventive"] : details.known === 0 ? ["insurance"] : []}
         sections={[
           {
             id: "about",
@@ -86,6 +95,8 @@ export default async function ProfilePage({ searchParams }: PageProps<"/profile"
                   ["Name", profile?.full_name || null],
                   ["ZIP code", profile?.zip_code || null],
                   ["Household", profile?.household_size ? String(profile.household_size) : null],
+                  ["Birth year", profile?.birth_year ? String(profile.birth_year) : null],
+                  ["Sex", profile?.sex ? (profile.sex === "female" ? "Female" : "Male") : null],
                 ]}
               />
             ),
@@ -96,11 +107,7 @@ export default async function ProfilePage({ searchParams }: PageProps<"/profile"
                 submitLabel={t.common.save}
                 t={t.aboutForm}
                 savingLabel={t.common.saving}
-                defaults={{
-                  fullName: profile?.full_name ?? "",
-                  zipCode: profile?.zip_code ?? "",
-                  householdSize: profile?.household_size == null ? "" : String(profile.household_size),
-                }}
+                defaults={aboutYouDefaults(profile)}
               />
             ),
           },
@@ -139,6 +146,35 @@ export default async function ProfilePage({ searchParams }: PageProps<"/profile"
                 t={t.insuranceForm}
                 savingLabel={t.common.saving}
                 defaults={insuranceToInput(insurance)}
+              />
+            ),
+          },
+          {
+            id: "preventive",
+            label: "Preventive care",
+            title: "Free preventive care",
+            summary: (
+              <>
+                <ul className="text-sm">
+                  {preventive.items.map((item) => (
+                    <li key={item.service.id} className="flex flex-wrap items-center justify-between gap-2 border-t border-[var(--rc-navy)]/10 py-2 first:border-t-0">
+                      <span>{t.preventiveServices[item.service.id as keyof typeof t.preventiveServices]?.name ?? item.service.id}</span>
+                      <StatusBadge item={item} t={preventiveText} localeTag={localeTag} />
+                    </li>
+                  ))}
+                </ul>
+                <p className="mt-3 text-xs text-[var(--rc-muted)]">{t.preventiveForm.coverage}</p>
+              </>
+            ),
+            editor: (
+              <PreventiveForm
+                action={savePreventiveAction}
+                next="/profile?saved=1"
+                {...preventive}
+                localeTag={localeTag}
+                submitLabel={t.common.save}
+                savingLabel={t.common.saving}
+                t={preventiveText}
               />
             ),
           },

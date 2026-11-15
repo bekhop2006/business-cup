@@ -23,6 +23,7 @@ beforeEach(() => {
   vi.mocked(getCareCase).mockResolvedValue({
     id: caseId, user_id: userId, created_at: "2026-11-15T00:00:00Z",
     description: "My knee hurts after tennis", summary: null, body_area: null,
+    appointment_at: null, appointment_status: null,
     warning_answers: { intake: null }, urgency: null, route: null,
     chosen_provider: null, estimate: null, estimated_savings_cents: null,
   });

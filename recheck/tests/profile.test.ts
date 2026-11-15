@@ -40,16 +40,33 @@ const michael: InsuranceInput = {
 };
 
 describe("about you", () => {
+  const optional = { birthYear: "", sex: "", tbRisk: false } as const;
+
   it("accepts a name, a 5-digit ZIP and an optional household size", () => {
-    const parsed = aboutYouSchema.parse({ fullName: " Michael ", zipCode: "78701", householdSize: "5" });
-    expect(aboutYouToProfile(parsed)).toEqual({ full_name: "Michael", zip_code: "78701", household_size: 5 });
-    const noSize = aboutYouSchema.parse({ fullName: "Michael", zipCode: "78701", householdSize: "" });
+    const parsed = aboutYouSchema.parse({ fullName: " Michael ", zipCode: "94110", householdSize: "5", ...optional });
+    expect(aboutYouToProfile(parsed)).toEqual({
+      full_name: "Michael", zip_code: "94110", household_size: 5, birth_year: null, sex: null, tb_risk: false,
+    });
+    const noSize = aboutYouSchema.parse({ fullName: "Michael", zipCode: "94110", householdSize: "", ...optional });
     expect(aboutYouToProfile(noSize).household_size).toBeNull();
   });
 
+  it("keeps the optional birth year, sex and TB risk", () => {
+    const parsed = aboutYouSchema.parse({
+      fullName: "Michael", zipCode: "94110", householdSize: "", birthYear: "1980", sex: "male", tbRisk: true,
+    });
+    expect(aboutYouToProfile(parsed)).toMatchObject({ birth_year: 1980, sex: "male", tb_risk: true });
+  });
+
+  it("rejects a birth year that is malformed or under 18", () => {
+    const base = { fullName: "M", zipCode: "94110", householdSize: "", sex: "", tbRisk: false } as const;
+    expect(aboutYouSchema.safeParse({ ...base, birthYear: "80" }).success).toBe(false);
+    expect(aboutYouSchema.safeParse({ ...base, birthYear: String(new Date().getUTCFullYear() - 10) }).success).toBe(false);
+  });
+
   it("rejects a ZIP that is not 5 digits", () => {
-    expect(aboutYouSchema.safeParse({ fullName: "M", zipCode: "7870", householdSize: "" }).success).toBe(false);
-    expect(aboutYouSchema.safeParse({ fullName: "M", zipCode: "78701-1234", householdSize: "" }).success).toBe(false);
+    expect(aboutYouSchema.safeParse({ fullName: "M", zipCode: "7870", householdSize: "", ...optional }).success).toBe(false);
+    expect(aboutYouSchema.safeParse({ fullName: "M", zipCode: "78701-1234", householdSize: "", ...optional }).success).toBe(false);
   });
 });
 

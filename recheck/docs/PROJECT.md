@@ -14,7 +14,7 @@
 
 ## User
 
-**Michael**, 33, software engineer in Austin, Texas. Married, three children, employer-sponsored PPO. He handles the household money, doesn't fully understand his coverage, and doesn't want to spend hours calling clinics and his insurer.
+**Michael**, 46, software engineer in San Francisco (ZIP 94110). Married, three children, employer-sponsored PPO. He handles the household money, doesn't fully understand his coverage, and doesn't want to spend hours calling clinics and his insurer.
 
 His goal: "I want to get the medical care I need without paying more than necessary."
 
@@ -25,12 +25,12 @@ His goal: "I want to get the medical care I need without paying more than necess
 
 ## What the product does
 
-1. **Onboarding:** name, ZIP, household size, and an insurance profile (insurer, plan type, deductible and how much is met, out-of-pocket max, coinsurance, copays). Every field can be skipped. Saved once, reused everywhere.
+1. **Onboarding:** name, ZIP, household size, optional birth year, sex and TB-risk answer, an insurance profile (insurer, plan type, deductible and how much is met, out-of-pocket max, coinsurance, copays). Every field can be skipped. Saved once, reused everywhere. A third step lists **free preventive care** (USPSTF screenings, CDC vaccines) that applies to the person, generally $0 in-network; they record when they last had each one and Recheck shows when the next is due.
 2. **Describe the problem:** "My knee has hurt for a week after tennis. I don't want to overpay." The AI summarises it; a fixed set of safety questions checks for warning signs. Any warning sign → "Get care now", with no selling and no paywall.
 3. **Care options:** primary care, sports medicine, urgent care — what each is for and roughly what it costs.
 4. **Real providers nearby** (Google Places, CMS NPI Registry as fallback): address, distance, rating, phone, website. Insurance network status is always shown as **not verified**.
 5. **Cost forecast:** visit only / + X-ray / + MRI. Prices are real public benchmarks (CMS Medicare Physician Fee Schedule), the person's share is computed by code from their own plan, and every assumption is shown. "This does not mean you need an X-ray or MRI."
-6. **Choose a provider:** a checklist of questions to ask before booking ("Are you in-network for my exact plan?"). The case and its estimated savings are saved.
+6. **Choose and book:** a checklist of questions to ask ("Are you in-network for my exact plan?"), the clinic's phone and a ready email. The person books it themselves and saves the date; Recheck shows it on the home page, offers a calendar file, and after the visit asks for the bill. The case and its estimated savings are saved.
 7. **After the visit:** upload the bill and EOB → Recheck explains each line, flags possible errors and writes a dispute letter (built in stages 1–3).
 8. **Home dashboard:** insurance overview with deductible progress, estimated savings from choices, money worth asking about on bills, recent cases and visits.
 
@@ -52,7 +52,7 @@ Why people return: every new health need is a new case, every visit brings a bil
 
 - Diagnoses or telling anyone to skip care to save money.
 - Real-time insurance eligibility or network verification, insurer or hospital integrations.
-- Appointment booking, sending letters or calling on the user's behalf.
+- Booking appointments, sending letters or calling on the user's behalf (the person books and tells us the date).
 - Family profiles (only a household size field), a second paid tier.
 - Native mobile apps.
 

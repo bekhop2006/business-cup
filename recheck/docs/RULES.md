@@ -14,7 +14,7 @@ These rules apply to every coding agent and every human contributor. If a reques
 ## 2. Scope
 
 - B2C, web only. The app must work in a desktop and a phone browser.
-- Do not build: diagnoses, lab results, appointment booking, prescriptions, hospital or insurer integrations, real-time insurance verification, native apps, sending letters or calling on the user's behalf.
+- Do not build: diagnoses, lab results, booking on the user's behalf (the person calls or emails the clinic and records the date in Recheck), prescriptions, hospital or insurer integrations, real-time insurance verification, native apps, sending letters or calling on the user's behalf.
 - Do not add features that are not in `PLAN.md` without asking.
 
 ## 3. The core value must be real
@@ -28,6 +28,7 @@ Judges read the repository and check that nothing is faked.
 - **Prices:** only real public benchmarks (CMS fee schedules) stored with their source URL and year, or numbers the user entered. The patient's share is computed in `src/lib/costs/` from the user's own insurance profile. Every assumption (for example a commercial-vs-Medicare multiplier) is labeled as an assumption in the UI. Never show a made-up price for a real clinic.
 - **Providers:** only real records from Google Places or the CMS NPI Registry, each carrying its source. Insurance network status is always "not verified". If both sources fail, say so; never substitute demo providers.
 - **Savings** from choosing a provider are labeled as estimates. Never call them realised savings.
+- **Preventive care:** only USPSTF grade A/B screenings and CDC adult schedule vaccines, each with its official source link and the date it was checked (`src/lib/preventive/services.ts`). Which services apply and when they are due is computed in code from birth year, sex and the TB-risk answer; the LLM is never involved. Coverage wording follows healthcare.gov: "generally $0 in-network", never a guarantee. Vaccine guidance changed in 2025–2026, so the UI asks people to confirm with their plan.
 
 ## 4. LLM usage
 

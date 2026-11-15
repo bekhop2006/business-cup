@@ -3,12 +3,13 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
+import { parseAppointmentTime } from "@/lib/care/appointment";
 import { CARE_ROUTES } from "@/lib/care/routes";
 import { insuranceToCostPlan } from "@/lib/care/profile";
 import { canCompareCare, makeSelectionEstimate } from "@/lib/care/selection";
 import { canCompareCareOptions } from "@/lib/billing/plan";
 import { getCurrentUser } from "@/lib/db/auth";
-import { getCareCase, getCaseProvider, getFirstCareCaseId, saveCaseChoice, saveCaseProviders, saveCaseProviderSearch } from "@/lib/db/care";
+import { getCareCase, getCaseProvider, getFirstCareCaseId, saveCaseAppointment, saveCaseChoice, saveCaseProviders, saveCaseProviderSearch, setCaseAppointmentStatus } from "@/lib/db/care";
 import { getInsurancePlan, getPlan } from "@/lib/db/profiles";
 import { createServerSupabase } from "@/lib/db/supabase";
 import { env } from "@/lib/env";
@@ -94,4 +95,38 @@ export async function chooseCaseProvider(_previous: ProviderFormState, form: For
   revalidatePath(`/care/${caseId}`);
   revalidatePath("/home");
   redirect(`/care/${caseId}?route=${route}#your-choice`);
+}
+
+// The person booked by phone or email and tells us when. Recheck never books.
+export async function bookAppointment(_previous: ProviderFormState, form: FormData): Promise<ProviderFormState> {
+  const user = await getCurrentUser();
+  if (!user) redirect("/login");
+  const caseId = z.uuid().safeParse(form.get("caseId"));
+  if (!caseId.success) return { error: "This care question wasn't found." };
+  const appointmentAt = parseAppointmentTime(String(form.get("appointmentAt") ?? ""), new Date());
+  if (appointmentAt === "invalid") return { error: "Enter the date and time of your appointment." };
+  if (appointmentAt === "past") return { error: "That time has passed. Enter the date and time you booked." };
+  try {
+    await saveCaseAppointment(await createServerSupabase(), user.id, caseId.data, appointmentAt);
+  } catch {
+    return { error: "We couldn't save your appointment. Choose a provider first, then try again." };
+  }
+  revalidatePath(`/care/${caseId.data}`);
+  revalidatePath("/home");
+  return {};
+}
+
+const statusSchema = z.object({ caseId: z.uuid(), status: z.enum(["done", "cancelled"]), next: z.enum(["home", "case"]) });
+
+export async function updateAppointmentStatus(form: FormData): Promise<void> {
+  const user = await getCurrentUser();
+  if (!user) redirect("/login");
+  const parsed = statusSchema.safeParse({ caseId: form.get("caseId"), status: form.get("status"), next: form.get("next") });
+  if (!parsed.success) redirect("/home");
+  const { caseId, status, next } = parsed.data;
+  await setCaseAppointmentStatus(await createServerSupabase(), user.id, caseId, status);
+  revalidatePath(`/care/${caseId}`);
+  revalidatePath("/home");
+  if (status === "done") redirect("/upload");
+  redirect(next === "home" ? "/home" : `/care/${caseId}#your-choice`);
 }

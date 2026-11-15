@@ -24,15 +24,64 @@ export const aboutYouSchema = z.object({
     z.literal(""),
     z.coerce.number().int("Enter a whole number.").min(1, "Enter at least 1.").max(20, "Enter 20 or fewer."),
   ]),
+  // Used only to show which free preventive care applies. All optional.
+  birthYear: z.union([
+    z.literal(""),
+    z.coerce
+      .number()
+      .int("Enter a 4-digit birth year.")
+      .min(1900, "Enter a 4-digit birth year.")
+      .refine((year) => year <= new Date().getUTCFullYear() - 18, "Recheck is for adults 18 and older."),
+  ]),
+  sex: z.enum(["", "female", "male"]),
+  tbRisk: z.boolean(),
 });
 
-export type AboutYou = { full_name: string; zip_code: string; household_size: number | null };
+export type AboutYou = {
+  full_name: string;
+  zip_code: string;
+  household_size: number | null;
+  birth_year: number | null;
+  sex: "female" | "male" | null;
+  tb_risk: boolean;
+};
 
 export function aboutYouToProfile(input: z.infer<typeof aboutYouSchema>): AboutYou {
   return {
     full_name: input.fullName,
     zip_code: input.zipCode,
     household_size: input.householdSize === "" ? null : input.householdSize,
+    birth_year: input.birthYear === "" ? null : input.birthYear,
+    sex: input.sex === "" ? null : input.sex,
+    tb_risk: input.tbRisk,
+  };
+}
+
+export type AboutYouDefaults = {
+  fullName: string;
+  zipCode: string;
+  householdSize: string;
+  birthYear: string;
+  sex: string;
+  tbRisk: boolean;
+};
+
+// The form's starting values from the stored profile.
+export function aboutYouDefaults(profile: {
+  full_name: string | null;
+  zip_code: string | null;
+  household_size: number | null;
+  birth_year: number | null;
+  sex: string | null;
+  tb_risk: boolean | null;
+} | null): AboutYouDefaults {
+  return {
+    fullName: profile?.full_name ?? "",
+    zipCode: profile?.zip_code ?? "",
+    householdSize: profile?.household_size == null ? "" : String(profile.household_size),
+    birthYear: profile?.birth_year == null ? "" : String(profile.birth_year),
+    sex: profile?.sex ?? "",
+    tbRisk: profile?.tb_risk === true,
   };
 }
 

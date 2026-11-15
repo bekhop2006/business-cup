@@ -22,6 +22,7 @@ export function careCase(context = routineContext()): CareCase {
   return {
     id: CASE_ID, user_id: USER_ID, created_at: "2026-11-15T00:00:00Z",
     description: "Knee pain after tennis.", summary: null, body_area: "knee_leg",
+    appointment_at: null, appointment_status: null,
     urgency: "routine", warning_answers: context, route: null,
     chosen_provider: null, estimate: null, estimated_savings_cents: null,
   };

@@ -74,6 +74,7 @@
         │   ├── patientShare.ts  # the person's share from their own plan (copay, deductible, coinsurance, OOP)
         │   └── scenarios.ts  # visit / + X-ray / + MRI forecasts
         ├── providers/        # Google Places search, NPI Registry fallback, distance
+        ├── preventive/       # USPSTF/CDC preventive services, who they apply to, when due
         ├── llm/
         │   ├── client.ts     # the only file that talks to the LLM provider
         │   ├── extract.ts    # document -> ExtractedDocument
@@ -129,7 +130,7 @@ All money columns are integer cents. All tables have `id uuid`, `created_at`, an
 
 | Table | Key columns |
 | --- | --- |
-| `profiles` | `user_id`, `email`, `inbound_alias`, `stripe_customer_id`, `plan`, `full_name`, `zip_code`, `household_size`, `onboarded_at` (users may update only the last four) |
+| `profiles` | `user_id`, `email`, `inbound_alias`, `stripe_customer_id`, `plan`, `full_name`, `zip_code`, `household_size`, `onboarded_at`, `birth_year`, `sex`, `tb_risk` (users may update only the last seven) |
 | `family_members` | `name` (unique per user, ignoring case), `relation` |
 | `insurance_plans` | the insurance profile: `year`, `insurer_name`, `plan_name`, `plan_type`, `deductible_cents`, `deductible_met_cents`, `oop_max_cents`, `oop_met_cents`, `coinsurance_bps`, `copay_primary_cents`, `copay_specialist_cents`, `copay_urgent_care_cents`, `copay_er_cents`, `updated_at` (all amounts optional) |
 | `visits` | `family_member_id`, `provider_name`, `service_date`, `status`, `billed_cents`, `insurance_paid_cents`, `patient_owes_cents` |
@@ -141,7 +142,8 @@ Files live in the private Storage bucket `documents` under `<user id>/<document 
 `documents.extracted` keeps the raw LLM output. The document columns next to it (`provider_name` … `patient_responsibility_cents`, `stated_total_cents`) are the trusted values used by matching, totals and checks: filled from the extraction, or by the person on the review screen.
 | `flags` | `visit_id`, `document_id`, `line_item_id`, `type`, `message` (written by the check), `explanation` (written by the LLM), `potential_savings_cents` |
 | `disputes` | `visit_id` (one per visit), `status`, `letter_text`, `call_script`, `next_action_at` |
-| `care_cases` | `description`, `summary`, `body_area`, `warning_answers` (jsonb), `urgency`, `route`, `chosen_provider` (jsonb), `estimate` (jsonb snapshot with sources), `estimated_savings_cents` |
+| `care_cases` | `description`, `summary`, `body_area`, `warning_answers` (jsonb), `urgency`, `route`, `chosen_provider` (jsonb), `estimate` (jsonb snapshot with sources), `estimated_savings_cents`, `appointment_at`, `appointment_status` (`planned`, `done`, `cancelled`) |
+| `preventive_records` | `service_id` (unique per user), `last_done_on`, `method` (which test, when the interval depends on it) |
 | `case_providers` | `case_id`, `route`, `source` (`google_places`, `npi_registry`), `external_id`, `name`, `address`, `phone`, `website`, `rating`, `rating_count`, `distance_meters`, `maps_url`, `network_status` (always `not_verified`) |
 
 Enumerations:
@@ -195,3 +197,8 @@ GOOGLE_PLACES_API_KEY=
 4. **Costs.** `src/lib/costs/` turns CMS benchmark amounts into a range of the person's own share using their insurance profile; every assumption and source travels with the numbers.
 5. **Providers.** `src/lib/providers/` searches Google Places near the person's ZIP and falls back to the CMS NPI Registry. Results are stored in `case_providers` with their source; network status is always "not verified".
 6. **Choose.** The chosen provider, the estimate snapshot and the estimated savings (vs the most expensive suitable option) are saved on the case, with a checklist of questions to ask before booking.
+7. **Book.** The person calls or emails the clinic (Recheck shows the phone and a ready email from `src/lib/care/appointment.ts`) and saves the date. The home page shows the upcoming visit; `/care/[id]/appointment.ics` adds it to a calendar; after the visit the person marks it done and is sent to add the bill.
+
+## Free preventive care
+
+`src/lib/preventive/services.ts` lists USPSTF A/B screenings and CDC adult vaccines with age, sex, risk criteria, interval and source URL. `schedule.ts` decides which apply (birth year, sex, TB-risk answer) and when each is due from `preventive_records`. Shown as onboarding step 3, a profile card and a home card.

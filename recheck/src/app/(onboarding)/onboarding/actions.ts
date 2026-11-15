@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { translateMessage } from "@/lib/i18n/dictionaries";
 import { getLocale } from "@/lib/i18n/server";
 import { getCurrentUser } from "@/lib/db/auth";
+import { savePreventiveRecords } from "@/lib/db/preventive";
 import { markOnboarded, saveAboutYou, saveInsurancePlan } from "@/lib/db/profiles";
 import { createServerSupabase } from "@/lib/db/supabase";
 import {
@@ -12,12 +13,19 @@ import {
   insuranceSchema,
   insuranceToProfile,
 } from "@/lib/profile/onboarding";
+import { parseDoneMonth } from "@/lib/preventive/schedule";
+import { PREVENTIVE_SERVICES } from "@/lib/preventive/services";
 import { HOME_PATH } from "@/lib/routes";
 
 export type ProfileFormState = { error?: string };
 
 // Where a form may send the person after saving.
-const NEXT_PAGES = ["/onboarding?step=insurance", "/onboarding?step=done", "/profile?saved=1"] as const;
+const NEXT_PAGES = [
+  "/onboarding?step=insurance",
+  "/onboarding?step=prevention",
+  "/onboarding?step=done",
+  "/profile?saved=1",
+] as const;
 const nextPage = (formData: FormData) => {
   const next = String(formData.get("next"));
   return NEXT_PAGES.find((page) => page === next) ?? "/profile?saved=1";
@@ -38,6 +46,9 @@ async function saveAboutYouDetails(
     fullName: formData.get("fullName"),
     zipCode: formData.get("zipCode"),
     householdSize: formData.get("householdSize") ?? "",
+    birthYear: String(formData.get("birthYear") ?? "").trim(),
+    sex: formData.get("sex") ?? "",
+    tbRisk: formData.get("tbRisk") === "on",
   });
   if (!parsed.success) return { error: parsed.error.issues[0].message };
 
@@ -85,6 +96,31 @@ async function saveInsuranceDetails(
   redirect(nextPage(formData));
 }
 
+// The form lists the services it showed; only those are saved or cleared.
+async function savePreventiveDetails(
+  _previous: ProfileFormState,
+  formData: FormData,
+): Promise<ProfileFormState> {
+  const userId = await requireUserId();
+  const shown = new Set(formData.getAll("service").map(String));
+  const today = new Date();
+  const answers: { serviceId: string; lastDoneOn: string | null; method: string | null }[] = [];
+  for (const service of PREVENTIVE_SERVICES.filter((item) => shown.has(item.id))) {
+    const lastDoneOn = parseDoneMonth(String(formData.get(`done_${service.id}`) ?? ""), today);
+    if (lastDoneOn === "invalid") return { error: "Enter the month you had it, not a future month." };
+    const method = String(formData.get(`method_${service.id}`) ?? "");
+    const knownMethod = service.methods?.some((option) => option.id === method) ? method : null;
+    answers.push({ serviceId: service.id, lastDoneOn, method: lastDoneOn ? knownMethod : null });
+  }
+
+  try {
+    await savePreventiveRecords(await createServerSupabase(), userId, answers);
+  } catch {
+    return { error: "We couldn't save your preventive care. Please try again." };
+  }
+  redirect(nextPage(formData));
+}
+
 // Messages are written in English; show them in the reader's language.
 async function translated(state: ProfileFormState): Promise<ProfileFormState> {
   return { ...state, error: translateMessage(await getLocale(), state.error) };
@@ -96,6 +132,10 @@ export async function saveAboutYouAction(previous: ProfileFormState, formData: F
 
 export async function saveInsuranceAction(previous: ProfileFormState, formData: FormData): Promise<ProfileFormState> {
   return translated(await saveInsuranceDetails(previous, formData));
+}
+
+export async function savePreventiveAction(previous: ProfileFormState, formData: FormData): Promise<ProfileFormState> {
+  return translated(await savePreventiveDetails(previous, formData));
 }
 
 // Finishing or skipping onboarding: the rest can be added later on /profile.
