@@ -18,7 +18,7 @@ const QUESTIONS = [
   "Will you check with me before adding any tests or services that cost extra?",
 ];
 
-type Appointment = { caseId: string; at: string | null; status: string | null; name: string | null; insurance: string | null };
+type Appointment = { caseId: string; at: string | null; status: string | null; name: string | null; insurance: string | null; suggestTime?: boolean };
 
 export function CareChoice({ providerValue, estimateValue, appointment }: { providerValue: unknown; estimateValue: unknown; appointment: Appointment }) {
   const provider = chosenProviderSchema.safeParse(providerValue);
@@ -61,6 +61,7 @@ export function CareChoice({ providerValue, estimateValue, appointment }: { prov
         appointmentAt={appointment.at}
         stage={appointmentStage(appointment.at, appointment.status, new Date())}
         phone={provider.data.phone}
+        suggestTime={appointment.suggestTime}
         email={appointmentEmail({
           providerName: displayProviderName(provider.data.name),
           careLabel: CARE_ROUTES[snapshot.route].label,

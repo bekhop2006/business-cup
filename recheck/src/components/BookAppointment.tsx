@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import { bookAppointment, updateAppointmentStatus } from "@/app/(app)/care/provider-actions";
 import { LocalDateTime } from "@/components/LocalDateTime";
 import type { AppointmentStage } from "@/lib/care/appointment";
@@ -11,14 +11,29 @@ type Props = {
   stage: AppointmentStage | null;
   phone: string | null;
   email: { subject: string; body: string };
+  // The shared demo account gets a time filled in, so visitors only click.
+  suggestTime?: boolean;
 };
+
+// Seven days from now at 10:30, in the browser's time zone, as datetime-local text.
+function nextWeekAt1030(): string {
+  const date = new Date();
+  date.setDate(date.getDate() + 7);
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T10:30`;
+}
 
 // Booking happens between the person and the clinic. We help them ask, then
 // keep the date they tell us.
-export function BookAppointment({ caseId, appointmentAt, stage, phone, email }: Props) {
+export function BookAppointment({ caseId, appointmentAt, stage, phone, email, suggestTime }: Props) {
   const [state, formAction, pending] = useActionState(bookAppointment, {});
   const [copied, setCopied] = useState(false);
   const [editing, setEditing] = useState(stage === null || stage === "cancelled");
+  const timeField = useRef<HTMLInputElement>(null);
+  // Filled in after mount: the server doesn't know the visitor's time zone.
+  useEffect(() => {
+    if (suggestTime && editing && timeField.current && !timeField.current.value) timeField.current.value = nextWeekAt1030();
+  }, [suggestTime, editing]);
   const emailText = `Subject: ${email.subject}\n\n${email.body}`;
 
   // The browser knows the person's time zone; send the exact instant.
@@ -91,7 +106,7 @@ export function BookAppointment({ caseId, appointmentAt, stage, phone, email }: 
           <input type="hidden" name="caseId" value={caseId} />
           <label className="flex flex-col gap-1 text-sm font-medium">
             I booked it for
-            <input type="datetime-local" name="local" required className="rounded-lg border border-slate-300 bg-white/70 px-3 py-2 text-base font-normal" />
+            <input ref={timeField} type="datetime-local" name="local" required className="rounded-lg border border-slate-300 bg-white/70 px-3 py-2 text-base font-normal" />
           </label>
           <button disabled={pending} className="min-h-11 rounded-lg bg-[var(--rc-accent)] px-4 py-2 text-sm font-medium text-[var(--rc-navy)] disabled:opacity-60">
             {pending ? "Saving…" : "Save appointment"}

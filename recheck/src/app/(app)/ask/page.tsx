@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { isDemoAccount } from "@/lib/demo";
 import { AskForm } from "@/components/AskForm";
 import { Paywall } from "@/components/Paywall";
 import { canAskQuestion } from "@/lib/billing/plan";
@@ -22,7 +23,7 @@ export default async function AskPage() {
         {plan === "free" && asked === 0 && " Your first question is free."}
       </p>
       {canAskQuestion(plan, asked) ? (
-        <AskForm />
+        <AskForm demo={isDemoAccount(user.email)} />
       ) : (
         <Paywall title="Ask more questions with Recheck Plus">
           Your free question is used. Recheck Plus answers every question from official sources.

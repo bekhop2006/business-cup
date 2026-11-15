@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { isDemoAccount } from "@/lib/demo";
 import { ScrollToHash } from "@/components/ScrollToHash";
 import { notFound, redirect } from "next/navigation";
 import { z } from "zod";
@@ -59,7 +60,14 @@ export default async function CareCasePage({ params, searchParams }: PageProps<"
         {!context.intake && <p role="status" className="mt-3 text-xs text-[var(--rc-muted)]">AI summary skipped or unavailable. You can still answer the safety questions and compare costs.</p>}
       </section>
       {editingSafety ? (
-        <CareSafetyForm key={`${id}-${careCase.urgency}`} caseId={id} defaults={context.answers ?? {}} mentioned={context.intake?.mentioned_warning_signs ?? []} scope={context.scope} />
+        <>
+          {isDemoAccount(user.email) && (
+            <p className="mt-6 rounded-lg bg-[var(--rc-accent)]/40 p-3 text-sm">
+              Demo tip: answer <b>No</b> to every question to see care options, prices and nearby clinics. Answer <b>Yes</b> to any of them to see the safety warning instead.
+            </p>
+          )}
+          <CareSafetyForm key={`${id}-${careCase.urgency}`} caseId={id} defaults={context.answers ?? {}} mentioned={context.intake?.mentioned_warning_signs ?? []} scope={context.scope} />
+        </>
       ) : (
         <Link href={`/care/${id}?safety=1`} className="mt-5 inline-block min-h-11 py-3 text-sm font-medium underline">Review or change your safety answers</Link>
       )}
@@ -84,6 +92,7 @@ export default async function CareCasePage({ params, searchParams }: PageProps<"
               status: careCase.appointment_status,
               name: profile?.full_name ?? null,
               insurance: [insurance?.insurer_name, insurance?.plan_name].filter(Boolean).join(" ") || null,
+              suggestTime: isDemoAccount(user.email),
             }}
           />
           <h2 className="mt-8 text-xl font-medium">Compare ways to get care</h2>
