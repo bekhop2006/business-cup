@@ -25,14 +25,14 @@ export type Database = {
           Tables: {
             "care_cases": {
                   Row: {
-                    "body_area": string | null,"chosen_provider": Json | null,"created_at": string,"description": string,"estimate": Json | null,"estimated_savings_cents": number | null,"id": string,"route": string | null,"summary": string | null,"urgency": Database["public"]['Enums']["care_urgency"] | null,"user_id": string,"warning_answers": Json | null
+                    "appointment_at": string | null,"appointment_status": string | null,"body_area": string | null,"chosen_provider": Json | null,"created_at": string,"description": string,"estimate": Json | null,"estimated_savings_cents": number | null,"id": string,"route": string | null,"summary": string | null,"urgency": Database["public"]['Enums']["care_urgency"] | null,"user_id": string,"warning_answers": Json | null
                   }
                   ComputedFields: never
                   Insert: {
-                    "body_area"?: string | null,"chosen_provider"?: Json | null,"created_at"?: string,"description": string,"estimate"?: Json | null,"estimated_savings_cents"?: number | null,"id"?: string,"route"?: string | null,"summary"?: string | null,"urgency"?: Database["public"]['Enums']["care_urgency"] | null,"user_id"?: string,"warning_answers"?: Json | null
+                    "appointment_at"?: string | null,"appointment_status"?: string | null,"body_area"?: string | null,"chosen_provider"?: Json | null,"created_at"?: string,"description": string,"estimate"?: Json | null,"estimated_savings_cents"?: number | null,"id"?: string,"route"?: string | null,"summary"?: string | null,"urgency"?: Database["public"]['Enums']["care_urgency"] | null,"user_id"?: string,"warning_answers"?: Json | null
                   }
                   Update: {
-                    "body_area"?: string | null,"chosen_provider"?: Json | null,"created_at"?: string,"description"?: string,"estimate"?: Json | null,"estimated_savings_cents"?: number | null,"id"?: string,"route"?: string | null,"summary"?: string | null,"urgency"?: Database["public"]['Enums']["care_urgency"] | null,"user_id"?: string,"warning_answers"?: Json | null
+                    "appointment_at"?: string | null,"appointment_status"?: string | null,"body_area"?: string | null,"chosen_provider"?: Json | null,"created_at"?: string,"description"?: string,"estimate"?: Json | null,"estimated_savings_cents"?: number | null,"id"?: string,"route"?: string | null,"summary"?: string | null,"urgency"?: Database["public"]['Enums']["care_urgency"] | null,"user_id"?: string,"warning_answers"?: Json | null
                   }
                   Relationships: [
                     
@@ -177,16 +177,30 @@ isOneToOne: false
       referencedColumns: ["id","user_id"]
     }
                   ]
-                },"profiles": {
+                },"preventive_records": {
                   Row: {
-                    "created_at": string,"email": string,"full_name": string | null,"household_size": number | null,"id": string,"inbound_alias": string,"onboarded_at": string | null,"plan": Database["public"]['Enums']["subscription_plan"],"stripe_customer_id": string | null,"user_id": string,"zip_code": string | null
+                    "id": string,"last_done_on": string,"method": string | null,"service_id": string,"updated_at": string,"user_id": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "created_at"?: string,"email": string,"full_name"?: string | null,"household_size"?: number | null,"id"?: string,"inbound_alias": string,"onboarded_at"?: string | null,"plan"?: Database["public"]['Enums']["subscription_plan"],"stripe_customer_id"?: string | null,"user_id": string,"zip_code"?: string | null
+                    "id"?: string,"last_done_on": string,"method"?: string | null,"service_id": string,"updated_at"?: string,"user_id"?: string
                   }
                   Update: {
-                    "created_at"?: string,"email"?: string,"full_name"?: string | null,"household_size"?: number | null,"id"?: string,"inbound_alias"?: string,"onboarded_at"?: string | null,"plan"?: Database["public"]['Enums']["subscription_plan"],"stripe_customer_id"?: string | null,"user_id"?: string,"zip_code"?: string | null
+                    "id"?: string,"last_done_on"?: string,"method"?: string | null,"service_id"?: string,"updated_at"?: string,"user_id"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
+                },"profiles": {
+                  Row: {
+                    "birth_year": number | null,"created_at": string,"email": string,"full_name": string | null,"household_size": number | null,"id": string,"inbound_alias": string,"onboarded_at": string | null,"plan": Database["public"]['Enums']["subscription_plan"],"sex": string | null,"stripe_customer_id": string | null,"tb_risk": boolean | null,"user_id": string,"zip_code": string | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "birth_year"?: number | null,"created_at"?: string,"email": string,"full_name"?: string | null,"household_size"?: number | null,"id"?: string,"inbound_alias": string,"onboarded_at"?: string | null,"plan"?: Database["public"]['Enums']["subscription_plan"],"sex"?: string | null,"stripe_customer_id"?: string | null,"tb_risk"?: boolean | null,"user_id": string,"zip_code"?: string | null
+                  }
+                  Update: {
+                    "birth_year"?: number | null,"created_at"?: string,"email"?: string,"full_name"?: string | null,"household_size"?: number | null,"id"?: string,"inbound_alias"?: string,"onboarded_at"?: string | null,"plan"?: Database["public"]['Enums']["subscription_plan"],"sex"?: string | null,"stripe_customer_id"?: string | null,"tb_risk"?: boolean | null,"user_id"?: string,"zip_code"?: string | null
                   }
                   Relationships: [
                     

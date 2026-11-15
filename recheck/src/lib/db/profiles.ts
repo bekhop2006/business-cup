@@ -12,7 +12,7 @@ type Db = SupabaseClient<Database>;
 export async function getProfile(db: Db, userId: string) {
   const { data, error } = await db
     .from("profiles")
-    .select("email, plan, stripe_customer_id, full_name, zip_code, household_size, onboarded_at")
+    .select("email, plan, stripe_customer_id, full_name, zip_code, household_size, onboarded_at, birth_year, sex, tb_risk")
     .eq("user_id", userId)
     .maybeSingle();
   if (error) throw new Error("Could not load the profile.");

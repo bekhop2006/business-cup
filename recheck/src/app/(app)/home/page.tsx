@@ -14,6 +14,8 @@ import { listVisits } from "@/lib/db/visits";
 import { formatServiceDate } from "@/lib/dates";
 import { formatCents } from "@/lib/money";
 import { chosenProviderSchema } from "@/lib/schemas/providers";
+import { getPreventiveRecords } from "@/lib/db/preventive";
+import { preventiveChecklist, preventiveProfileOf } from "@/lib/preventive/schedule";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
 import { fill, LOCALE_TAGS } from "@/lib/i18n/locales";
 import { getT } from "@/lib/i18n/server";
@@ -29,14 +31,16 @@ export default async function HomePage() {
   const { locale, t } = await getT();
   const h = t.home;
   const date = (iso: string) => formatServiceDate(iso, LOCALE_TAGS[locale]);
-  const [profile, insurance, cases, visits, eobs, flags] = await Promise.all([
+  const [profile, insurance, cases, visits, eobs, flags, preventiveRecords] = await Promise.all([
     getProfile(db, user.id),
     getInsurancePlan(db, user.id, year),
     listCareCases(db, user.id),
     listVisits(db, user.id),
     listReadEobs(db, user.id),
     listUserFlags(db, user.id),
+    getPreventiveRecords(db, user.id),
   ]);
+  const preventive = preventiveChecklist(preventiveProfileOf(profile), preventiveRecords, new Date());
   const newestEob = (visitId: string) =>
     eobs
       .filter((eob) => eob.visit_id === visitId)
@@ -108,6 +112,23 @@ export default async function HomePage() {
           <Link href="/dashboard" className="mt-3 inline-block text-sm underline underline-offset-4">{h.yearDetail}</Link>
         </section>
       </div>
+
+      <section className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[var(--rc-navy)]/15 p-5">
+        <div>
+          <h2 className="font-medium">{h.preventiveTitle}</h2>
+          <p className="mt-1 text-sm">
+            {preventive.unused > 0 ? (
+              <span className="rc-mark">{fill(h.preventiveUnused, { n: preventive.unused })}</span>
+            ) : (
+              h.preventiveAllDone
+            )}
+          </p>
+          <p className="mt-1 text-xs text-[var(--rc-muted)]">{t.preventiveForm.coverage}</p>
+        </div>
+        <Link href="/profile?open=preventive#title-preventive" className="rounded-full bg-[var(--rc-navy)] px-4 py-2 text-sm text-[var(--rc-ivory)] transition-colors hover:bg-[var(--rc-navy)]/85">
+          {h.preventiveCta}
+        </Link>
+      </section>
 
       <section className="mt-10">
         <div className="flex items-baseline justify-between gap-3">
