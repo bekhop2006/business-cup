@@ -4,14 +4,15 @@ import { useActionState } from "react";
 import { startCareCase } from "@/app/(app)/care/actions";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
 
-export function CareDescriptionForm({ t }: { t: Dictionary["careForm"] }) {
+// `example` fills the box for the shared demo account, so visitors only click.
+export function CareDescriptionForm({ t, example }: { t: Dictionary["careForm"]; example?: string }) {
   const [state, action, pending] = useActionState(startCareCase, {});
   return (
     <form action={action} className="mt-6 space-y-4">
       <label className="block text-sm font-medium">
         {t.question}
         <textarea name="description" required minLength={10} maxLength={2000} rows={5}
-          defaultValue={state.description}
+          defaultValue={state.description ?? example}
           placeholder={t.placeholder}
           className="mt-2 w-full rounded-lg border border-[var(--rc-navy)]/25 bg-white/70 p-4 text-base" />
       </label>

@@ -17,13 +17,15 @@ const LEVEL = {
   california: "California — only plans regulated by the state",
 } as Record<string, string>;
 
-export function AskForm() {
+// Example questions ask at once; the demo account starts with one filled in.
+export function AskForm({ demo = false }: { demo?: boolean }) {
   const [state, formAction, pending] = useActionState<AskState, FormData>(askAction, {});
   const field = useRef<HTMLTextAreaElement>(null);
+  const form = useRef<HTMLFormElement>(null);
 
   return (
     <>
-      <form action={formAction} className="mt-6 flex flex-col gap-3">
+      <form ref={form} action={formAction} className="mt-6 flex flex-col gap-3">
         <label htmlFor="question" className="text-sm font-medium">Your question</label>
         <textarea
           ref={field}
@@ -32,19 +34,25 @@ export function AskForm() {
           rows={3}
           maxLength={500}
           required
-          defaultValue={state.question}
+          defaultValue={state.question ?? (demo ? EXAMPLES[0] : undefined)}
           key={state.question ?? "empty"}
           placeholder="Ask about your insurance, a bill or free preventive care"
           className="rounded-lg border border-slate-300 bg-white/70 px-3 py-2 text-base"
         />
         <p className="text-xs text-[var(--rc-muted)]">Leave out member IDs and other personal details. We don&apos;t store your question.</p>
+        <p className="text-xs text-[var(--rc-muted)]">Or tap an example to ask it:</p>
         <div className="flex flex-wrap gap-2">
           {EXAMPLES.map((example) => (
             <button
               key={example}
               type="button"
-              onClick={() => { if (field.current) field.current.value = example; }}
-              className="rounded-full bg-[var(--rc-navy)]/6 px-3 py-1.5 text-left text-xs hover:bg-[var(--rc-navy)]/10"
+              disabled={pending}
+              onClick={() => {
+                if (!field.current) return;
+                field.current.value = example;
+                form.current?.requestSubmit();
+              }}
+              className="rounded-full bg-[var(--rc-navy)]/6 px-3 py-1.5 text-left text-xs hover:bg-[var(--rc-navy)]/10 disabled:opacity-60"
             >
               {example}
             </button>

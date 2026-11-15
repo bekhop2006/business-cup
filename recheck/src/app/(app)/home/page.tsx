@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { isDemoAccount } from "@/lib/demo";
 import { displayProviderName } from "@/lib/providers/links";
 import { redirect } from "next/navigation";
 import { CareDescriptionForm } from "@/components/CareDescriptionForm";
@@ -114,7 +115,7 @@ export default async function HomePage() {
           )}
         </section>
       ))}
-      <CareDescriptionForm t={t.careForm} />
+      <CareDescriptionForm t={t.careForm} example={isDemoAccount(user.email) ? t.careForm.placeholder : undefined} />
 
       <div className="mt-10 grid gap-4 md:grid-cols-2">
         <section className="rounded-xl border border-[var(--rc-navy)]/15 p-5">
