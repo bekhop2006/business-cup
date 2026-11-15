@@ -30,7 +30,12 @@ export function CareChoice({ providerValue, estimateValue, appointment }: { prov
     <section id="your-choice" className="mt-8 scroll-mt-6 rounded-xl border-2 border-[var(--rc-navy)]/30 p-5">
       <h2 className="text-xl font-medium">Your saved choice</h2>
       <p role="status" className="mt-2 text-sm text-[var(--rc-muted)]">
-        Your case, provider and estimate are saved. {appointment.at && appointment.status === "planned" ? "You told us you booked a visit." : "No appointment has been booked yet."}
+        Your case, provider and estimate are saved.{" "}
+        {appointment.at && appointment.status === "planned"
+          ? "You told us you booked a visit."
+          : appointment.at && appointment.status === "done"
+            ? "You told us the visit happened."
+            : "No appointment has been booked yet."}
       </p>
       <div className="mt-4"><ProviderDetails provider={provider.data} /></div>
       <h3 className="mt-5 font-medium">Saved estimate · {CARE_ROUTES[snapshot.route].label}</h3>

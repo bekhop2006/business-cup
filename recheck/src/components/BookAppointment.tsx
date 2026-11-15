@@ -38,7 +38,7 @@ export function BookAppointment({ caseId, appointmentAt, stage, phone, email }: 
       <p className="mt-1 text-sm text-[var(--rc-muted)]">
         Recheck doesn&apos;t book for you. Call or email the clinic, ask the questions above, then save the time here so we can remind you and help with the bill afterwards.
       </p>
-      <div className="mt-3 flex flex-wrap gap-2">
+      {stage !== "done" && <div className="mt-3 flex flex-wrap gap-2">
         {phone && (
           <a href={`tel:${phone.replace(/[^\d+]/g, "")}`} className="min-h-11 rounded-lg bg-[var(--rc-navy)] px-4 py-2 text-sm text-[var(--rc-ivory)]">
             Call {phone}
@@ -58,11 +58,11 @@ export function BookAppointment({ caseId, appointmentAt, stage, phone, email }: 
         >
           {copied ? "Email text copied" : "Copy email text"}
         </button>
-      </div>
-      <details className="mt-3 text-sm">
+      </div>}
+      {stage !== "done" && <details className="mt-3 text-sm">
         <summary className="cursor-pointer underline underline-offset-4">Show the email</summary>
         <pre className="mt-2 whitespace-pre-wrap rounded-lg bg-white/70 p-3 font-sans text-sm">{emailText}</pre>
-      </details>
+      </details>}
 
       {appointmentAt && stage === "upcoming" && !editing && (
         <div className="mt-4 rounded-lg border border-green-200 bg-green-50 p-4 text-sm text-green-950">
