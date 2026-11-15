@@ -145,7 +145,8 @@ Checked 2026-11-15 on production (`6060647`): the signed-out landing shows the n
 ## Stage 10 — Demo and submission (last ~2 h)
 
 - [ ] Michael's demo account created through the real onboarding and flows
-- [ ] LLM and provider API failures show a clear message; layout checked on a phone
+- [x] LLM and provider API failures show a clear message; layout checked on a phone
+  - Checked 2026-11-15: with an invalid LLM key, intake and Ask raise `LlmUnavailableError`, which the actions turn into a clear message (the care case still opens with safety questions). Provider search shows "Search unavailable" when both directories fail; document reading shows "Try again". At 375px wide, 14 screens (landing, home, profile, Ask, bills, plan, upload, care, all onboarding steps, a case with booking, dashboard) have no horizontal scroll.
 - [x] `README.md`: what it is, live link, test account, how to run, architecture in five lines
 - [x] Remove dead code, unused dependencies, stray console output
 - [ ] All submission items prepared (list them here once confirmed): ______

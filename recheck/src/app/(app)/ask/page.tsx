@@ -18,7 +18,7 @@ export default async function AskPage() {
       <h1>Ask Recheck</h1>
       <p className="mt-2 text-sm leading-relaxed text-[var(--rc-muted)]">
         Questions about insurance, bills and free preventive care, answered only from official sources —
-        HealthCare.gov, CMS, USPSTF, CDC and California&apos;s DMHC — with links. If they don&apos;t cover it, we say so.
+        HealthCare.gov, CMS, the U.S. Department of Labor and California&apos;s DMHC — with links. If they don&apos;t cover it, we say so.
         {plan === "free" && asked === 0 && " Your first question is free."}
       </p>
       {canAskQuestion(plan, asked) ? (
