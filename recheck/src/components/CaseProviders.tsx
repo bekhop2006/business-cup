@@ -16,7 +16,7 @@ export function CaseProviders({ caseId, route, zip, search, providers, chosenId 
 }) {
   return (
     <section id="providers" className="mt-8 scroll-mt-6 rounded-xl border border-[var(--rc-navy)]/20 p-5">
-      <h2 className="text-xl font-semibold">Providers for {CARE_ROUTES[route].label.toLowerCase()}</h2>
+      <h2 className="text-xl font-medium">Providers for {CARE_ROUTES[route].label.toLowerCase()}</h2>
       <p className="mt-2 text-sm text-[var(--rc-muted)]">Directory listings are not a recommendation or a quote. Confirm availability, location and coverage before booking.</p>
       <ProviderSearchForm key={`${route}-${search?.zip ?? zip}`} caseId={caseId} route={route} zip={search?.zip ?? zip} />
       {search && <p className="mt-4 text-xs text-[var(--rc-muted)]">Last search: ZIP {search.zip}, {new Date(search.searched_at).toLocaleString("en-US", { timeZone: "UTC", dateStyle: "medium", timeStyle: "short" })} UTC.</p>}
@@ -30,7 +30,7 @@ export function CaseProviders({ caseId, route, zip, search, providers, chosenId 
           if (!result.success) return null;
           return <li key={row.id} className="min-w-0 rounded-lg border border-[var(--rc-navy)]/15 p-4">
             <ProviderDetails provider={result.data} />
-            {row.id === chosenId ? <p className="mt-4 text-sm font-semibold">Your saved choice</p> : <ChooseProviderForm caseId={caseId} route={route} providerId={row.id} />}
+            {row.id === chosenId ? <p className="mt-4 text-sm font-medium">Your saved choice</p> : <ChooseProviderForm caseId={caseId} route={route} providerId={row.id} />}
           </li>;
         })}
       </ul>}

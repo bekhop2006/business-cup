@@ -14,7 +14,7 @@ export function FlagNote({ flag }: { flag: FlagView }) {
   return (
     <div className="mt-3 rounded-lg border border-[var(--rc-red)]/25 bg-[var(--rc-red)]/5 p-3 text-sm text-[var(--rc-red)]">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <p className="font-semibold">{FLAG_TITLES[flag.type]}</p>
+        <p className="font-medium">{FLAG_TITLES[flag.type]}</p>
         {flag.potential_savings_cents > 0 && (
           <p className="font-medium">Up to {formatCents(flag.potential_savings_cents)} worth asking about</p>
         )}

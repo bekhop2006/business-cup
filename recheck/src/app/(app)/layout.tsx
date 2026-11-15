@@ -33,7 +33,7 @@ export default async function AppLayout({
             <AppNavigation t={t.nav} />
             <LanguageSwitcher current={locale} label={t.common.languageLabel} />
             <form action={signOut}>
-              <button className="rounded-lg border border-slate-300 px-3 py-1.5">
+              <button>
                 {t.common.logOut}
               </button>
             </form>

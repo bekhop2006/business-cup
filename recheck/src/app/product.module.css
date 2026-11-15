@@ -1,29 +1,30 @@
+/* The app shell: an ivory sheet of paper on a slightly darker table.
+   No washes, glass or glow; depth comes from one hairline and a small shadow. */
+
 .surface {
   position: relative;
   isolation: isolate;
   min-height: 100dvh;
   display: flow-root;
-  background: var(--rc-navy);
-  background-image: var(--rc-liquid-background);
-  background-size: 100% 100%;
+  background: var(--rc-table);
   color: var(--rc-navy);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-instrument), Arial, Helvetica, sans-serif;
 }
 
 .surface :focus-visible {
-  outline: 3px solid var(--rc-navy);
+  outline: 2px solid var(--rc-navy);
   outline-offset: 4px;
 }
 
 .header {
   background: var(--rc-ivory);
-  border-bottom: 1px solid var(--rc-glass-border, var(--rc-line));
+  border-bottom: 1px solid var(--rc-line);
 }
 
 .headerInner {
   max-width: 1080px;
   margin-inline: auto;
-  padding: 20px 24px;
+  padding: 12px 24px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -32,9 +33,9 @@
 }
 
 .brand {
-  font-size: 24px;
-  font-weight: 700;
-  letter-spacing: -1px;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
 }
 
 .skipLink {
@@ -55,7 +56,7 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 20px;
+  gap: 24px;
   font-size: 14px;
 }
 
@@ -63,45 +64,57 @@
   display: inline-flex;
   align-items: center;
   min-height: 44px;
-  padding-block: 10px;
-  text-underline-offset: 5px;
+  color: var(--rc-muted);
+  transition: color 150ms var(--rc-ease);
 }
 
 .navigation a:hover {
-  text-decoration: underline;
+  color: var(--rc-navy);
 }
 
 .navigation a[aria-current="page"] {
+  color: var(--rc-navy);
+  font-weight: 500;
   box-shadow: inset 0 -2px var(--rc-navy);
-  background: color-mix(in srgb, var(--rc-accent) 28%, transparent);
-  font-weight: 700;
+}
+
+.navigation button {
+  border-radius: 8px;
+  border: 1px solid var(--rc-line);
+  padding: 0 12px;
+  min-height: 36px;
+  font-size: 14px;
+  color: var(--rc-navy);
+  transition: background-color 150ms var(--rc-ease);
+}
+
+.navigation button:hover {
+  background: var(--rc-wash);
 }
 
 .main {
   max-width: 880px;
-  margin: 40px auto;
-  padding: 32px;
+  margin: 32px auto;
+  padding: 40px;
   background: var(--rc-ivory);
-  border: 1px solid var(--rc-glass-border, var(--rc-line));
+  border: 1px solid var(--rc-line);
   border-radius: 16px;
-  box-shadow: var(--rc-glass-shadow, 0 24px 64px color-mix(in srgb, var(--rc-navy) 18%, transparent));
+  box-shadow: 0 1px 2px color-mix(in srgb, var(--rc-navy) 6%, transparent);
 }
 
 .main h1 {
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-newsreader), Georgia, serif;
   font-size: 36px;
   font-weight: 500;
-  letter-spacing: -1px;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
 }
 
 .footer {
   max-width: 880px;
   margin-inline: auto;
   margin-bottom: 32px;
-  padding: 16px 24px;
-  background: var(--rc-ivory);
-  border: 1px solid var(--rc-glass-border, var(--rc-line));
-  border-radius: 16px;
+  padding-inline: 40px;
   font-size: 12px;
   color: var(--rc-muted);
 }
@@ -118,12 +131,10 @@
 }
 
 .loginIntro {
-  padding: 36px;
-  border: 1px solid color-mix(in srgb, var(--rc-ivory) 24%, transparent);
+  padding: 40px;
   border-radius: 16px;
   color: var(--rc-ivory);
-  background: color-mix(in srgb, var(--rc-navy) 88%, transparent);
-  box-shadow: 0 12px 32px color-mix(in srgb, var(--rc-navy) 12%, transparent);
+  background: var(--rc-navy);
 }
 
 .loginIntro :focus-visible {
@@ -131,64 +142,47 @@
 }
 
 .loginIntro h1 {
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: clamp(38px, 4.5vw, 56px);
-  font-weight: 500;
-  line-height: 1.1;
-  letter-spacing: -2px;
+  font-family: var(--font-newsreader), Georgia, serif;
+  font-size: clamp(40px, 4.5vw, 56px);
+  font-weight: 400;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
   margin-block: 40px 24px;
 }
 
 .loginIntro p {
-  color: color-mix(in srgb, var(--rc-ivory) 88%, transparent);
+  color: color-mix(in srgb, var(--rc-ivory) 80%, transparent);
   max-width: 360px;
-  line-height: 1.7;
+  line-height: 1.6;
 }
 
 .loginCard {
   padding: 32px;
   background: var(--rc-ivory);
-  border: 1px solid var(--rc-glass-border, var(--rc-line));
+  border: 1px solid var(--rc-line);
   border-radius: 16px;
-  border-top: 4px solid var(--rc-accent);
-  box-shadow: var(--rc-glass-shadow, 0 24px 64px color-mix(in srgb, var(--rc-navy) 18%, transparent));
-}
-
-@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .header,
-  .main,
-  .footer,
-  .loginCard {
-    background: var(--rc-glass-background, color-mix(in srgb, var(--rc-ivory) 94%, transparent));
-    -webkit-backdrop-filter: blur(12px);
-    backdrop-filter: blur(12px);
-  }
-
-  .loginIntro {
-    -webkit-backdrop-filter: blur(12px);
-    backdrop-filter: blur(12px);
-  }
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--rc-navy) 6%, transparent);
 }
 
 @media (max-width: 640px) {
   .headerInner {
     gap: 8px;
-    padding: 14px 20px;
+    padding: 12px 16px;
   }
 
   .navigation {
-    gap: 14px;
+    gap: 16px;
     font-size: 13px;
   }
 
   .main {
-    margin: 20px 12px;
-    padding: 20px 16px;
-    border-radius: 18px;
+    margin: 16px 12px;
+    padding: 24px 16px;
+    border-radius: 12px;
   }
 
   .footer {
-    margin-inline: 12px;
+    padding-inline: 16px;
   }
 
   .main h1 {
@@ -197,12 +191,12 @@
 
   .login {
     grid-template-columns: 1fr;
-    gap: 28px;
-    padding-block: 28px;
+    gap: 24px;
+    padding-block: 24px;
   }
 
   .loginIntro h1 {
-    font-size: 34px;
+    font-size: 36px;
     margin-block: 24px 16px;
   }
 

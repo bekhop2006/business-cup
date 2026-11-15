@@ -8,7 +8,7 @@ export function ProviderDetails({ provider }: { provider: ChosenProvider }) {
   const map = safeHttpUrl(provider.maps_url);
   return (
     <>
-      <h3 className="break-words text-lg font-semibold">{provider.name}</h3>
+      <h3 className="break-words text-lg font-medium">{provider.name}</h3>
       <p className="mt-2 break-words text-sm">{provider.address ?? "Address not listed"}</p>
       <p className="mt-2 text-xs text-[var(--rc-muted)]">
         {provider.distance_meters !== null ? `${(provider.distance_meters / 1609.344).toFixed(1)} miles from ZIP center (straight line)` : "Distance not available"}

@@ -56,23 +56,23 @@ export default async function HomePage() {
 
   return (
     <>
-      <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[var(--rc-navy)]/65">
+      <p className="text-sm text-[var(--rc-muted)]">
         {profile?.full_name ? fill(h.greeting, { name: profile.full_name }) : h.welcome}
       </p>
-      <h1 className="mt-3 text-2xl font-semibold tracking-tight">{h.title}</h1>
+      <h1 className="mt-3">{h.title}</h1>
       <p className="mt-2 text-sm leading-relaxed text-[var(--rc-muted)]">
         {h.intro}
       </p>
       <p className="mt-4 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-950">
         {h.emergencyBefore}{" "}
-        <a href="tel:911" className="font-semibold underline">{h.call911}</a> {h.emergencyAfter}
+        <a href="tel:911" className="font-medium underline">{h.call911}</a> {h.emergencyAfter}
       </p>
       <CareDescriptionForm t={t.careForm} />
 
       <div className="mt-10 grid gap-4 md:grid-cols-2">
         <section className="rounded-xl border border-[var(--rc-navy)]/15 p-5">
           <div className="flex items-baseline justify-between gap-3">
-            <h2 className="font-semibold">{fill(h.insuranceTitle, { year })}</h2>
+            <h2 className="font-medium">{fill(h.insuranceTitle, { year })}</h2>
             <Link href="/profile" className="text-sm underline underline-offset-4">{h.edit}</Link>
           </div>
           <p className="mt-1 text-sm text-[var(--rc-muted)]">{planLine || h.noPlan}</p>
@@ -91,15 +91,15 @@ export default async function HomePage() {
         </section>
 
         <section className="rounded-xl border border-[var(--rc-navy)]/15 p-5">
-          <h2 className="font-semibold">{h.savingsTitle}</h2>
+          <h2 className="font-medium">{h.savingsTitle}</h2>
           <dl className="mt-3 grid grid-cols-2 gap-3">
             <div className="rounded-xl bg-[var(--rc-navy)]/4 p-4">
               <dt className="text-xs text-[var(--rc-navy)]/70">{h.savedFromCare}</dt>
-              <dd className="mt-1 text-lg font-semibold tabular-nums">{formatCents(estimatedCareSavingsCents(cases))}</dd>
+              <dd className="mt-1 text-lg font-medium tabular-nums"><span className="rc-mark">{formatCents(estimatedCareSavingsCents(cases))}</span></dd>
             </div>
             <div className="rounded-xl bg-[var(--rc-navy)]/4 p-4">
               <dt className="text-xs text-[var(--rc-navy)]/70">{h.worthAsking}</dt>
-              <dd className="mt-1 text-lg font-semibold tabular-nums">{formatCents(summary.savingsFoundCents)}</dd>
+              <dd className="mt-1 text-lg font-medium tabular-nums">{formatCents(summary.savingsFoundCents)}</dd>
             </div>
           </dl>
           <p className="mt-3 text-xs text-[var(--rc-muted)]">
@@ -111,7 +111,7 @@ export default async function HomePage() {
 
       <section className="mt-10">
         <div className="flex items-baseline justify-between gap-3">
-          <h2 className="font-semibold">{h.casesTitle}</h2>
+          <h2 className="font-medium">{h.casesTitle}</h2>
           <Link href="/care/new" className="text-sm underline underline-offset-4">{h.askNew}</Link>
         </div>
         {cases.length === 0 ? (
@@ -139,7 +139,7 @@ export default async function HomePage() {
 
       <section className="mt-10">
         <div className="flex items-baseline justify-between gap-3">
-          <h2 className="font-semibold">{h.billsTitle}</h2>
+          <h2 className="font-medium">{h.billsTitle}</h2>
           <Link href="/upload" className="text-sm underline underline-offset-4">{h.addBill}</Link>
         </div>
         {visits.length === 0 ? (
@@ -158,7 +158,7 @@ export default async function HomePage() {
                       {date(visit.service_date)} · {t.visitStatus[visit.status]}
                     </span>
                   </span>
-                  <span className="shrink-0 font-semibold tabular-nums">{formatCents(visit.patient_owes_cents)}</span>
+                  <span className="shrink-0 font-medium tabular-nums">{formatCents(visit.patient_owes_cents)}</span>
                 </Link>
               </li>
             ))}

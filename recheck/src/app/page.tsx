@@ -66,7 +66,7 @@ export default async function Home() {
             <ul>
               {l.methodItems.map((item, index) => (
                 <li key={item}>
-                  <span aria-hidden="true">{String(index + 1).padStart(2, "0")}</span> {item}
+                  <span aria-hidden="true">{String(index + 1).padStart(2, "0")}</span> {index === 2 ? <span className="rc-mark">{item}</span> : item}
                 </li>
               ))}
             </ul>

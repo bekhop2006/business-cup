@@ -35,7 +35,7 @@ export function DisputePanel({ visitId, initialDraft, fileStem }: Props) {
 
   return (
     <section className="mt-10 rounded-xl border border-[var(--rc-navy)]/15 p-4 sm:p-6">
-      <h2 className="font-semibold">Ask the provider to fix it</h2>
+      <h2 className="font-medium">Ask the provider to fix it</h2>
       <p className="mt-1 text-sm text-[var(--rc-navy)]/70">
         We&apos;ll write a letter to the billing office and a script for calling them, based on what
         we found. Read it before you send it, and fill in the parts in [brackets].

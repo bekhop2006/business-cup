@@ -57,7 +57,7 @@ export function ReviewForm({ action, initialDetails, initialLines, initialTotal 
       <input type="hidden" name="payload" value={payload} />
 
       <fieldset className="grid gap-3 sm:grid-cols-2">
-        <legend className="mb-2 font-semibold">About this document</legend>
+        <legend className="mb-2 font-medium">About this document</legend>
         <label className={labelClass}>
           Type
           <select
@@ -93,7 +93,7 @@ export function ReviewForm({ action, initialDetails, initialLines, initialTotal 
         </label>
       </fieldset>
 
-      <h2 className="mt-8 mb-2 font-semibold">Charges</h2>
+      <h2 className="mt-8 mb-2 font-medium">Charges</h2>
       <div className="hidden gap-2 px-1 text-xs font-medium text-slate-500 sm:grid sm:grid-cols-[6rem_9rem_1fr_7rem_2rem]">
         <span>Code</span>
         <span>Date of service</span>

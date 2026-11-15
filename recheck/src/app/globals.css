@@ -5,22 +5,17 @@
   --rc-ivory: #F6F3EB;
   --rc-red: #B83434;
   --rc-accent: #E8F76B;
-  --rc-blue-glow: color-mix(in srgb, var(--rc-navy) 38%, var(--rc-ivory));
-  --rc-blue-glow: oklch(from var(--rc-navy) 0.72 0.09 h);
-  --rc-liquid-background:
-    radial-gradient(ellipse at 16% 35%, color-mix(in srgb, var(--rc-blue-glow) 75%, transparent), transparent 48%),
-    radial-gradient(ellipse at 90% 55%, color-mix(in srgb, var(--rc-ivory) 70%, transparent), transparent 45%),
-    linear-gradient(165deg, var(--rc-navy) 3%, var(--rc-blue-glow) 60%, var(--rc-ivory) 100%);
-  --rc-glass-background: color-mix(in srgb, var(--rc-ivory) 94%, transparent);
-  --rc-glass-border: color-mix(in srgb, var(--rc-ivory) 65%, transparent);
-  --rc-glass-shadow: 0 12px 32px color-mix(in srgb, var(--rc-navy) 12%, transparent);
-  --rc-liquid-dot: color-mix(in srgb, var(--rc-ivory) 15%, transparent);
   --rc-muted: color-mix(in srgb, var(--rc-navy) 72%, var(--rc-ivory));
-  --rc-line: color-mix(in srgb, var(--rc-navy) 18%, var(--rc-ivory));
+  --rc-line: color-mix(in srgb, var(--rc-navy) 10%, transparent);
   --rc-wash: color-mix(in srgb, var(--rc-navy) 4%, var(--rc-ivory));
+  /* The table the paperwork lies on: a step darker than the ivory sheet. */
+  --rc-table: color-mix(in srgb, var(--rc-navy) 7%, var(--rc-ivory));
+  --rc-ease: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 @theme inline {
+  --font-sans: var(--font-instrument), Arial, Helvetica, sans-serif;
+  --font-serif: var(--font-newsreader), Georgia, "Times New Roman", serif;
   --color-white: var(--rc-ivory);
   --color-black: var(--rc-navy);
   --color-slate-50: color-mix(in srgb, var(--rc-navy) 3%, var(--rc-ivory));
@@ -51,7 +46,16 @@ body {
   margin: 0;
   background: var(--rc-ivory);
   color: var(--rc-navy);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-instrument), Arial, Helvetica, sans-serif;
+}
+
+/* Signature: a highlighter stroke on the one figure that matters. */
+.rc-mark {
+  background: linear-gradient(transparent 55%, var(--rc-accent) 55%, var(--rc-accent) 92%, transparent 92%);
+  padding-inline: 2px;
+  margin-inline: -2px;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
 }
 
 ::selection {

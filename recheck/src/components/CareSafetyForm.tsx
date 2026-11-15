@@ -18,7 +18,7 @@ export function CareSafetyForm({ caseId, defaults, mentioned, scope }: {
   return (
     <form action={action} className="mt-6 space-y-5">
       <input type="hidden" name="caseId" value={caseId} />
-      <h2 className="text-xl font-semibold">First, check for warning signs</h2>
+      <h2 className="text-xl font-medium">First, check for warning signs</h2>
       <p className="text-sm text-[var(--rc-muted)]">Confirm these answers yourself. This check covers knee or leg pain and cannot rule out every emergency.</p>
       {hasWarning && <CareSafetyNotice assessment={assessUrgency(yesAnswers)} />}
       <fieldset className="rounded-lg border border-[var(--rc-navy)]/15 p-4">

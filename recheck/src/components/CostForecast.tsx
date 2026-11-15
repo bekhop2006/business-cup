@@ -9,13 +9,16 @@ export function priceRange(range: { lowCents: number; highCents: number }): stri
 export function CostForecast({ scenarios }: { scenarios: Scenario[] }) {
   return (
     <section className="mt-5">
-      <h3 className="font-semibold">What you might pay</h3>
+      <h3 className="font-medium">What you might pay</h3>
       <p className="mt-1 text-sm text-[var(--rc-muted)]">These are possible billing scenarios. This does not mean you need an X-ray or MRI.</p>
       <div className="mt-3 grid gap-3 sm:grid-cols-3">
-        {scenarios.map((scenario) => (
+        {scenarios.map((scenario, index) => (
           <article key={scenario.id} className="rounded-lg bg-[var(--rc-navy)]/4 p-4">
             <h4 className="text-sm font-medium">{scenario.label}</h4>
-            <p className="mt-2 text-lg font-semibold tabular-nums">{priceRange(scenario.patientShare)}</p>
+            <p className="mt-2 text-lg font-medium tabular-nums">
+              {/* The highlighter marks the visit itself, the figure people compare. */}
+              <span className={index === 0 ? "rc-mark" : undefined}>{priceRange(scenario.patientShare)}</span>
+            </p>
             <p className="text-xs text-[var(--rc-muted)]">Your estimated share</p>
             <details className="mt-3 text-xs leading-relaxed">
               <summary className="cursor-pointer py-2 font-medium">How this is estimated</summary>

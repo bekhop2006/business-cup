@@ -57,7 +57,7 @@ export function InsuranceProfileForm({ action, next, defaults, submitLabel, t, s
       <p className="text-sm text-slate-600">{t.intro}</p>
 
       <fieldset className="grid gap-4 sm:grid-cols-3">
-        <legend className="mb-2 font-semibold">{t.yourPlan}</legend>
+        <legend className="mb-2 font-medium">{t.yourPlan}</legend>
         <label className={labelClass}>
           {t.insurer}
           <input name="insurerName" list="insurers" defaultValue={defaults.insurerName} placeholder={t.insurerPlaceholder} className={inputClass} />
@@ -83,7 +83,7 @@ export function InsuranceProfileForm({ action, next, defaults, submitLabel, t, s
       </fieldset>
 
       <fieldset className="grid gap-4 sm:grid-cols-2">
-        <legend className="mb-2 font-semibold">{t.thisYear}</legend>
+        <legend className="mb-2 font-medium">{t.thisYear}</legend>
         <Field name="deductible" label={t.deductible} money defaults={defaults} hint={t.deductibleHint} emptyPlaceholder={empty} />
         <Field name="deductibleMet" label={t.deductibleMet} money defaults={defaults} hint={t.deductibleMetHint} emptyPlaceholder={empty} />
         <Field name="oopMax" label={t.oopMax} money defaults={defaults} hint={t.oopMaxHint} emptyPlaceholder={empty} />
@@ -92,7 +92,7 @@ export function InsuranceProfileForm({ action, next, defaults, submitLabel, t, s
       </fieldset>
 
       <fieldset className="grid gap-4 sm:grid-cols-4">
-        <legend className="mb-2 font-semibold">{t.copays}</legend>
+        <legend className="mb-2 font-medium">{t.copays}</legend>
         <Field name="copayPrimary" label={t.primaryCare} money defaults={defaults} placeholder="" emptyPlaceholder={empty} />
         <Field name="copaySpecialist" label={t.specialist} money defaults={defaults} placeholder="" emptyPlaceholder={empty} />
         <Field name="copayUrgentCare" label={t.urgentCare} money defaults={defaults} placeholder="" emptyPlaceholder={empty} />
