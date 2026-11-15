@@ -137,20 +137,20 @@ Checked 2026-11-15 on production (`6060647`): the signed-out landing shows the n
 - [x] The person records when they last had each service; code computes what is due; profile card and home card show it
 - [x] After choosing a provider: phone, ready email, "I booked it for" date; home shows the upcoming visit, `.ics` calendar file, and after the visit asks for the bill
 - [x] Strings in English, Russian and Kazakh
-- [ ] Migration applied on production and the flow checked there
+- [x] Migration applied on production and the flow checked there
 - [x] "Ask Recheck": answers from official federal and California documents with citations (pgvector), symptoms sent to Get care, first question free
 
 **Done when:** a new user on production enters birth year 1980 / male, sees colorectal screening as free, records a flu shot, books a visit with a real provider, and gets the "add your bill" prompt after the date.
 
 ## Stage 10 — Demo and submission (last ~2 h)
 
-- [ ] Michael's demo account created through the real onboarding and flows
+- [x] Michael's demo account created through the real onboarding and flows; "Explore the demo" opens it without signing up
 - [x] LLM and provider API failures show a clear message; layout checked on a phone
   - Checked 2026-11-15: with an invalid LLM key, intake and Ask raise `LlmUnavailableError`, which the actions turn into a clear message (the care case still opens with safety questions). Provider search shows "Search unavailable" when both directories fail; document reading shows "Try again". At 375px wide, 14 screens (landing, home, profile, Ask, bills, plan, upload, care, all onboarding steps, a case with booking, dashboard) have no horizontal scroll.
 - [x] `README.md`: what it is, live link, test account, how to run, architecture in five lines
 - [x] Demo script with Michael's inputs, timings and fallbacks: `docs/DEMO.md`
 - [x] Remove dead code, unused dependencies, stray console output
-- [ ] All submission items prepared (list them here once confirmed): ______
+- [ ] All submission items prepared (deadline 12:00, Nov 15; the captain submits one entry): pitch deck PDF of at most 10 slides in English (done); production link the jury can use without signing up (done: "Explore the demo"); public GitHub repository (owner to switch visibility)
 - [ ] Demo rehearsed twice end-to-end on production
 - [ ] Feature freeze 2 hours before the deadline: bug fixes only
 

@@ -3,7 +3,7 @@
 **Stop overpaying for healthcare.** Recheck is a web app for insured American families. Before a visit, it tells you where to go for care, who is nearby and what you are likely to pay under your own insurance. After the visit, it checks the bill for errors and drafts the letter to dispute them.
 
 - **Live app:** https://business-cup-production.up.railway.app
-- **Test account:** given in the submission form. Or create your own: sign-up logs you in at once. Stripe runs in test mode, so you can pay with card `4242 4242 4242 4242`, any future date and any CVC.
+- **No sign-up needed:** click **Explore the demo** on the landing page to open Michael's account (San Francisco, PPO, Recheck Plus) with his care questions, booked visit, preventive care and checked bills. It is shared with other visitors. Or create your own account: sign-up logs you in at once. Stripe runs in test mode, so you can pay with card `4242 4242 4242 4242`, any future date and any CVC.
 
 ## What it does
 
