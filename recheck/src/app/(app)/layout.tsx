@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { isDemoAccount } from "@/lib/demo";
 import { redirect } from "next/navigation";
 import { signOut } from "@/app/(auth)/login/actions";
 import { getCurrentUser } from "@/lib/db/auth";
@@ -40,6 +41,11 @@ export default async function AppLayout({
           </nav>
         </div>
       </header>
+      {isDemoAccount(user.email) && (
+        <p role="note" className="border-b border-[var(--rc-navy)]/10 bg-[var(--rc-accent)]/40 px-4 py-2 text-center text-sm text-[var(--rc-navy)]">
+          {t.common.demoBanner}
+        </p>
+      )}
       <main id="main-content" className={styles.main}>{children}</main>
       <footer className={styles.footer}>
         {t.common.footer}

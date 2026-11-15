@@ -4,6 +4,7 @@
 
 export const en = {
   common: {
+    demoBanner: "You're exploring Michael's demo account. It's shared with other visitors, so they see changes you make. Log out to create your own account.",
     skipToContent: "Skip to content",
     logOut: "Log out",
     footer: "Recheck helps you compare care options, estimate costs and question medical bills. It does not give legal or medical advice.",
@@ -23,6 +24,8 @@ export const en = {
     label: "Your account",
   },
   landing: {
+    demoCta: "Explore the demo — no sign-up",
+    demoHelper: "Opens a sample account (Michael, San Francisco) with his insurance, care questions and bills.",
     homeLabel: "Recheck home",
     mainNav: "Main navigation",
     howItWorks: "How it works",
@@ -88,6 +91,8 @@ export const en = {
     ctaTitle: "Know the cost before the visit.",
   },
   login: {
+    demoCta: "Explore the demo instead — no sign-up",
+    demoUnavailable: "The demo account isn't available right now. Create your own account instead.",
     homeLabel: "Recheck home",
     titleLine1: "Your paperwork.",
     titleLine2: "A clearer picture.",

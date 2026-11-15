@@ -167,6 +167,34 @@
   transform: scale(0.98);
 }
 
+.heroActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.demoButton {
+  min-height: 48px;
+  border: 1px solid color-mix(in srgb, var(--rc-ivory) 55%, transparent);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--rc-ivory);
+  padding: 12px 20px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 150ms var(--rc-ease), transform 150ms var(--rc-ease);
+}
+
+.demoButton:hover {
+  background: color-mix(in srgb, var(--rc-ivory) 12%, transparent);
+}
+
+.demoButton:active {
+  transform: scale(0.98);
+}
+
 .helper {
   margin-top: 16px;
   font-size: 13px;
