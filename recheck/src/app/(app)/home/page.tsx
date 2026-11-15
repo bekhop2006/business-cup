@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { displayProviderName } from "@/lib/providers/links";
 import { redirect } from "next/navigation";
 import { CareDescriptionForm } from "@/components/CareDescriptionForm";
 import { ProgressBar } from "@/components/ProgressBar";
@@ -88,7 +89,7 @@ export default async function HomePage() {
           <h2 className="font-medium">{stage === "upcoming" ? h.visitTitle : h.afterVisitTitle}</h2>
           <p className="mt-1 text-sm">
             <span className="rc-mark"><LocalDateTime iso={careCase.appointment_at as string} localeTag={LOCALE_TAGS[locale]} /></span>
-            {provider.success && <> · {provider.data.name}{provider.data.address ? ` · ${provider.data.address}` : ""}</>}
+            {provider.success && <> · {displayProviderName(provider.data.name)}{provider.data.address ? ` · ${provider.data.address}` : ""}</>}
           </p>
           {stage === "upcoming" ? (
             <Link href={`/care/${careCase.id}#book`} className="mt-3 inline-block text-sm underline underline-offset-4">{h.visitDetails}</Link>
@@ -125,9 +126,12 @@ export default async function HomePage() {
           {summary.deductible && <ProgressBar label={h.deductible} progress={summary.deductible} of={h.of} />}
           {summary.outOfPocket && <ProgressBar label={h.oopMax} progress={summary.outOfPocket} of={h.of} />}
           {summary.deductible || summary.outOfPocket ? (
-            <p className="mt-3 text-xs text-[var(--rc-muted)]">
-              {h.insuranceNote}
-            </p>
+            <>
+              <p className="mt-3 text-xs text-[var(--rc-muted)]">
+                {h.insuranceNote}
+              </p>
+              <p className="mt-2 text-xs text-[var(--rc-muted)]">{h.glossary}</p>
+            </>
           ) : (
             <p className="mt-3 text-sm">
               <Link href="/profile" className="font-medium underline">{h.addDeductible}</Link>{" "}

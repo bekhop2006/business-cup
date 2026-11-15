@@ -42,7 +42,7 @@ export default async function AppLayout({
         </div>
       </header>
       {isDemoAccount(user.email) && (
-        <p role="note" className="border-b border-[var(--rc-navy)]/10 bg-[var(--rc-accent)]/40 px-4 py-2 text-center text-sm text-[var(--rc-navy)]">
+        <p role="note" className="border-b border-[var(--rc-navy)]/10 bg-[var(--rc-accent)]/40 px-4 py-1.5 text-center text-xs text-[var(--rc-navy)] sm:py-2 sm:text-sm">
           {t.common.demoBanner}
         </p>
       )}

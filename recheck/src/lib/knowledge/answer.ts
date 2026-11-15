@@ -55,16 +55,23 @@ export function resolveAnswer(output: AskAnswer, matches: KnowledgeMatch[]): Ask
   if (output.kind === "symptoms") return { kind: "symptoms" };
   const used = [...new Set(output.used_sources)].filter((n) => n >= 1 && n <= matches.length).sort((a, b) => a - b);
   if (output.kind === "not_in_sources" || used.length === 0 || !output.answer.trim()) return { kind: "not_in_sources" };
-  // One entry per document, with every excerpt number the answer cites from it.
+  // One entry per document, numbered 1, 2, 3… in order; the answer's
+  // citations are rewritten to those numbers.
   const sources: AskSource[] = [];
+  const renumber = new Map<number, number>();
   for (const n of used) {
     const match = matches[n - 1];
-    const existing = sources.find((source) => source.url === match.url);
-    if (existing) {
-      existing.ns.push(n);
-      continue;
+    let index = sources.findIndex((source) => source.url === match.url);
+    if (index === -1) {
+      sources.push({ ns: [sources.length + 1], title: match.title, url: match.url, jurisdiction: match.jurisdiction, publisher: match.publisher, checkedOn: match.checked_on });
+      index = sources.length - 1;
     }
-    sources.push({ ns: [n], title: match.title, url: match.url, jurisdiction: match.jurisdiction, publisher: match.publisher, checkedOn: match.checked_on });
+    renumber.set(n, index + 1);
   }
-  return { kind: "answer", answer: output.answer.trim(), sources };
+  const answer = output.answer
+    .trim()
+    .replace(/\[(\d+)\]/g, (cite, n) => (renumber.has(Number(n)) ? `[${renumber.get(Number(n))}]` : ""))
+    .replace(/(\[\d+\])(?:\1)+/g, "$1")
+    .replace(/\s+([.,;])/g, "$1");
+  return { kind: "answer", answer, sources };
 }

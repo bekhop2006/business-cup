@@ -1,4 +1,5 @@
 import { appointmentIcs } from "@/lib/care/appointment";
+import { displayProviderName } from "@/lib/providers/links";
 import { getCurrentUser } from "@/lib/db/auth";
 import { getCareCase } from "@/lib/db/care";
 import { createServerSupabase } from "@/lib/db/supabase";
@@ -17,7 +18,7 @@ export async function GET(_request: Request, { params }: RouteContext<"/care/[id
   const body = appointmentIcs({
     caseId: id,
     startsAt: careCase.appointment_at,
-    providerName: provider.data.name,
+    providerName: displayProviderName(provider.data.name),
     address: provider.data.address,
     phone: provider.data.phone,
     now: new Date(),

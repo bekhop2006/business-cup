@@ -25,3 +25,14 @@ export function providerDirections(address: string | null, placeId?: string): st
   if (placeId) url.searchParams.set("destination_place_id", placeId);
   return url.href;
 }
+
+const KEEP_UPPER = new Set(["MD", "DO", "DPM", "PA", "PC", "NP", "LLC", "PLLC", "LLP", "PT", "DC", "II", "III", "IV", "UCSF", "USA"]);
+
+// "MICHAEL DAVIES" -> "Michael Davies". Names that already use mixed case are kept.
+export function displayProviderName(name: string): string {
+  if (name !== name.toUpperCase() || !/[A-Z]/.test(name)) return name;
+  return name
+    .split(/(\s+|-)/)
+    .map((part) => (KEEP_UPPER.has(part.replace(/[.,]/g, "")) || !/[A-Z]/.test(part) ? part : part[0] + part.slice(1).toLowerCase()))
+    .join("");
+}

@@ -71,10 +71,18 @@ describe("resolveAnswer", () => {
     });
   });
 
-  it("groups excerpts from the same document under one source", () => {
+  it("groups excerpts from the same document under one numbered source", () => {
     const sameDoc = [match({ id: "a" }), match({ id: "b", url: "https://www.cms.gov/x", title: "X" }), match({ id: "c" })];
-    const result = resolveAnswer({ kind: "answer", answer: "Yes [1][3].", used_sources: [3, 1, 2] }, sameDoc);
-    expect(result.kind === "answer" && result.sources.map((source) => source.ns)).toEqual([[1, 3], [2]]);
+    const result = resolveAnswer({ kind: "answer", answer: "Yes [1][3]. Also [2].", used_sources: [3, 1, 2] }, sameDoc);
+    expect(result.kind === "answer" && result.sources.map((source) => source.ns)).toEqual([[1], [2]]);
+    expect(result.kind === "answer" && result.answer).toBe("Yes [1]. Also [2].");
+  });
+
+  it("renumbers citations 1, 2… and drops numbers it can't back", () => {
+    const many = Array.from({ length: 8 }, (_, i) => match({ id: String(i), url: `https://www.cms.gov/${i}` }));
+    const result = resolveAnswer({ kind: "answer", answer: "Covered [4], with limits [7] [9].", used_sources: [7, 4] }, many);
+    expect(result.kind === "answer" && result.answer).toBe("Covered [1], with limits [2].");
+    expect(result.kind === "answer" && result.sources.map((source) => source.url)).toEqual(["https://www.cms.gov/3", "https://www.cms.gov/6"]);
   });
 
   it("refuses an answer that cites nothing", () => {
