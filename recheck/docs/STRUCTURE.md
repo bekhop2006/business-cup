@@ -143,6 +143,8 @@ Files live in the private Storage bucket `documents` under `<user id>/<document 
 | `flags` | `visit_id`, `document_id`, `line_item_id`, `type`, `message` (written by the check), `explanation` (written by the LLM), `potential_savings_cents` |
 | `disputes` | `visit_id` (one per visit), `status`, `letter_text`, `call_script`, `next_action_at` |
 | `care_cases` | `description`, `summary`, `body_area`, `warning_answers` (jsonb), `urgency`, `route`, `chosen_provider` (jsonb), `estimate` (jsonb snapshot with sources), `estimated_savings_cents`, `appointment_at`, `appointment_status` (`planned`, `done`, `cancelled`) |
+| `knowledge_chunks` | public, no `user_id`: chunks of `knowledge/*.md` with `source_id`, `title`, `url`, `jurisdiction` (`federal`, `california`), `publisher`, `checked_on`, `content`, `embedding` (pgvector, 1536); read by signed-in users through `match_knowledge()`, written only by `scripts/build-knowledge.ts` |
+| `ask_log` | one row per "Ask Recheck" question, without its text (for the free limit) |
 | `preventive_records` | `service_id` (unique per user), `last_done_on`, `method` (which test, when the interval depends on it) |
 | `case_providers` | `case_id`, `route`, `source` (`google_places`, `npi_registry`), `external_id`, `name`, `address`, `phone`, `website`, `rating`, `rating_count`, `distance_meters`, `maps_url`, `network_status` (always `not_verified`) |
 
@@ -198,6 +200,10 @@ GOOGLE_PLACES_API_KEY=
 5. **Providers.** `src/lib/providers/` searches Google Places near the person's ZIP and falls back to the CMS NPI Registry. Results are stored in `case_providers` with their source; network status is always "not verified".
 6. **Choose.** The chosen provider, the estimate snapshot and the estimated savings (vs the most expensive suitable option) are saved on the case, with a checklist of questions to ask before booking.
 7. **Book.** The person calls or emails the clinic (Recheck shows the phone and a ready email from `src/lib/care/appointment.ts`) and saves the date. The home page shows the upcoming visit; `/care/[id]/appointment.ics` adds it to a calendar; after the visit the person marks it done and is sent to add the bill.
+
+## Ask Recheck (RAG)
+
+`knowledge/*.md` holds official pages (HealthCare.gov, CMS No Surprises Act, DOL, California DMHC) with their URL and check date in front matter. `npm run build:knowledge` chunks them (`src/lib/knowledge/documents.ts`), embeds them (`text-embedding-3-small`) and replaces `knowledge_chunks`. A question is embedded, `match_knowledge()` returns the closest excerpts (plus the closest California ones when the person's ZIP is in California), and `src/lib/llm/ask.ts` answers only from them. `src/lib/knowledge/answer.ts` keeps only the excerpts the answer cites; source links come from the database, never from the model. Symptom questions are sent to Get care; questions the sources don't cover get "I don't know". First question free, then Recheck Plus.
 
 ## Free preventive care
 

@@ -16,6 +16,7 @@ export const en = {
   nav: {
     home: "Home",
     getCare: "Get care",
+    ask: "Ask",
     bills: "Bills",
     plan: "Plan",
     profile: "Profile",

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
 
-// Home · Get care · Bills · Plan, plus the profile with the insurance details.
+// Home · Get care · Ask · Bills · Plan, plus the profile with the insurance details.
 export function AppNavigation({ t }: { t: Dictionary["nav"] }) {
   const pathname = usePathname();
   const current = (active: boolean) => (active ? "page" : undefined);
@@ -18,6 +18,9 @@ export function AppNavigation({ t }: { t: Dictionary["nav"] }) {
       </Link>
       <Link href="/care/new" aria-current={current(pathname.startsWith("/care"))}>
         {t.getCare}
+      </Link>
+      <Link href="/ask" aria-current={current(pathname === "/ask")}>
+        {t.ask}
       </Link>
       <Link href="/visits" aria-current={current(inBills)}>
         {t.bills}

@@ -138,7 +138,7 @@ Checked 2026-11-15 on production (`6060647`): the signed-out landing shows the n
 - [x] After choosing a provider: phone, ready email, "I booked it for" date; home shows the upcoming visit, `.ics` calendar file, and after the visit asks for the bill
 - [x] Strings in English, Russian and Kazakh
 - [ ] Migration applied on production and the flow checked there
-- [ ] Optional, only if more than 3 hours remain: "Ask Recheck" answers from official documents with citations
+- [x] "Ask Recheck": answers from official federal and California documents with citations (pgvector), symptoms sent to Get care, first question free
 
 **Done when:** a new user on production enters birth year 1980 / male, sees colorectal screening as free, records a flu shot, books a visit with a real provider, and gets the "add your bill" prompt after the date.
 

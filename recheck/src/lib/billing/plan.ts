@@ -18,6 +18,11 @@ export function canCompareCareOptions(plan: Plan, caseId: string, firstCaseId: s
   return plan === "paid" || caseId === firstCaseId;
 }
 
+// "Ask Recheck": the first question is free, the rest are on the paid plan.
+export function canAskQuestion(plan: Plan, questionsAsked: number): boolean {
+  return plan === "paid" || questionsAsked === 0;
+}
+
 export function canWriteLetters(plan: Plan): boolean {
   return plan === "paid";
 }
