@@ -17,6 +17,7 @@ export const ru: Dictionary = {
   nav: {
     home: "Главная",
     getCare: "Помощь",
+    ask: "Спросить",
     bills: "Счета",
     plan: "Тариф",
     profile: "Профиль",

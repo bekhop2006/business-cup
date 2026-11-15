@@ -92,3 +92,19 @@ export function writeStructured<Schema extends z.ZodType>(
 ): Promise<z.infer<Schema> | null> {
   return parseStructured(options);
 }
+
+// Embedding model for the knowledge base. Changing it means rebuilding the
+// knowledge base (scripts/build-knowledge.ts) and the vector column size.
+export const EMBEDDING_MODEL = "text-embedding-3-small";
+export const EMBEDDING_DIMENSIONS = 1536;
+
+// Embeds texts in order. Throws LlmUnavailableError when the provider fails.
+export async function embedTexts(texts: string[]): Promise<number[][]> {
+  try {
+    const response = await getClient().embeddings.create({ model: EMBEDDING_MODEL, input: texts });
+    return response.data.sort((a, b) => a.index - b.index).map((item) => item.embedding);
+  } catch (error) {
+    if (error instanceof OpenAI.APIError) throw new LlmUnavailableError(error.status);
+    throw error;
+  }
+}

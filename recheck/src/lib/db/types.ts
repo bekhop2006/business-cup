@@ -23,7 +23,21 @@ export type Database = {
           }
         },"public": {
           Tables: {
-            "care_cases": {
+            "ask_log": {
+                  Row: {
+                    "created_at": string,"id": string,"user_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"id"?: string,"user_id"?: string
+                  }
+                  Update: {
+                    "created_at"?: string,"id"?: string,"user_id"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
+                },"care_cases": {
                   Row: {
                     "appointment_at": string | null,"appointment_status": string | null,"body_area": string | null,"chosen_provider": Json | null,"created_at": string,"description": string,"estimate": Json | null,"estimated_savings_cents": number | null,"id": string,"route": string | null,"summary": string | null,"urgency": Database["public"]['Enums']["care_urgency"] | null,"user_id": string,"warning_answers": Json | null
                   }
@@ -157,6 +171,20 @@ isOneToOne: false
                   Relationships: [
                     
                   ]
+                },"knowledge_chunks": {
+                  Row: {
+                    "checked_on": string,"content": string,"created_at": string,"embedding": string,"id": string,"jurisdiction": string,"position": number,"publisher": string,"source_id": string,"title": string,"url": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "checked_on": string,"content": string,"created_at"?: string,"embedding": string,"id"?: string,"jurisdiction": string,"position": number,"publisher": string,"source_id": string,"title": string,"url": string
+                  }
+                  Update: {
+                    "checked_on"?: string,"content"?: string,"created_at"?: string,"embedding"?: string,"id"?: string,"jurisdiction"?: string,"position"?: number,"publisher"?: string,"source_id"?: string,"title"?: string,"url"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
                 },"line_items": {
                   Row: {
                     "amount_cents": number,"code": string | null,"created_at": string,"description": string | null,"document_id": string,"id": string,"plain_explanation": string | null,"position": number,"quantity": number | null,"service_date": string | null,"user_id": string
@@ -231,7 +259,11 @@ isOneToOne: false
             [_ in never]: never
           }
           Functions: {
-            [_ in never]: never
+            "match_knowledge":
+{ Args: { "match_count": number,"only_jurisdiction"?: string,"query_embedding": string }; Returns: {
+              "checked_on": string,"content": string,"distance": number,"id": string,"jurisdiction": string,"publisher": string,"source_id": string,"title": string,"url": string
+            }[]
+                           }
           }
           Enums: {
             "care_urgency": "emergency"|"urgent"|"routine","dispute_status": "draft"|"sent"|"waiting"|"resolved","document_source": "upload"|"email","document_status": "uploaded"|"processing"|"parsed"|"needs_review"|"failed","document_type": "bill"|"eob"|"receipt"|"other","flag_type": "duplicate_line"|"eob_mismatch"|"billed_before_insurance"|"unclear_line"|"total_mismatch","subscription_plan": "free"|"paid","visit_status": "waiting_for_insurance"|"to_pay"|"disputing"|"closed"

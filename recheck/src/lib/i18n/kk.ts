@@ -17,6 +17,7 @@ export const kk: Dictionary = {
   nav: {
     home: "Басты бет",
     getCare: "Көмек",
+    ask: "Сұрау",
     bills: "Шоттар",
     plan: "Тариф",
     profile: "Профиль",
