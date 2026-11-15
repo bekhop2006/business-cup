@@ -115,7 +115,26 @@ export async function saveCaseChoice(db: Db, userId: string, caseId: string, pro
   const { data, error } = await db.from("care_cases").update({
     route: estimate.route, chosen_provider: provider, estimate,
     estimated_savings_cents: estimate.comparison.estimated_savings_cents,
+    // A new provider means any earlier appointment no longer applies.
+    appointment_at: null, appointment_status: null,
   }).eq("user_id", userId).eq("id", caseId).eq("urgency", "routine").eq("body_area", "knee_leg")
     .eq("warning_answers->>revision", revision).select("id").single();
   if (error || !data) throw new Error("Could not save this choice. Review your safety answers and try again.");
+}
+
+// The person booked with their chosen provider themselves; we keep the date.
+export async function saveCaseAppointment(db: Db, userId: string, caseId: string, appointmentAt: string) {
+  const { data, error } = await db.from("care_cases")
+    .update({ appointment_at: appointmentAt, appointment_status: "planned" })
+    .eq("user_id", userId).eq("id", caseId).not("chosen_provider", "is", null)
+    .select("id").single();
+  if (error || !data) throw new Error("Could not save the appointment.");
+}
+
+export async function setCaseAppointmentStatus(db: Db, userId: string, caseId: string, status: "done" | "cancelled") {
+  const { data, error } = await db.from("care_cases")
+    .update({ appointment_status: status })
+    .eq("user_id", userId).eq("id", caseId).not("appointment_at", "is", null)
+    .select("id").single();
+  if (error || !data) throw new Error("Could not update the appointment.");
 }

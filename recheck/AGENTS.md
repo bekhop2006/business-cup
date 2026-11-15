@@ -21,7 +21,7 @@ Before writing any code, read these files in order:
 6. **All LLM output is validated.** Structured output goes through a Zod schema in `src/lib/schemas/`. Invalid output marks the document `needs_review`, never crashes the request.
 7. **Money is integer cents.** Never floats. Format only at the UI edge with `src/lib/money.ts`.
 8. **No secrets and no document contents in git or logs.** Keys come from environment variables. Never log extracted medical or billing data.
-9. **Stay in scope.** B2C, web only. No diagnoses, lab results, appointment booking, prescriptions, hospital or insurer integrations, native mobile apps. Prices come from real CMS benchmarks or the user's own plan; providers from Google Places or the NPI Registry; urgency from `src/lib/care/safety.ts`.
+9. **Stay in scope.** B2C, web only. No diagnoses, lab results, booking on the user's behalf (they call or email the clinic and record the date), prescriptions, hospital or insurer integrations, native mobile apps. Prices come from real CMS benchmarks or the user's own plan; providers from Google Places or the NPI Registry; urgency from `src/lib/care/safety.ts`; preventive care from USPSTF and CDC in `src/lib/preventive/`.
 10. **Keep `main` deployable.** Run `npm run typecheck && npm run lint && npm test` before every commit. Small commits with clear messages.
 
 ## When unsure

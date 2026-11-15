@@ -196,6 +196,12 @@ export const en = {
     dontWait: "Don't wait for Recheck.",
   },
   home: {
+    visitTitle: "Your next visit",
+    visitDetails: "Details and what to ask",
+    afterVisitTitle: "How did your visit go?",
+    afterVisitText: "Add your bill and we'll check the charges.",
+    wentAddBill: "I went — add my bill",
+    didntHappen: "It didn't happen",
     preventiveTitle: "Free preventive care",
     preventiveUnused: "Free services you haven't used or are due for: {n}",
     preventiveAllDone: "You're up to date. We'll show when the next one is due.",

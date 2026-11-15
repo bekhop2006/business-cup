@@ -14,6 +14,9 @@ import { listVisits } from "@/lib/db/visits";
 import { formatServiceDate } from "@/lib/dates";
 import { formatCents } from "@/lib/money";
 import { chosenProviderSchema } from "@/lib/schemas/providers";
+import { updateAppointmentStatus } from "@/app/(app)/care/provider-actions";
+import { LocalDateTime } from "@/components/LocalDateTime";
+import { appointmentStage } from "@/lib/care/appointment";
 import { getPreventiveRecords } from "@/lib/db/preventive";
 import { preventiveChecklist, preventiveProfileOf } from "@/lib/preventive/schedule";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
@@ -40,7 +43,16 @@ export default async function HomePage() {
     listUserFlags(db, user.id),
     getPreventiveRecords(db, user.id),
   ]);
-  const preventive = preventiveChecklist(preventiveProfileOf(profile), preventiveRecords, new Date());
+  const now = new Date();
+  const preventive = preventiveChecklist(preventiveProfileOf(profile), preventiveRecords, now);
+  const appointments = cases
+    .map((careCase) => ({
+      careCase,
+      provider: chosenProviderSchema.safeParse(careCase.chosen_provider),
+      stage: appointmentStage(careCase.appointment_at, careCase.appointment_status, now),
+    }))
+    .filter((item) => item.provider.success && (item.stage === "upcoming" || item.stage === "after_visit"))
+    .sort((a, b) => (a.careCase.appointment_at ?? "").localeCompare(b.careCase.appointment_at ?? ""));
   const newestEob = (visitId: string) =>
     eobs
       .filter((eob) => eob.visit_id === visitId)
@@ -71,6 +83,36 @@ export default async function HomePage() {
         {h.emergencyBefore}{" "}
         <a href="tel:911" className="font-medium underline">{h.call911}</a> {h.emergencyAfter}
       </p>
+      {appointments.map(({ careCase, provider, stage }) => (
+        <section key={careCase.id} className="mt-6 rounded-xl border-2 border-[var(--rc-navy)]/25 p-5">
+          <h2 className="font-medium">{stage === "upcoming" ? h.visitTitle : h.afterVisitTitle}</h2>
+          <p className="mt-1 text-sm">
+            <span className="rc-mark"><LocalDateTime iso={careCase.appointment_at as string} localeTag={LOCALE_TAGS[locale]} /></span>
+            {provider.success && <> · {provider.data.name}{provider.data.address ? ` · ${provider.data.address}` : ""}</>}
+          </p>
+          {stage === "upcoming" ? (
+            <Link href={`/care/${careCase.id}#book`} className="mt-3 inline-block text-sm underline underline-offset-4">{h.visitDetails}</Link>
+          ) : (
+            <>
+              <p className="mt-1 text-sm text-[var(--rc-muted)]">{h.afterVisitText}</p>
+              <div className="mt-3 flex flex-wrap gap-3 text-sm">
+                <form action={updateAppointmentStatus}>
+                  <input type="hidden" name="caseId" value={careCase.id} />
+                  <input type="hidden" name="status" value="done" />
+                  <input type="hidden" name="next" value="home" />
+                  <button className="rounded-full bg-[var(--rc-navy)] px-4 py-2 text-[var(--rc-ivory)]">{h.wentAddBill}</button>
+                </form>
+                <form action={updateAppointmentStatus}>
+                  <input type="hidden" name="caseId" value={careCase.id} />
+                  <input type="hidden" name="status" value="cancelled" />
+                  <input type="hidden" name="next" value="home" />
+                  <button className="px-2 py-2 underline underline-offset-4">{h.didntHappen}</button>
+                </form>
+              </div>
+            </>
+          )}
+        </section>
+      ))}
       <CareDescriptionForm t={t.careForm} />
 
       <div className="mt-10 grid gap-4 md:grid-cols-2">

@@ -197,6 +197,12 @@ export const ru: Dictionary = {
     dontWait: "Не ждите Recheck.",
   },
   home: {
+    visitTitle: "Ваш следующий визит",
+    visitDetails: "Подробности и что спросить",
+    afterVisitTitle: "Как прошёл визит?",
+    afterVisitText: "Добавьте счёт — мы проверим начисления.",
+    wentAddBill: "Был(а) — добавить счёт",
+    didntHappen: "Визита не было",
     preventiveTitle: "Бесплатная профилактика",
     preventiveUnused: "Бесплатных услуг не использовано или пора повторить: {n}",
     preventiveAllDone: "Всё в порядке. Покажем, когда подойдёт следующий срок.",

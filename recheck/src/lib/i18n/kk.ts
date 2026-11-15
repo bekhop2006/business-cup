@@ -197,6 +197,12 @@ export const kk: Dictionary = {
     dontWait: "Recheck-ті күтпеңіз.",
   },
   home: {
+    visitTitle: "Келесі қабылдауыңыз",
+    visitDetails: "Толығырақ және не сұрау керек",
+    afterVisitTitle: "Қабылдау қалай өтті?",
+    afterVisitText: "Шотты қосыңыз — есептелген сомаларды тексереміз.",
+    wentAddBill: "Бардым — шотты қосу",
+    didntHappen: "Қабылдау болмады",
     preventiveTitle: "Тегін профилактика",
     preventiveUnused: "Пайдаланылмаған немесе қайталайтын уақыты келген тегін қызметтер: {n}",
     preventiveAllDone: "Бәрі тәртіпте. Келесі мерзімді көрсетеміз.",

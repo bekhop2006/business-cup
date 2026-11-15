@@ -131,6 +131,17 @@ Verified 2026-11-15 on production (`8992fee`): new account with Michael's profil
 
 Checked 2026-11-15 on production (`6060647`): the signed-out landing shows the new copy and CTA, and `/home` redirects to login; signed in, `/home` shows the case box, Michael's plan with deductible and out-of-pocket progress, $50.00 estimated from care choices and $96.00 worth asking about on bills, the chosen provider on the recent case and the latest bills. Navigation reads Home · Get care · Bills · Plan · Profile; Bills and "Your year" still load. A second case on a Recheck Plus account shows options and costs. A new free account that skipped the insurance step got its first case in full (wide ranges such as $0.00–$210.15 for a visit); its second case showed the safety questions for free and then the Recheck Plus paywall instead of options. After a Stripe test-mode payment the plan page shows Recheck Plus and the same case shows options and a provider search with 10 results. Bills were already in Michael's account. The insurance card photo is not built (optional). Stripe Checkout still shows the merchant name "nFactorial sandbox" instead of Recheck.
 
+## Stage 11 — Free preventive care and booking (~4 h, before stage 10)
+
+- [x] Onboarding asks birth year, sex and TB risk (optional); step 3 lists free preventive care from USPSTF A/B and the CDC adult schedule, each with its source
+- [x] The person records when they last had each service; code computes what is due; profile card and home card show it
+- [x] After choosing a provider: phone, ready email, "I booked it for" date; home shows the upcoming visit, `.ics` calendar file, and after the visit asks for the bill
+- [x] Strings in English, Russian and Kazakh
+- [ ] Migration applied on production and the flow checked there
+- [ ] Optional, only if more than 3 hours remain: "Ask Recheck" answers from official documents with citations
+
+**Done when:** a new user on production enters birth year 1980 / male, sees colorectal screening as free, records a flu shot, books a visit with a real provider, and gets the "add your bill" prompt after the date.
+
 ## Stage 10 — Demo and submission (last ~2 h)
 
 - [ ] Michael's demo account created through the real onboarding and flows
