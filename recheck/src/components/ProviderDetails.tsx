@@ -13,8 +13,12 @@ export function ProviderDetails({ provider }: { provider: ChosenProvider }) {
       {/* The NPI Registry has no distance or ratings; the search notes that once, above the list. */}
       {(provider.distance_meters !== null || provider.rating !== null) && (
         <p className="mt-2 text-xs text-[var(--rc-muted)]">
-          {provider.distance_meters !== null ? `${(provider.distance_meters / 1609.344).toFixed(1)} miles from ZIP center (straight line)` : "Distance not available"}
-          {" · "}{provider.rating !== null ? `${provider.rating.toFixed(1)} / 5${provider.rating_count !== null ? ` (${provider.rating_count} reviews)` : ""}` : "Rating not available"}
+          {[
+            provider.distance_meters !== null ? `${(provider.distance_meters / 1609.344).toFixed(1)} miles from ZIP center (straight line)` : "Distance not available",
+            provider.rating !== null
+              ? `${provider.rating.toFixed(1)} / 5${provider.rating_count !== null ? ` (${provider.rating_count} reviews)` : ""}`
+              : provider.source === "google_places" ? "Rating not available" : null,
+          ].filter(Boolean).join(" · ")}
         </p>
       )}
       <p className="mt-3 inline-block rounded-full bg-[var(--rc-navy)]/6 px-3 py-1 text-xs font-medium">Insurance: not verified</p>
