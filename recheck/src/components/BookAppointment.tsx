@@ -2,6 +2,7 @@
 
 import { useActionState, useState } from "react";
 import { bookAppointment, updateAppointmentStatus } from "@/app/(app)/care/provider-actions";
+import { LocalDateTime } from "@/components/LocalDateTime";
 import type { AppointmentStage } from "@/lib/care/appointment";
 
 type Props = {
@@ -11,10 +12,6 @@ type Props = {
   phone: string | null;
   email: { subject: string; body: string };
 };
-
-const appointmentFormat = new Intl.DateTimeFormat("en-US", {
-  weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit",
-});
 
 // Booking happens between the person and the clinic. We help them ask, then
 // keep the date they tell us.
@@ -67,7 +64,7 @@ export function BookAppointment({ caseId, appointmentAt, stage, phone, email }: 
       {appointmentAt && stage === "upcoming" && !editing && (
         <div className="mt-4 rounded-lg border border-green-200 bg-green-50 p-4 text-sm text-green-950">
           <p className="font-medium">
-            Booked for <time dateTime={appointmentAt} suppressHydrationWarning>{appointmentFormat.format(new Date(appointmentAt))}</time>
+            Booked for <LocalDateTime iso={appointmentAt} localeTag="en-US" />
           </p>
           <div className="mt-2 flex flex-wrap gap-3">
             <a href={`/care/${caseId}/appointment.ics`} className="underline underline-offset-4">Add to calendar</a>
